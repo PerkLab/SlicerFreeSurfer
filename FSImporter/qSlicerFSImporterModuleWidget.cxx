@@ -18,6 +18,9 @@
 // Qt includes
 #include <QDebug>
 
+#include "qSlicerFSImporterModule.h"
+#include "vtkSlicerFSImporterLogic.h"
+
 // SlicerQt includes
 #include "qSlicerFSImporterModuleWidget.h"
 #include "ui_qSlicerFSImporterModuleWidget.h"
@@ -29,6 +32,7 @@
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLSegmentationNode.h>
+#include <vtkMRMLSegmentationDisplayNode.h>
 #include <vtkMRMLSegmentationStorageNode.h>
 
 // VTK include
@@ -47,7 +51,9 @@ public:
   vtkMRMLScalarVolumeNode* loadVolume(QString fsDirectory, QString name);
   vtkMRMLSegmentationNode* loadSegmentation(QString fsDirectory, QString name);
   vtkMRMLModelNode* loadModel(QString fsDirectory, QString name);
+
   void transformModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode*orig);
+  void applyFreeSurferSegmentationNames(vtkMRMLSegmentationNode* segmentation);
 
   void updateStatus(bool success, QString statusMessage = "");
 
@@ -219,7 +225,7 @@ vtkMRMLScalarVolumeNode* qSlicerFSImporterModuleWidgetPrivate::loadVolume(QStrin
   QString volumeFile = fsDirectory + name;
   if (!QFile::exists(volumeFile))
     {
-    qCritical("Could not find orig.mgz");
+    this->updateStatus(false, "Could not find " + volumeFile + "!");
     return nullptr;
     }
 
@@ -264,6 +270,7 @@ vtkMRMLSegmentationNode* qSlicerFSImporterModuleWidgetPrivate::loadSegmentation(
   vtkMRMLSegmentationStorageNode* segmentationStorageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(segmentationNode->GetStorageNode());
   if (segmentationStorageNode->ReadData(segmentationNode))
     {
+    this->applyFreeSurferSegmentationNames(segmentationNode);
     return segmentationNode;
     }
 
@@ -336,4 +343,83 @@ void qSlicerFSImporterModuleWidgetPrivate::transformModelToRAS(vtkMRMLModelNode*
   transformer->Update();
   modelNode->GetPolyData()->ShallowCopy(transformer->GetOutput());
   modelNode->GetPolyData()->Modified();
+}
+
+struct SegmentInfo
+{
+  std::string name = "Unknown";
+  QColor color = QColor(100, 100, 100, 255);
+};
+
+//-----------------------------------------------------------------------------
+void qSlicerFSImporterModuleWidgetPrivate::applyFreeSurferSegmentationNames(vtkMRMLSegmentationNode* segmentationNode)
+{
+  Q_Q(qSlicerFSImporterModuleWidget);
+  if (!segmentationNode)
+    {
+    return;
+    }
+  MRMLNodeModifyBlocker blocker(segmentationNode);
+
+  qSlicerFSImporterModule* module = qobject_cast<qSlicerFSImporterModule*>(q->module());
+  vtkSlicerFSImporterLogic* logic = vtkSlicerFSImporterLogic::SafeDownCast(module->logic());
+  std::string sharedDirectory = logic->GetModuleShareDirectory();
+  std::string lutFilename = "FreeSurferColorLUT.txt";
+
+  QString lutDirectory = QString::fromStdString(sharedDirectory + "/" + lutFilename);
+  QFile lutFile(lutDirectory);
+  if (!lutFile.exists())
+    {
+    return;
+    }
+
+  std::map<int, SegmentInfo> segmentInfoMap;
+
+  QTextStream lutStream(&lutFile);
+  if (lutFile.open(QIODevice::ReadOnly))
+    {
+    while (!lutStream.atEnd())
+      {
+        QString line = lutStream.readLine();
+        line = line.trimmed();
+        if (line.isEmpty())
+          {
+          continue;
+          }
+        if (line.at(0) == '#')
+          {
+          continue;
+          }
+        line = line.replace(QRegularExpression("[ ]+"), " ");
+
+        QStringList tokens = line.split(" ");
+        if (tokens.size() != 6)
+          {
+          continue;
+          }
+
+        int value = tokens[0].toInt();
+        std::string name = tokens[1].toStdString();
+        QColor color;
+        color.setRed(tokens[2].toInt());
+        color.setGreen(tokens[3].toInt());
+        color.setBlue(tokens[4].toInt());
+        color.setAlpha(tokens[5].toInt());
+
+        SegmentInfo info;
+        info.name = name;
+        info.color = color;
+        segmentInfoMap[value] = info;
+      }
+    lutFile.close();
+    }
+
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  for (int i = 0; i < segmentation->GetNumberOfSegments(); ++i)
+    {
+    vtkSegment* segment = segmentation->GetNthSegment(i);
+    SegmentInfo info = segmentInfoMap[segment->GetLabelValue()];
+    segment->SetName(info.name.c_str());
+    segment->SetColor(info.color.red()/255.0, info.color.green() / 255.0, info.color.blue() / 255.0);
+    }
 }
