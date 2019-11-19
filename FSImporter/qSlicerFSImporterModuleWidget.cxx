@@ -28,6 +28,8 @@
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelStorageNode.h>
+#include <vtkMRMLSegmentationNode.h>
+#include <vtkMRMLSegmentationStorageNode.h>
 
 // VTK include
 #include <vtkImageData.h>
@@ -43,6 +45,7 @@ public:
   qSlicerFSImporterModuleWidgetPrivate(qSlicerFSImporterModuleWidget& object);
 
   vtkMRMLScalarVolumeNode* loadVolume(QString fsDirectory, QString name);
+  vtkMRMLSegmentationNode* loadSegmentation(QString fsDirectory, QString name);
   vtkMRMLModelNode* loadModel(QString fsDirectory, QString name);
   void transformModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode*orig);
 
@@ -107,6 +110,7 @@ void qSlicerFSImporterModuleWidget::updateFileList()
   Q_D(qSlicerFSImporterModuleWidget);
 
   d->modelSelectorBox->clear();
+  d->segmentationSelectorBox->clear();
   d->volumeSelectorBox->clear();
 
   QString directory = d->fsDirectoryButton->directory();
@@ -124,6 +128,14 @@ void qSlicerFSImporterModuleWidget::updateFileList()
   for (QString mgzFile : mgzFiles)
     {
     d->volumeSelectorBox->addItem(mgzFile);
+    }
+
+  QDir segDirectory(directory + "/mri");
+  segDirectory.setNameFilters(QStringList() << "*seg*.mgz");
+  QStringList segFiles = segDirectory.entryList();
+  for (QString segFile : segFiles)
+    {
+    d->segmentationSelectorBox->addItem(segFile);
     }
 
   QDir surfDirectory(directory + "/surf");
@@ -154,16 +166,26 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
   QModelIndexList selectedVolumes = d->volumeSelectorBox->checkedIndexes();
   for (QModelIndex selectedVolume : selectedVolumes)
     {
-    QString volumelName = d->volumeSelectorBox->itemText(selectedVolume.row());
-    vtkMRMLScalarVolumeNode* volumeNode = d->loadVolume(mriDirectory, volumelName);
+    QString volumeName = d->volumeSelectorBox->itemText(selectedVolume.row());
+    vtkMRMLScalarVolumeNode* volumeNode = d->loadVolume(mriDirectory, volumeName);
     if (!volumeNode)
       {
-      d->updateStatus(true, "Could not load surface " + volumelName + "!");
+      d->updateStatus(true, "Could not load surface " + volumeName + "!");
+      }
+    }
+
+  QModelIndexList selectedSegmentations = d->segmentationSelectorBox->checkedIndexes();
+  for (QModelIndex selectedSegmentation : selectedSegmentations)
+    {
+    QString segmentationName = d->segmentationSelectorBox->itemText(selectedSegmentation.row());
+    vtkMRMLSegmentationNode* segmentationNode = d->loadSegmentation(mriDirectory, segmentationName);
+    if (!segmentationNode)
+      {
+      d->updateStatus(true, "Could not load surface " + segmentationName + "!");
       }
     }
 
   std::vector<vtkMRMLModelNode*> modelNodes;
-
   QString surfDirectory = directory + "/surf/"; 
   QModelIndexList selectedModels = d->modelSelectorBox->checkedIndexes();
   for (QModelIndex selectedModel : selectedModels)
@@ -185,6 +207,7 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     modelNode->CreateDefaultDisplayNodes();
     }
 
+  this->mrmlScene()->RemoveNode(origNode);
   return true;
 }
 
@@ -202,6 +225,9 @@ vtkMRMLScalarVolumeNode* qSlicerFSImporterModuleWidgetPrivate::loadVolume(QStrin
 
   std::string fileNameTemp = volumeFile.toStdString();
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(q->mrmlScene()->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
+
+  std::string nodeName = name.toStdString();
+  volumeNode->SetName(nodeName.c_str());
   volumeNode->AddDefaultStorageNode(fileNameTemp.c_str());
   
   vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(volumeNode->GetStorageNode());
@@ -213,6 +239,36 @@ vtkMRMLScalarVolumeNode* qSlicerFSImporterModuleWidgetPrivate::loadVolume(QStrin
 
   q->mrmlScene()->RemoveNode(volumeStorageNode);
   q->mrmlScene()->RemoveNode(volumeNode);
+  return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLSegmentationNode* qSlicerFSImporterModuleWidgetPrivate::loadSegmentation(QString fsDirectory, QString name)
+{
+  Q_Q(qSlicerFSImporterModuleWidget);
+
+  QString segmentationFile = fsDirectory + name;
+  if (!QFile::exists(segmentationFile))
+  {
+    qCritical("Could not find surf.");
+    return nullptr;
+  }
+
+  std::string fileNameTemp = segmentationFile.toStdString();
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(q->mrmlScene()->AddNewNodeByClass("vtkMRMLSegmentationNode"));
+
+  std::string nodeName = name.toStdString();
+  segmentationNode->SetName(nodeName.c_str());
+  segmentationNode->AddDefaultStorageNode(fileNameTemp.c_str());
+
+  vtkMRMLSegmentationStorageNode* segmentationStorageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(segmentationNode->GetStorageNode());
+  if (segmentationStorageNode->ReadData(segmentationNode))
+    {
+    return segmentationNode;
+    }
+
+  q->mrmlScene()->RemoveNode(segmentationStorageNode);
+  q->mrmlScene()->RemoveNode(segmentationNode);
   return nullptr;
 }
 
@@ -230,6 +286,9 @@ vtkMRMLModelNode* qSlicerFSImporterModuleWidgetPrivate::loadModel(QString fsDire
 
   std::string fileNameTemp = surfFile.toStdString();
   vtkMRMLModelNode* surfNode = vtkMRMLModelNode::SafeDownCast(q->mrmlScene()->AddNewNodeByClass("vtkMRMLModelNode"));
+
+  std::string nodeName = name.toStdString();
+  surfNode->SetName(nodeName.c_str());
   surfNode->AddDefaultStorageNode(fileNameTemp.c_str());
 
   vtkMRMLModelStorageNode* surfStorageNode = vtkMRMLModelStorageNode::SafeDownCast(surfNode->GetStorageNode());
