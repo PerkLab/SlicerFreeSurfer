@@ -28,6 +28,9 @@
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
+class vtkMRMLScalarVolumeNode;
+class vtkMRMLSegmentationNode;
+class vtkMRMLModelNode;
 
 // STD includes
 #include <cstdlib>
@@ -44,6 +47,13 @@ public:
   static vtkSlicerFSImporterLogic *New();
   vtkTypeMacro(vtkSlicerFSImporterLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  vtkMRMLScalarVolumeNode* loadVolume(std::string fsDirectory, std::string name);
+  vtkMRMLSegmentationNode* loadSegmentation(std::string fsDirectory, std::string name);
+  vtkMRMLModelNode* loadModel(std::string fsDirectory, std::string name);
+
+  void transformModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode* orig);
+  void applyFreeSurferSegmentationNames(vtkMRMLSegmentationNode* segmentation);
 
 protected:
   vtkSlicerFSImporterLogic();
