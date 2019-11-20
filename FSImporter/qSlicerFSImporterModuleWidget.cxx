@@ -158,7 +158,7 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
 
   QString directory = d->fsDirectoryButton->directory();
   QString mriDirectory = directory + "/mri/";
-  vtkMRMLScalarVolumeNode* origNode = logic->loadVolume(mriDirectory.toStdString(), "orig.mgz");
+  vtkMRMLScalarVolumeNode* origNode = logic->loadFreeSurferVolume(mriDirectory.toStdString(), "orig.mgz");
   if (!origNode)
     {
     d->updateStatus(true, "Could not find orig.mgz!");
@@ -169,7 +169,7 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedVolume : selectedVolumes)
     {
     QString volumeName = d->volumeSelectorBox->itemText(selectedVolume.row());
-    vtkMRMLScalarVolumeNode* volumeNode = logic->loadVolume(mriDirectory.toStdString(), volumeName.toStdString());
+    vtkMRMLScalarVolumeNode* volumeNode = logic->loadFreeSurferVolume(mriDirectory.toStdString(), volumeName.toStdString());
     if (!volumeNode)
       {
       d->updateStatus(true, "Could not load surface " + volumeName + "!");
@@ -180,7 +180,7 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedSegmentation : selectedSegmentations)
     {
     QString segmentationName = d->segmentationSelectorBox->itemText(selectedSegmentation.row());
-    vtkMRMLSegmentationNode* segmentationNode = logic->loadSegmentation(mriDirectory.toStdString(), segmentationName.toStdString());
+    vtkMRMLSegmentationNode* segmentationNode = logic->loadFreeSurferSegmentation(mriDirectory.toStdString(), segmentationName.toStdString());
     if (!segmentationNode)
       {
       d->updateStatus(true, "Could not load surface " + segmentationName + "!");
@@ -194,13 +194,13 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     {
     QString modelName = d->modelSelectorBox->itemText(selectedModel.row());
 
-    vtkMRMLModelNode* modelNode = logic->loadModel(surfDirectory.toStdString(), modelName.toStdString());
+    vtkMRMLModelNode* modelNode = logic->loadFreeSurferModel(surfDirectory.toStdString(), modelName.toStdString());
     if (!modelNode)
       {
       d->updateStatus(true, "Could not load surface " + modelName + "!");
       continue;
       }
-    logic->transformModelToRAS(modelNode, origNode);
+    logic->transformFreeSurferModelToRAS(modelNode, origNode);
     modelNodes.push_back(modelNode);
     }
 
