@@ -164,11 +164,20 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     d->updateStatus(true, "Could not find orig.mgz!");
     return false;
     }
-  
+
+  bool keepOrigNode = false;
   QModelIndexList selectedVolumes = d->volumeSelectorBox->checkedIndexes();
   for (QModelIndex selectedVolume : selectedVolumes)
     {
     QString volumeName = d->volumeSelectorBox->itemText(selectedVolume.row());
+    if (volumeName == "orig.mgz")
+      {
+      keepOrigNode = true;
+      if (origNode)
+        {
+        continue;
+        }
+      }
     vtkMRMLScalarVolumeNode* volumeNode = logic->loadFreeSurferVolume(mriDirectory.toStdString(), volumeName.toStdString());
     if (!volumeNode)
       {
@@ -188,7 +197,7 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     }
 
   std::vector<vtkMRMLModelNode*> modelNodes;
-  QString surfDirectory = directory + "/surf/"; 
+  QString surfDirectory = directory + "/surf/";
   QModelIndexList selectedModels = d->modelSelectorBox->checkedIndexes();
   for (QModelIndex selectedModel : selectedModels)
     {
@@ -209,6 +218,9 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     modelNode->CreateDefaultDisplayNodes();
     }
 
-  this->mrmlScene()->RemoveNode(origNode);
+  if (!keepOrigNode)
+    {
+    this->mrmlScene()->RemoveNode(origNode);
+    }
   return true;
 }
