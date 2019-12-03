@@ -165,6 +165,8 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     return false;
     }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
   bool keepOrigNode = false;
   QModelIndexList selectedVolumes = d->volumeSelectorBox->checkedIndexes();
   for (QModelIndex selectedVolume : selectedVolumes)
@@ -182,7 +184,9 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     if (!volumeNode)
       {
       d->updateStatus(true, "Could not load surface " + volumeName + "!");
+      continue;
       }
+    d->segmentationSelectorBox->setCheckState(selectedVolume, Qt::CheckState::Unchecked);
     }
 
   QModelIndexList selectedSegmentations = d->segmentationSelectorBox->checkedIndexes();
@@ -193,7 +197,9 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     if (!segmentationNode)
       {
       d->updateStatus(true, "Could not load surface " + segmentationName + "!");
+      continue;
       }
+    d->segmentationSelectorBox->setCheckState(selectedSegmentation, Qt::CheckState::Unchecked);
     }
 
   std::vector<vtkMRMLModelNode*> modelNodes;
@@ -209,6 +215,7 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
       d->updateStatus(true, "Could not load surface " + modelName + "!");
       continue;
       }
+    d->segmentationSelectorBox->setCheckState(selectedModel, Qt::CheckState::Unchecked);
     logic->transformFreeSurferModelToRAS(modelNode, origNode);
     modelNodes.push_back(modelNode);
     }
@@ -222,5 +229,8 @@ bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
     {
     this->mrmlScene()->RemoveNode(origNode);
     }
+
+  QApplication::restoreOverrideCursor();
+
   return true;
 }
