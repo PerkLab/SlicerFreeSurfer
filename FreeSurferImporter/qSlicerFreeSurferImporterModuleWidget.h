@@ -15,40 +15,40 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFSImporterModuleWidget_h
-#define __qSlicerFSImporterModuleWidget_h
+#ifndef __qSlicerFreeSurferImporterModuleWidget_h
+#define __qSlicerFreeSurferImporterModuleWidget_h
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerFSImporterModuleExport.h"
+#include "qSlicerFreeSurferImporterModuleExport.h"
 
-class qSlicerFSImporterModuleWidgetPrivate;
+class qSlicerFreeSurferImporterModuleWidgetPrivate;
 class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_FSIMPORTER_EXPORT qSlicerFSImporterModuleWidget :
+class Q_SLICER_QTMODULES_FREESURFERIMPORTER_EXPORT qSlicerFreeSurferImporterModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerFSImporterModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerFSImporterModuleWidget();
+  qSlicerFreeSurferImporterModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerFreeSurferImporterModuleWidget();
 
 public slots:
   void updateFileList();
   bool loadSelectedFiles();
 
 protected:
-  QScopedPointer<qSlicerFSImporterModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerFreeSurferImporterModuleWidgetPrivate> d_ptr;
 
   virtual void setup();
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerFSImporterModuleWidget);
-  Q_DISABLE_COPY(qSlicerFSImporterModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerFreeSurferImporterModuleWidget);
+  Q_DISABLE_COPY(qSlicerFreeSurferImporterModuleWidget);
 };
 
 #endif

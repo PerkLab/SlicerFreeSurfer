@@ -18,12 +18,12 @@
 // Qt includes
 #include <QDebug>
 
-#include "qSlicerFSImporterModule.h"
-#include "vtkSlicerFSImporterLogic.h"
+#include "qSlicerFreeSurferImporterModule.h"
+#include "vtkSlicerFreeSurferImporterLogic.h"
 
 // SlicerQt includes
-#include "qSlicerFSImporterModuleWidget.h"
-#include "ui_qSlicerFSImporterModuleWidget.h"
+#include "qSlicerFreeSurferImporterModuleWidget.h"
+#include "ui_qSlicerFreeSurferImporterModuleWidget.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -42,28 +42,28 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerFSImporterModuleWidgetPrivate: public Ui_qSlicerFSImporterModuleWidget
+class qSlicerFreeSurferImporterModuleWidgetPrivate: public Ui_qSlicerFreeSurferImporterModuleWidget
 {
-  Q_DECLARE_PUBLIC(qSlicerFSImporterModuleWidget);
+  Q_DECLARE_PUBLIC(qSlicerFreeSurferImporterModuleWidget);
 public:
-  qSlicerFSImporterModuleWidgetPrivate(qSlicerFSImporterModuleWidget& object);
+  qSlicerFreeSurferImporterModuleWidgetPrivate(qSlicerFreeSurferImporterModuleWidget& object);
 
   void updateStatus(bool success, QString statusMessage = "");
 
-  qSlicerFSImporterModuleWidget* q_ptr;
+  qSlicerFreeSurferImporterModuleWidget* q_ptr;
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerFSImporterModuleWidgetPrivate methods
+// qSlicerFreeSurferImporterModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerFSImporterModuleWidgetPrivate::qSlicerFSImporterModuleWidgetPrivate(qSlicerFSImporterModuleWidget& object)
+qSlicerFreeSurferImporterModuleWidgetPrivate::qSlicerFreeSurferImporterModuleWidgetPrivate(qSlicerFreeSurferImporterModuleWidget& object)
   : q_ptr(&object)
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFSImporterModuleWidgetPrivate::updateStatus(bool success, QString statusMessage/*=""*/)
+void qSlicerFreeSurferImporterModuleWidgetPrivate::updateStatus(bool success, QString statusMessage/*=""*/)
 {
   this->filesGroupBox->setEnabled(success);
   this->statusLabel->setText(statusMessage);
@@ -74,39 +74,39 @@ void qSlicerFSImporterModuleWidgetPrivate::updateStatus(bool success, QString st
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerFSImporterModuleWidget methods
+// qSlicerFreeSurferImporterModuleWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerFSImporterModuleWidget::qSlicerFSImporterModuleWidget(QWidget* _parent)
+qSlicerFreeSurferImporterModuleWidget::qSlicerFreeSurferImporterModuleWidget(QWidget* _parent)
   : Superclass( _parent )
-  , d_ptr( new qSlicerFSImporterModuleWidgetPrivate(*this) )
+  , d_ptr( new qSlicerFreeSurferImporterModuleWidgetPrivate(*this) )
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFSImporterModuleWidget::~qSlicerFSImporterModuleWidget()
+qSlicerFreeSurferImporterModuleWidget::~qSlicerFreeSurferImporterModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFSImporterModuleWidget::setup()
+void qSlicerFreeSurferImporterModuleWidget::setup()
 {
-  Q_D(qSlicerFSImporterModuleWidget);
+  Q_D(qSlicerFreeSurferImporterModuleWidget);
   d->setupUi(this);
   this->Superclass::setup();
 
   // Erase status label
   d->statusLabel->setText("");
 
-  QObject::connect(d->fsDirectoryButton, &ctkDirectoryButton::directoryChanged, this, &qSlicerFSImporterModuleWidget::updateFileList);
-  QObject::connect(d->loadButton, &QPushButton::clicked, this, &qSlicerFSImporterModuleWidget::loadSelectedFiles);
+  QObject::connect(d->fsDirectoryButton, &ctkDirectoryButton::directoryChanged, this, &qSlicerFreeSurferImporterModuleWidget::updateFileList);
+  QObject::connect(d->loadButton, &QPushButton::clicked, this, &qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles);
   this->updateFileList();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFSImporterModuleWidget::updateFileList()
+void qSlicerFreeSurferImporterModuleWidget::updateFileList()
 {
-  Q_D(qSlicerFSImporterModuleWidget);
+  Q_D(qSlicerFreeSurferImporterModuleWidget);
 
   d->modelSelectorBox->clear();
   d->segmentationSelectorBox->clear();
@@ -149,12 +149,12 @@ void qSlicerFSImporterModuleWidget::updateFileList()
 
 
 //-----------------------------------------------------------------------------
-bool qSlicerFSImporterModuleWidget::loadSelectedFiles()
+bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
 {
-  Q_D(qSlicerFSImporterModuleWidget);
+  Q_D(qSlicerFreeSurferImporterModuleWidget);
 
-  qSlicerFSImporterModule* module = qobject_cast<qSlicerFSImporterModule*>(this->module());
-  vtkSlicerFSImporterLogic* logic = vtkSlicerFSImporterLogic::SafeDownCast(module->logic());
+  qSlicerFreeSurferImporterModule* module = qobject_cast<qSlicerFreeSurferImporterModule*>(this->module());
+  vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(module->logic());
 
   QString directory = d->fsDirectoryButton->directory();
   QString mriDirectory = directory + "/mri/";

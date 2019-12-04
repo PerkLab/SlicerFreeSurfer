@@ -15,58 +15,58 @@
 
 ==============================================================================*/
 
-// FSImporter Logic includes
-#include <vtkSlicerFSImporterLogic.h>
+// FreeSurferImporter Logic includes
+#include <vtkSlicerFreeSurferImporterLogic.h>
 
-// FSImporter includes
-#include "qSlicerFSImporterModule.h"
-#include "qSlicerFSImporterModuleWidget.h"
+// FreeSurferImporter includes
+#include "qSlicerFreeSurferImporterModule.h"
+#include "qSlicerFreeSurferImporterModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerFSImporterModulePrivate
+class qSlicerFreeSurferImporterModulePrivate
 {
 public:
-  qSlicerFSImporterModulePrivate();
+  qSlicerFreeSurferImporterModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerFSImporterModulePrivate methods
+// qSlicerFreeSurferImporterModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerFSImporterModulePrivate::qSlicerFSImporterModulePrivate()
+qSlicerFreeSurferImporterModulePrivate::qSlicerFreeSurferImporterModulePrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerFSImporterModule methods
+// qSlicerFreeSurferImporterModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerFSImporterModule::qSlicerFSImporterModule(QObject* _parent)
+qSlicerFreeSurferImporterModule::qSlicerFreeSurferImporterModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerFSImporterModulePrivate)
+  , d_ptr(new qSlicerFreeSurferImporterModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFSImporterModule::~qSlicerFSImporterModule()
+qSlicerFreeSurferImporterModule::~qSlicerFreeSurferImporterModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFSImporterModule::helpText() const
+QString qSlicerFreeSurferImporterModule::helpText() const
 {
   return "This is a loadable module that can be bundled in an extension";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFSImporterModule::acknowledgementText() const
+QString qSlicerFreeSurferImporterModule::acknowledgementText() const
 {
   return "This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerFSImporterModule::contributors() const
+QStringList qSlicerFreeSurferImporterModule::contributors() const
 {
   QStringList moduleContributors;
   moduleContributors << QString("John Doe (AnyWare Corp.)");
@@ -74,38 +74,38 @@ QStringList qSlicerFSImporterModule::contributors() const
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerFSImporterModule::icon() const
+QIcon qSlicerFreeSurferImporterModule::icon() const
 {
-  return QIcon(":/Icons/FSImporter.png");
+  return QIcon(":/Icons/FreeSurferImporter.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerFSImporterModule::categories() const
+QStringList qSlicerFreeSurferImporterModule::categories() const
 {
   return QStringList() << "Examples";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerFSImporterModule::dependencies() const
+QStringList qSlicerFreeSurferImporterModule::dependencies() const
 {
   return QStringList();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFSImporterModule::setup()
+void qSlicerFreeSurferImporterModule::setup()
 {
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation* qSlicerFSImporterModule
+qSlicerAbstractModuleRepresentation* qSlicerFreeSurferImporterModule
 ::createWidgetRepresentation()
 {
-  return new qSlicerFSImporterModuleWidget;
+  return new qSlicerFreeSurferImporterModuleWidget;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerFSImporterModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerFreeSurferImporterModule::createLogic()
 {
-  return vtkSlicerFSImporterLogic::New();
+  return vtkSlicerFreeSurferImporterLogic::New();
 }

@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-// FSImporter Logic includes
-#include "vtkSlicerFSImporterLogic.h"
+// FreeSurferImporter Logic includes
+#include "vtkSlicerFreeSurferImporterLogic.h"
 
 // MRML includes
 #include <vtkMRMLScalarVolumeNode.h>
@@ -41,26 +41,26 @@
 #include <regex>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerFSImporterLogic);
+vtkStandardNewMacro(vtkSlicerFreeSurferImporterLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerFSImporterLogic::vtkSlicerFSImporterLogic()
+vtkSlicerFreeSurferImporterLogic::vtkSlicerFreeSurferImporterLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerFSImporterLogic::~vtkSlicerFSImporterLogic()
+vtkSlicerFreeSurferImporterLogic::~vtkSlicerFreeSurferImporterLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerFreeSurferImporterLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerFreeSurferImporterLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -70,31 +70,31 @@ void vtkSlicerFSImporterLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic::RegisterNodes()
+void vtkSlicerFreeSurferImporterLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic::UpdateFromMRMLScene()
+void vtkSlicerFreeSurferImporterLogic::UpdateFromMRMLScene()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic
+void vtkSlicerFreeSurferImporterLogic
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic
+void vtkSlicerFreeSurferImporterLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* vtkSlicerFSImporterLogic::loadFreeSurferVolume(std::string fsDirectory, std::string name)
+vtkMRMLScalarVolumeNode* vtkSlicerFreeSurferImporterLogic::loadFreeSurferVolume(std::string fsDirectory, std::string name)
 {
   std::string volumeFile = fsDirectory + name;
   vtkMRMLScalarVolumeNode* volumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLScalarVolumeNode"));
@@ -114,7 +114,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerFSImporterLogic::loadFreeSurferVolume(std::str
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLSegmentationNode* vtkSlicerFSImporterLogic::loadFreeSurferSegmentation(std::string fsDirectory, std::string name)
+vtkMRMLSegmentationNode* vtkSlicerFreeSurferImporterLogic::loadFreeSurferSegmentation(std::string fsDirectory, std::string name)
 {
   std::string segmentationFile = fsDirectory + name;
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLSegmentationNode"));
@@ -134,7 +134,7 @@ vtkMRMLSegmentationNode* vtkSlicerFSImporterLogic::loadFreeSurferSegmentation(st
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLModelNode* vtkSlicerFSImporterLogic::loadFreeSurferModel(std::string fsDirectory, std::string name)
+vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::loadFreeSurferModel(std::string fsDirectory, std::string name)
 {
   std::string surfFile = fsDirectory + name;
   vtkMRMLModelNode* surfNode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode"));
@@ -153,7 +153,7 @@ vtkMRMLModelNode* vtkSlicerFSImporterLogic::loadFreeSurferModel(std::string fsDi
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic::transformFreeSurferModelToRAS(vtkMRMLModelNode* modelNode, vtkMRMLScalarVolumeNode* origVolumeNode)
+void vtkSlicerFreeSurferImporterLogic::transformFreeSurferModelToRAS(vtkMRMLModelNode* modelNode, vtkMRMLScalarVolumeNode* origVolumeNode)
 {
   if (!modelNode || !origVolumeNode)
     {
@@ -195,7 +195,7 @@ struct SegmentInfo
 };
 
 //-----------------------------------------------------------------------------
-void vtkSlicerFSImporterLogic::applyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentationNode)
+void vtkSlicerFreeSurferImporterLogic::applyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentationNode)
 {
   if (!segmentationNode)
     {

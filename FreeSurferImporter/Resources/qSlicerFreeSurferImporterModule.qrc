@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/FSImporter.png</file>
+    <file>Icons/FreeSurferImporter.png</file>
     <file>Data/FreeSurferColorLUT.txt</file>
   </qresource>
 </RCC>

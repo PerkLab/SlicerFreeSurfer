@@ -15,19 +15,19 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFSImporterModule_h
-#define __qSlicerFSImporterModule_h
+#ifndef __qSlicerFreeSurferImporterModule_h
+#define __qSlicerFreeSurferImporterModule_h
 
 // SlicerQt includes
 #include "qSlicerLoadableModule.h"
 
-#include "qSlicerFSImporterModuleExport.h"
+#include "qSlicerFreeSurferImporterModuleExport.h"
 
-class qSlicerFSImporterModulePrivate;
+class qSlicerFreeSurferImporterModulePrivate;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_FSIMPORTER_EXPORT
-qSlicerFSImporterModule
+class Q_SLICER_QTMODULES_FREESURFERIMPORTER_EXPORT
+qSlicerFreeSurferImporterModule
   : public qSlicerLoadableModule
 {
   Q_OBJECT
@@ -37,8 +37,8 @@ qSlicerFSImporterModule
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerFSImporterModule(QObject *parent=0);
-  virtual ~qSlicerFSImporterModule();
+  explicit qSlicerFreeSurferImporterModule(QObject *parent=0);
+  virtual ~qSlicerFreeSurferImporterModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -63,11 +63,11 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
-  QScopedPointer<qSlicerFSImporterModulePrivate> d_ptr;
+  QScopedPointer<qSlicerFreeSurferImporterModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerFSImporterModule);
-  Q_DISABLE_COPY(qSlicerFSImporterModule);
+  Q_DECLARE_PRIVATE(qSlicerFreeSurferImporterModule);
+  Q_DISABLE_COPY(qSlicerFreeSurferImporterModule);
 
 };
 

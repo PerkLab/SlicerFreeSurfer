@@ -15,14 +15,14 @@
 
 ==============================================================================*/
 
-// .NAME vtkSlicerFSImporterLogic - slicer logic class for volumes manipulation
+// .NAME vtkSlicerFreeSurferImporterLogic - slicer logic class for volumes manipulation
 // .SECTION Description
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
 
-#ifndef __vtkSlicerFSImporterLogic_h
-#define __vtkSlicerFSImporterLogic_h
+#ifndef __vtkSlicerFreeSurferImporterLogic_h
+#define __vtkSlicerFreeSurferImporterLogic_h
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
@@ -35,17 +35,17 @@ class vtkMRMLModelNode;
 // STD includes
 #include <cstdlib>
 
-#include "vtkSlicerFSImporterModuleLogicExport.h"
+#include "vtkSlicerFreeSurferImporterModuleLogicExport.h"
 
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class VTK_SLICER_FSIMPORTER_MODULE_LOGIC_EXPORT vtkSlicerFSImporterLogic :
+class VTK_SLICER_FREESURFERIMPORTER_MODULE_LOGIC_EXPORT vtkSlicerFreeSurferImporterLogic :
   public vtkSlicerModuleLogic
 {
 public:
 
-  static vtkSlicerFSImporterLogic *New();
-  vtkTypeMacro(vtkSlicerFSImporterLogic, vtkSlicerModuleLogic);
+  static vtkSlicerFreeSurferImporterLogic *New();
+  vtkTypeMacro(vtkSlicerFreeSurferImporterLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkMRMLScalarVolumeNode* loadFreeSurferVolume(std::string fsDirectory, std::string name);
@@ -56,8 +56,8 @@ public:
   void applyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
 
 protected:
-  vtkSlicerFSImporterLogic();
-  virtual ~vtkSlicerFSImporterLogic();
+  vtkSlicerFreeSurferImporterLogic();
+  virtual ~vtkSlicerFreeSurferImporterLogic();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
@@ -67,8 +67,8 @@ protected:
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 private:
 
-  vtkSlicerFSImporterLogic(const vtkSlicerFSImporterLogic&); // Not implemented
-  void operator=(const vtkSlicerFSImporterLogic&); // Not implemented
+  vtkSlicerFreeSurferImporterLogic(const vtkSlicerFreeSurferImporterLogic&); // Not implemented
+  void operator=(const vtkSlicerFreeSurferImporterLogic&); // Not implemented
 };
 
 #endif
