@@ -51,7 +51,7 @@ public:
   vtkMRMLScalarVolumeNode* loadFreeSurferVolume(std::string fsDirectory, std::string name);
   vtkMRMLSegmentationNode* loadFreeSurferSegmentation(std::string fsDirectory, std::string name);
   vtkMRMLModelNode* loadFreeSurferModel(std::string fsDirectory, std::string name);
-  bool loadFreeSurferScalarOverlay(std::string fsDirectory, std::string name);
+  bool loadFreeSurferScalarOverlay(std::string fsDirectory, std::string name, std::vector<vtkMRMLModelNode*> modelNodes);
 
   void transformFreeSurferModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode* orig);
   void applyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);

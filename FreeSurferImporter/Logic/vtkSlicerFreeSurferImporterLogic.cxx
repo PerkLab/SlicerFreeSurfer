@@ -169,7 +169,7 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::loadFreeSurferModel(std::str
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerFreeSurferImporterLogic::loadFreeSurferScalarOverlay(std::string fsDirectory, std::string name)
+bool vtkSlicerFreeSurferImporterLogic::loadFreeSurferScalarOverlay(std::string fsDirectory, std::string name, std::vector<vtkMRMLModelNode*> modelNodes)
 {
   std::string hemisphereName = vtksys::SystemTools::GetFilenameWithoutExtension(name);
 
@@ -184,15 +184,8 @@ bool vtkSlicerFreeSurferImporterLogic::loadFreeSurferScalarOverlay(std::string f
 
   bool success = true;
   int numberOfOverlayLoaded = 0;
-  vtkSmartPointer<vtkCollection> modelNodes = vtkSmartPointer<vtkCollection>::Take(this->GetMRMLScene()->GetNodesByClass("vtkMRMLModelNode"));
-  for (int i = 0; i < modelNodes->GetNumberOfItems(); ++i)
+  for (vtkMRMLModelNode* modelNode : modelNodes)
     {
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(modelNodes->GetItemAsObject(i));
-    if (!modelNode)
-      {
-      continue;
-      }
-
     if (!modelNode->GetName())
       {
       continue;

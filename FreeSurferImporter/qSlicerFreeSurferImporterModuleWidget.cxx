@@ -144,7 +144,7 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
     }
 
   QDir surfDirectory(directory + "/surf");
-  surfDirectory.setNameFilters(QStringList() << "*h.white" << "*h.pial" << "*h.inflated" << "*h.sphere");
+  surfDirectory.setNameFilters(QStringList() << "*h.white" << "*h.pial" << "*h.inflated" << "*h.sphere" << "*h.sphere.reg");
   QStringList surfFiles = surfDirectory.entryList();
   for (QString surfFile : surfFiles)
     {
@@ -248,7 +248,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedScalarOverlay : selectedScalarOverlays)
     {
     QString scalarOverlayName = d->scalarOverlaySelectorBox->itemText(selectedScalarOverlay.row());
-    bool success = logic->loadFreeSurferScalarOverlay(surfDirectory.toStdString(), scalarOverlayName.toStdString());
+    bool success = logic->loadFreeSurferScalarOverlay(surfDirectory.toStdString(), scalarOverlayName.toStdString(), modelNodes);
     if (!success)
       {
       d->updateStatus(true, "Could not load scalar overlay " + scalarOverlayName + "!");
