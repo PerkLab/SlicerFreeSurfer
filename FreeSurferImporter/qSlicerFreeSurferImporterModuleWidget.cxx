@@ -144,7 +144,7 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
     }
 
   QDir surfDirectory(directory + "/surf");
-  surfDirectory.setNameFilters(QStringList() << "*h.white" << "*h.pial" << "*h.inflated" << "*h.sphere" << "*h.sphere.reg");
+  surfDirectory.setNameFilters(QStringList() << "*h.white" << "*h.pial" << "*h.inflated" << "*h.sphere" << "*h.sphere.reg" << "*h.orig");
   QStringList surfFiles = surfDirectory.entryList();
   for (QString surfFile : surfFiles)
     {
@@ -152,7 +152,7 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
     }
 
   QDir scalarDirectory(directory + "/surf");
-  scalarDirectory.setNameFilters(QStringList() << "*.area*" << "*.curv*");
+  scalarDirectory.setNameFilters(QStringList() << "*.area*" << "*.curv*" << "*.sulc" << "*.W");
   QStringList scalarFiles = scalarDirectory.entryList();
   for (QString scalarFile : scalarFiles)
     {
@@ -216,12 +216,11 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     {
     removeOrigNode = true;
     origNode = logic->loadFreeSurferVolume(mriDirectory.toStdString(), "orig.mgz");
-    }
-
-  if (!origNode)
-    {
-    d->updateStatus(true, "Could not find orig.mgz!");
-    return false;
+    if (!origNode)
+      {
+      d->updateStatus(true, "Could not find orig.mgz!");
+      return false;
+      }
     }
 
   for (QModelIndex selectedModel : selectedModels)
@@ -235,8 +234,13 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       continue;
       }
     d->modelSelectorBox->setCheckState(selectedModel, Qt::CheckState::Unchecked);
-    logic->transformFreeSurferModelToRAS(modelNode, origNode);
     modelNodes.push_back(modelNode);
+    if (vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".pial"
+      || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
+      || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig")
+      {
+      logic->transformFreeSurferModelToRAS(modelNode, origNode);
+      }
     }
 
   for (vtkMRMLModelNode* modelNode : modelNodes)
