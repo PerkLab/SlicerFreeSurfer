@@ -21,6 +21,7 @@
 // MRML includes
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
+#include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelStorageNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
@@ -222,8 +223,16 @@ bool vtkSlicerFreeSurferImporterLogic::loadFreeSurferScalarOverlay(std::string f
 //-----------------------------------------------------------------------------
 void vtkSlicerFreeSurferImporterLogic::transformFreeSurferModelToRAS(vtkMRMLModelNode* modelNode, vtkMRMLScalarVolumeNode* origVolumeNode)
 {
-  if (!modelNode || !origVolumeNode)
+  if (!modelNode || !origVolumeNode || !this->GetMRMLScene())
     {
+    vtkErrorMacro("Invalid input arugments!");
+    return;
+    }
+
+  vtkMRMLLinearTransformNode* modelToRAS = vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLLinearTransformNode"));
+  if (!modelToRAS)
+    {
+    vtkErrorMacro("Could not create transform node!");
     return;
     }
 
@@ -245,13 +254,17 @@ void vtkSlicerFreeSurferImporterLogic::transformFreeSurferModelToRAS(vtkMRMLMode
 
   vtkNew<vtkTransform> transform;
   transform->Translate(center);
+  modelToRAS->SetMatrixTransformToParent(transform->GetMatrix());
 
-  vtkNew<vtkTransformPolyDataFilter> transformer;
-  transformer->SetTransform(transform);
-  transformer->SetInputData(modelNode->GetPolyData());
-  transformer->Update();
-  modelNode->GetPolyData()->ShallowCopy(transformer->GetOutput());
-  modelNode->GetPolyData()->Modified();
+  std::string transformName = "Model";
+  if (modelNode->GetName())
+    {
+    transformName = modelNode->GetName();
+    }
+  transformName += "ToRAS";
+  modelToRAS->SetName(transformName.c_str());
+  
+  modelNode->SetAndObserveTransformNodeID(modelToRAS->GetID());
 }
 
 //-----------------------------------------------------------------------------
