@@ -48,13 +48,13 @@ public:
   vtkTypeMacro(vtkSlicerFreeSurferImporterLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkMRMLScalarVolumeNode* loadFreeSurferVolume(std::string fsDirectory, std::string name);
-  vtkMRMLSegmentationNode* loadFreeSurferSegmentation(std::string fsDirectory, std::string name);
-  vtkMRMLModelNode* loadFreeSurferModel(std::string fsDirectory, std::string name);
-  bool loadFreeSurferScalarOverlay(std::string fsDirectory, std::string name, std::vector<vtkMRMLModelNode*> modelNodes);
+  vtkMRMLScalarVolumeNode* LoadFreeSurferVolume(std::string fsDirectory, std::string name);
+  vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string fsDirectory, std::string name);
+  vtkMRMLModelNode* LoadFreeSurferModel(std::string fsDirectory, std::string name);
+  bool LoadFreeSurferScalarOverlay(std::string fsDirectory, std::string name, std::vector<vtkMRMLModelNode*> modelNodes);
 
-  void transformFreeSurferModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode* orig);
-  void applyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
+  void TransformFreeSurferModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode* orig);
+  void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
 
 protected:
   vtkSlicerFreeSurferImporterLogic();

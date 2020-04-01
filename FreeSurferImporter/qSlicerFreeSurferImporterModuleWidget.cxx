@@ -182,7 +182,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedVolume : selectedVolumes)
     {
     QString volumeName = d->volumeSelectorBox->itemText(selectedVolume.row());
-    vtkMRMLScalarVolumeNode* volumeNode = logic->loadFreeSurferVolume(mriDirectory.toStdString(), volumeName.toStdString());
+    vtkMRMLScalarVolumeNode* volumeNode = logic->LoadFreeSurferVolume(mriDirectory.toStdString(), volumeName.toStdString());
     if (!volumeNode)
       {
       d->updateStatus(true, "Could not load surface " + volumeName + "!");
@@ -199,7 +199,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedSegmentation : selectedSegmentations)
     {
     QString segmentationName = d->segmentationSelectorBox->itemText(selectedSegmentation.row());
-    vtkMRMLSegmentationNode* segmentationNode = logic->loadFreeSurferSegmentation(mriDirectory.toStdString(), segmentationName.toStdString());
+    vtkMRMLSegmentationNode* segmentationNode = logic->LoadFreeSurferSegmentation(mriDirectory.toStdString(), segmentationName.toStdString());
     if (!segmentationNode)
       {
       d->updateStatus(true, "Could not load surface " + segmentationName + "!");
@@ -216,7 +216,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   if (!origNode)
     {
     removeOrigNode = true;
-    origNode = logic->loadFreeSurferVolume(mriDirectory.toStdString(), "orig.mgz");
+    origNode = logic->LoadFreeSurferVolume(mriDirectory.toStdString(), "orig.mgz");
     if (!origNode)
       {
       d->updateStatus(true, "Could not find orig.mgz!");
@@ -228,7 +228,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     {
     QString modelName = d->modelSelectorBox->itemText(selectedModel.row());
 
-    vtkMRMLModelNode* modelNode = logic->loadFreeSurferModel(surfDirectory.toStdString(), modelName.toStdString());
+    vtkMRMLModelNode* modelNode = logic->LoadFreeSurferModel(surfDirectory.toStdString(), modelName.toStdString());
     if (!modelNode)
       {
       d->updateStatus(true, "Could not load surface " + modelName + "!");
@@ -240,7 +240,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
       || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig")
       {
-      logic->transformFreeSurferModelToRAS(modelNode, origNode);
+      logic->TransformFreeSurferModelToRAS(modelNode, origNode);
       }
     }
 
@@ -253,7 +253,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedScalarOverlay : selectedScalarOverlays)
     {
     QString scalarOverlayName = d->scalarOverlaySelectorBox->itemText(selectedScalarOverlay.row());
-    bool success = logic->loadFreeSurferScalarOverlay(surfDirectory.toStdString(), scalarOverlayName.toStdString(), modelNodes);
+    bool success = logic->LoadFreeSurferScalarOverlay(surfDirectory.toStdString(), scalarOverlayName.toStdString(), modelNodes);
     if (!success)
       {
       d->updateStatus(true, "Could not load scalar overlay " + scalarOverlayName + "!");
