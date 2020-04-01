@@ -113,6 +113,7 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
   d->modelSelectorBox->clear();
   d->segmentationSelectorBox->clear();
   d->volumeSelectorBox->clear();
+  d->scalarOverlaySelectorBox->clear();
 
   QString directory = d->fsDirectoryButton->directory();
 
