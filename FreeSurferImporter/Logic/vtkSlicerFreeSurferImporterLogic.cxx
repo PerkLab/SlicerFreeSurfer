@@ -173,7 +173,6 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
 bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes)
 {
   std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
-  std::string hemisphereName = vtksys::SystemTools::GetFilenameWithoutExtension(name);
   vtkMRMLFreeSurferModelOverlayStorageNode* overlayStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelOverlayStorageNode"));
   if (!overlayStorageNode)
@@ -193,7 +192,7 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
       }
 
     std::string modelNodeHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(modelNode->GetName());
-    if (modelNodeHemisphere != hemisphereName)
+    if (modelNodeHemisphere != name)
       {
       continue;
       }
@@ -221,26 +220,19 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToRAS(vtkMRMLModelNode* modelNode, vtkMRMLVolumeNode* origVolumeNode)
+void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLModelNode* modelNode, vtkMRMLVolumeNode* referenceVolumeNode)
 {
-  if (!modelNode || !origVolumeNode || !this->GetMRMLScene())
+  if (!modelNode || !referenceVolumeNode || !this->GetMRMLScene())
     {
     vtkErrorMacro("Invalid input arugments!");
     return;
     }
 
-  vtkMRMLLinearTransformNode* modelToRAS = vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLLinearTransformNode"));
-  if (!modelToRAS)
-    {
-    vtkErrorMacro("Could not create transform node!");
-    return;
-    }
-
   int extent[6] = { 0 };
-  origVolumeNode->GetImageData()->GetExtent(extent);
+  referenceVolumeNode->GetImageData()->GetExtent(extent);
 
   int dimensions[3] = { 0 };
-  origVolumeNode->GetImageData()->GetDimensions(dimensions);
+  referenceVolumeNode->GetImageData()->GetDimensions(dimensions);
 
   double center[4] = { 0, 0, 0, 1 };
   for (int i = 0; i < 3; ++i)
@@ -249,22 +241,67 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToRAS(vtkMRMLMode
     }
 
   vtkNew<vtkMatrix4x4> ijkToRAS;
-  origVolumeNode->GetIJKToRASMatrix(ijkToRAS);
+  referenceVolumeNode->GetIJKToRASMatrix(ijkToRAS);
   ijkToRAS->MultiplyPoint(center, center);
 
-  vtkNew<vtkTransform> transform;
-  transform->Translate(center);
-  modelToRAS->SetMatrixTransformToParent(transform->GetMatrix());
-
-  std::string transformName = "Model";
-  if (modelNode->GetName())
+  std::string transformName = "FSModel_";
+  if (referenceVolumeNode->GetName())
     {
-    transformName = modelNode->GetName();
+    transformName += referenceVolumeNode->GetName();
     }
-  transformName += "ToRAS";
-  modelToRAS->SetName(transformName.c_str());
-  
-  modelNode->SetAndObserveTransformNodeID(modelToRAS->GetID());
+  transformName += "ToWorld";
+
+  vtkNew<vtkTransform> modelToWorldTransform;
+  modelToWorldTransform->Translate(center);
+
+  vtkMRMLLinearTransformNode* modelToWorldNode = vtkMRMLLinearTransformNode::SafeDownCast(
+    this->GetMRMLScene()->GetFirstNodeByName(transformName.c_str()));
+  if (modelToWorldNode)
+    {
+    vtkNew<vtkMatrix4x4> modelToWorld;
+    modelToWorldNode->GetMatrixTransformToParent(modelToWorld);
+
+    // Compare the current matrix with the one found in the scene.
+    // If they are identical, then use that matrix.
+    bool matrixExists = true;
+    for (int j = 0; j < 4; ++j)
+      {
+      for (int i = 0; i < 4; ++i)
+        {
+        double epsilon = 0.00001;
+        if (std::abs(modelToWorld->GetElement(i, j) - modelToWorldTransform->GetMatrix()->GetElement(i, j)) > epsilon)
+          {
+          matrixExists = false;
+          break;
+          }
+        }
+      if (!matrixExists)
+        {
+        break;
+        }
+      }
+    if (!matrixExists)
+      {
+      modelToWorldNode = nullptr;
+      }
+    }
+
+  if (!modelToWorldNode)
+    {
+    modelToWorldNode = vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLLinearTransformNode"));
+    modelToWorldNode->SetName(transformName.c_str());
+    }
+  if (!modelToWorldNode)
+    {
+    vtkErrorMacro("Could not create transform node!");
+    return;
+    }
+  modelToWorldNode->SetMatrixTransformToParent(modelToWorldTransform->GetMatrix());
+  if (referenceVolumeNode->GetParentTransformNode())
+    {
+    modelToWorldNode->SetAndObserveTransformNodeID(referenceVolumeNode->GetParentTransformNode()->GetID());
+    }
+  modelNode->SetAndObserveTransformNodeID(modelToWorldNode->GetID());
 }
 
 //-----------------------------------------------------------------------------

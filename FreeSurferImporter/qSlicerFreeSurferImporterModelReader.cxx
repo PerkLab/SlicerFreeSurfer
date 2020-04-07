@@ -133,7 +133,7 @@ bool qSlicerFreeSurferImporterModelReader::load(const IOProperties& properties)
     vtkMRMLVolumeNode* referenceNode = vtkMRMLVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(referenceVolumeID));
     if (referenceNode)
     {
-      d->Logic->TransformFreeSurferModelToRAS(node, referenceNode);
+      d->Logic->TransformFreeSurferModelToWorld(node, referenceNode);
     }
   }
 

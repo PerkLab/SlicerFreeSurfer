@@ -53,7 +53,7 @@ public:
   vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
   bool LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes);
 
-  void TransformFreeSurferModelToRAS(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
+  void TransformFreeSurferModelToWorld(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
 
 protected:

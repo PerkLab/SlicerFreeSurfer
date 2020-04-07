@@ -93,7 +93,7 @@ QIcon qSlicerFreeSurferImporterModule::icon() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerFreeSurferImporterModule::categories() const
 {
-  return QStringList() << "Examples";
+  return QStringList() << "Utilities";
 }
 
 //-----------------------------------------------------------------------------

@@ -244,7 +244,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
       || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig")
       {
-      logic->TransformFreeSurferModelToRAS(modelNode, origNode);
+      logic->TransformFreeSurferModelToWorld(modelNode, origNode);
       }
     }
 
