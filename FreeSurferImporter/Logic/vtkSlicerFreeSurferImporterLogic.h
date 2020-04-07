@@ -28,7 +28,7 @@
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-class vtkMRMLScalarVolumeNode;
+class vtkMRMLVolumeNode;
 class vtkMRMLSegmentationNode;
 class vtkMRMLModelNode;
 
@@ -48,12 +48,12 @@ public:
   vtkTypeMacro(vtkSlicerFreeSurferImporterLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  vtkMRMLScalarVolumeNode* LoadFreeSurferVolume(std::string fsDirectory, std::string name);
-  vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string fsDirectory, std::string name);
-  vtkMRMLModelNode* LoadFreeSurferModel(std::string fsDirectory, std::string name);
-  bool LoadFreeSurferScalarOverlay(std::string fsDirectory, std::string name, std::vector<vtkMRMLModelNode*> modelNodes);
+  vtkMRMLVolumeNode* LoadFreeSurferVolume(std::string filePath);
+  vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string filePath);
+  vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
+  bool LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes);
 
-  void TransformFreeSurferModelToRAS(vtkMRMLModelNode* surf, vtkMRMLScalarVolumeNode* orig);
+  void TransformFreeSurferModelToRAS(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
 
 protected:

@@ -13,6 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
+  This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
+  and was supported through CANARIE's Research Software Program, Cancer
+  Care Ontario, OpenAnatomy, and Brigham and Women's Hospital through NIH grant R01MH112748.
+
 ==============================================================================*/
 
 // FreeSurferImporter Logic includes
@@ -21,6 +25,11 @@
 // FreeSurferImporter includes
 #include "qSlicerFreeSurferImporterModule.h"
 #include "qSlicerFreeSurferImporterModuleWidget.h"
+#include "qSlicerFreeSurferImporterModelReader.h"
+
+// Slicer includes
+#include <qSlicerCoreApplication.h>
+#include <qSlicerCoreIOManager.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
@@ -56,20 +65,21 @@ qSlicerFreeSurferImporterModule::~qSlicerFreeSurferImporterModule()
 //-----------------------------------------------------------------------------
 QString qSlicerFreeSurferImporterModule::helpText() const
 {
-  return "This is a loadable module that can be bundled in an extension";
+  return "This is a module for importing FreeSurfer files into Slicer";
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerFreeSurferImporterModule::acknowledgementText() const
 {
-  return "This work was partially funded by NIH grant NXNNXXNNNNNN-NNXN";
+  return "This work was supported through CANARIE's Research Software Program, Cancer Care Ontario,"
+    "OpenAnatomy, and Brigham and Women's Hospital through NIH grant R01MH112748.";
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerFreeSurferImporterModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("John Doe (AnyWare Corp.)");
+  moduleContributors << QString("Kyle Sunderland (PerkLab, Queen's University)");
   return moduleContributors;
 }
 
@@ -95,6 +105,12 @@ QStringList qSlicerFreeSurferImporterModule::dependencies() const
 void qSlicerFreeSurferImporterModule::setup()
 {
   this->Superclass::setup();
+
+  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
+
+  // Register the IO
+  vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(this->logic());
+  app->coreIOManager()->registerIO(new qSlicerFreeSurferImporterModelReader(logic, this));
 }
 
 //-----------------------------------------------------------------------------

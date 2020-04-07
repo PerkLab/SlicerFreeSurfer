@@ -13,6 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
+  This file was originally developed by Kyle Sunderland, PerkLab, Queen's University
+  and was supported through CANARIE's Research Software Program, Cancer
+  Care Ontario, OpenAnatomy, and Brigham and Women's Hospital through NIH grant R01MH112748.
+
 ==============================================================================*/
 
 // Qt includes
@@ -174,7 +178,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
 
   QString directory = d->fsDirectoryButton->directory();
   QString mriDirectory = directory + "/mri/";
-  vtkMRMLScalarVolumeNode* origNode = nullptr;
+  vtkMRMLVolumeNode* origNode = nullptr;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -182,7 +186,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedVolume : selectedVolumes)
     {
     QString volumeName = d->volumeSelectorBox->itemText(selectedVolume.row());
-    vtkMRMLScalarVolumeNode* volumeNode = logic->LoadFreeSurferVolume(mriDirectory.toStdString(), volumeName.toStdString());
+    vtkMRMLVolumeNode* volumeNode = logic->LoadFreeSurferVolume((mriDirectory + volumeName).toStdString());
     if (!volumeNode)
       {
       d->updateStatus(true, "Could not load surface " + volumeName + "!");
@@ -199,7 +203,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedSegmentation : selectedSegmentations)
     {
     QString segmentationName = d->segmentationSelectorBox->itemText(selectedSegmentation.row());
-    vtkMRMLSegmentationNode* segmentationNode = logic->LoadFreeSurferSegmentation(mriDirectory.toStdString(), segmentationName.toStdString());
+    vtkMRMLSegmentationNode* segmentationNode = logic->LoadFreeSurferSegmentation((mriDirectory + segmentationName).toStdString());
     if (!segmentationNode)
       {
       d->updateStatus(true, "Could not load surface " + segmentationName + "!");
@@ -216,7 +220,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   if (!origNode)
     {
     removeOrigNode = true;
-    origNode = logic->LoadFreeSurferVolume(mriDirectory.toStdString(), "orig.mgz");
+    origNode = logic->LoadFreeSurferVolume((mriDirectory + "orig.mgz").toStdString());
     if (!origNode)
       {
       d->updateStatus(true, "Could not find orig.mgz!");
@@ -228,7 +232,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     {
     QString modelName = d->modelSelectorBox->itemText(selectedModel.row());
 
-    vtkMRMLModelNode* modelNode = logic->LoadFreeSurferModel(surfDirectory.toStdString(), modelName.toStdString());
+    vtkMRMLModelNode* modelNode = logic->LoadFreeSurferModel((surfDirectory + modelName).toStdString());
     if (!modelNode)
       {
       d->updateStatus(true, "Could not load surface " + modelName + "!");
@@ -253,7 +257,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   for (QModelIndex selectedScalarOverlay : selectedScalarOverlays)
     {
     QString scalarOverlayName = d->scalarOverlaySelectorBox->itemText(selectedScalarOverlay.row());
-    bool success = logic->LoadFreeSurferScalarOverlay(surfDirectory.toStdString(), scalarOverlayName.toStdString(), modelNodes);
+    bool success = logic->LoadFreeSurferScalarOverlay((surfDirectory + scalarOverlayName).toStdString(), modelNodes);
     if (!success)
       {
       d->updateStatus(true, "Could not load scalar overlay " + scalarOverlayName + "!");
