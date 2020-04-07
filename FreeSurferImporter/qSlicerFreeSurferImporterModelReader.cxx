@@ -42,7 +42,7 @@ Care Ontario, OpenAnatomy, and Brigham and Women's Hospital through NIH grant R0
 class qSlicerFreeSurferImporterModelReaderPrivate
 {
 public:
-  vtkSlicerFreeSurferImporterLogic* Logic;
+  vtkSmartPointer<vtkSlicerFreeSurferImporterLogic> Logic;
 };
 
 //-----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ QString qSlicerFreeSurferImporterModelReader::description() const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerFreeSurferImporterModelReader::fileType() const
 {
-  return "FreeSurfer model";
+  return "FreeSurferModelFile";
 }
 
 //-----------------------------------------------------------------------------
