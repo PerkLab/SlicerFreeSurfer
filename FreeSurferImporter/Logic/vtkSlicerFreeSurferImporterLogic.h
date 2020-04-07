@@ -44,7 +44,7 @@ class VTK_SLICER_FREESURFERIMPORTER_MODULE_LOGIC_EXPORT vtkSlicerFreeSurferImpor
 {
 public:
 
-  static vtkSlicerFreeSurferImporterLogic *New();
+  static vtkSlicerFreeSurferImporterLogic* New();
   vtkTypeMacro(vtkSlicerFreeSurferImporterLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 

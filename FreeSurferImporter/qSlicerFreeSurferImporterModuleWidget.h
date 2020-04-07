@@ -38,7 +38,7 @@ class Q_SLICER_QTMODULES_FREESURFERIMPORTER_EXPORT qSlicerFreeSurferImporterModu
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerFreeSurferImporterModuleWidget(QWidget *parent=0);
+  qSlicerFreeSurferImporterModuleWidget(QWidget* parent = 0);
   virtual ~qSlicerFreeSurferImporterModuleWidget();
 
 public slots:

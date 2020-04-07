@@ -46,7 +46,7 @@ qSlicerFreeSurferImporterModelOptionsWidget::qSlicerFreeSurferImporterModelOptio
   d->setupUi(this);
 
   connect(d->VolumeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(updateProperties()));
+    this, SLOT(updateProperties()));
 }
 
 //-----------------------------------------------------------------------------
@@ -59,12 +59,12 @@ void qSlicerFreeSurferImporterModelOptionsWidget::updateProperties()
   Q_D(qSlicerFreeSurferImporterModelOptionsWidget);
   vtkMRMLNode* volumeNode = d->VolumeSelector->currentNode();
   if (volumeNode)
-    {
+  {
     d->Properties["referenceVolumeID"] = QString(volumeNode->GetID());
-    }
+  }
   else
-    {
+  {
     d->Properties.remove("referenceVolumeID");
-    }
+  }
   this->updateValid();
 }

@@ -45,7 +45,7 @@ qSlicerFreeSurferImporterScalarOverlayOptionsWidget::qSlicerFreeSurferImporterSc
   d->setupUi(this);
 
   connect(d->ModelSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-          this, SLOT(updateProperties()));
+    this, SLOT(updateProperties()));
 }
 
 //-----------------------------------------------------------------------------
@@ -66,12 +66,12 @@ void qSlicerFreeSurferImporterScalarOverlayOptionsWidget::updateProperties()
   Q_D(qSlicerFreeSurferImporterScalarOverlayOptionsWidget);
   vtkMRMLNode* modelNode = d->ModelSelector->currentNode();
   if (modelNode)
-    {
+  {
     d->Properties["modelNodeId"] = QString(modelNode->GetID());
-    }
+  }
   else
-    {
+  {
     d->Properties.remove("modelNodeId");
-    }
+  }
   this->updateValid();
 }

@@ -64,7 +64,7 @@ void vtkSlicerFreeSurferImporterLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFreeSurferImporterLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerFreeSurferImporterLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -107,10 +107,10 @@ vtkMRMLVolumeNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferVolume(std::s
 
   vtkMRMLVolumeArchetypeStorageNode* volumeStorageNode = vtkMRMLVolumeArchetypeStorageNode::SafeDownCast(volumeNode->GetStorageNode());
   if (volumeStorageNode->ReadData(volumeNode))
-    {
+  {
     volumeNode->CreateDefaultDisplayNodes();
     return volumeNode;
-    }
+  }
 
   this->GetMRMLScene()->RemoveNode(volumeStorageNode);
   this->GetMRMLScene()->RemoveNode(volumeNode);
@@ -123,18 +123,18 @@ vtkMRMLSegmentationNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferSegment
   std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
   vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLSegmentationNode"));
   if (!segmentationNode)
-    {
+  {
     return nullptr;
-    }
+  }
   segmentationNode->SetName(name.c_str());
   segmentationNode->AddDefaultStorageNode(filePath.c_str());
 
   vtkMRMLSegmentationStorageNode* segmentationStorageNode = vtkMRMLSegmentationStorageNode::SafeDownCast(segmentationNode->GetStorageNode());
   if (segmentationStorageNode && segmentationStorageNode->ReadData(segmentationNode))
-    {
+  {
     this->ApplyFreeSurferSegmentationLUT(segmentationNode);
     return segmentationNode;
-    }
+  }
 
   this->GetMRMLScene()->RemoveNode(segmentationStorageNode);
   this->GetMRMLScene()->RemoveNode(segmentationNode);
@@ -147,22 +147,22 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
   std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
   vtkMRMLModelNode* surfNode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode"));
   if (!surfNode)
-    {
+  {
     return nullptr;
-    }
+  }
   surfNode->SetName(name.c_str());
 
   vtkMRMLFreeSurferModelStorageNode* surfStorageNode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelStorageNode"));
   if (surfStorageNode)
-    {
+  {
     surfNode->SetAndObserveStorageNodeID(surfStorageNode->GetID());
     surfStorageNode->SetFileName(filePath.c_str());
     if (surfStorageNode->ReadData(surfNode))
-      {
+    {
       return surfNode;
-      }
     }
+  }
 
   this->GetMRMLScene()->RemoveNode(surfStorageNode);
   this->GetMRMLScene()->RemoveNode(surfNode);
@@ -176,46 +176,46 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
   vtkMRMLFreeSurferModelOverlayStorageNode* overlayStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelOverlayStorageNode"));
   if (!overlayStorageNode)
-    {
+  {
     return false;
-    }
+  }
 
   overlayStorageNode->SetFileName(filePath.c_str());
 
   bool success = true;
   int numberOfOverlayLoaded = 0;
   for (vtkMRMLModelNode* modelNode : modelNodes)
-    {
+  {
     if (!modelNode->GetName())
-      {
+    {
       continue;
-      }
+    }
 
     std::string modelNodeHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(modelNode->GetName());
     if (modelNodeHemisphere != name)
-      {
+    {
       continue;
-      }
+    }
 
     // Scalar overlay is already loaded for this model
     if (modelNode->HasCellScalarName(name.c_str()))
-      {
+    {
       continue;
-      }
+    }
 
     if (!overlayStorageNode->ReadData(modelNode))
-      {
+    {
       success = false;
       continue;
-      }
-    numberOfOverlayLoaded += 1;
     }
+    numberOfOverlayLoaded += 1;
+  }
 
   this->GetMRMLScene()->RemoveNode(overlayStorageNode);
   if (numberOfOverlayLoaded == 0)
-    {
+  {
     success = false;
-    }
+  }
   return success;
 }
 
@@ -223,10 +223,10 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
 void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLModelNode* modelNode, vtkMRMLVolumeNode* referenceVolumeNode)
 {
   if (!modelNode || !referenceVolumeNode || !this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("Invalid input arugments!");
     return;
-    }
+  }
 
   int extent[6] = { 0 };
   referenceVolumeNode->GetImageData()->GetExtent(extent);
@@ -236,9 +236,9 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLMo
 
   double center[4] = { 0, 0, 0, 1 };
   for (int i = 0; i < 3; ++i)
-    {
+  {
     center[i] = extent[2 * i] + std::ceil((dimensions[i] / 2.0));
-    }
+  }
 
   vtkNew<vtkMatrix4x4> ijkToRAS;
   referenceVolumeNode->GetIJKToRASMatrix(ijkToRAS);
@@ -246,9 +246,9 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLMo
 
   std::string transformName = "FSModel_";
   if (referenceVolumeNode->GetName())
-    {
+  {
     transformName += referenceVolumeNode->GetName();
-    }
+  }
   transformName += "ToWorld";
 
   vtkNew<vtkTransform> modelToWorldTransform;
@@ -257,7 +257,7 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLMo
   vtkMRMLLinearTransformNode* modelToWorldNode = vtkMRMLLinearTransformNode::SafeDownCast(
     this->GetMRMLScene()->GetFirstNodeByName(transformName.c_str()));
   if (modelToWorldNode)
-    {
+  {
     vtkNew<vtkMatrix4x4> modelToWorld;
     modelToWorldNode->GetMatrixTransformToParent(modelToWorld);
 
@@ -265,42 +265,42 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLMo
     // If they are identical, then use that matrix.
     bool matrixExists = true;
     for (int j = 0; j < 4; ++j)
-      {
+    {
       for (int i = 0; i < 4; ++i)
-        {
+      {
         double epsilon = 0.00001;
         if (std::abs(modelToWorld->GetElement(i, j) - modelToWorldTransform->GetMatrix()->GetElement(i, j)) > epsilon)
-          {
+        {
           matrixExists = false;
           break;
-          }
-        }
-      if (!matrixExists)
-        {
-        break;
         }
       }
-    if (!matrixExists)
+      if (!matrixExists)
       {
-      modelToWorldNode = nullptr;
+        break;
       }
     }
+    if (!matrixExists)
+    {
+      modelToWorldNode = nullptr;
+    }
+  }
 
   if (!modelToWorldNode)
-    {
+  {
     modelToWorldNode = vtkMRMLLinearTransformNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLLinearTransformNode"));
     modelToWorldNode->SetName(transformName.c_str());
-    }
+  }
   if (!modelToWorldNode)
-    {
+  {
     vtkErrorMacro("Could not create transform node!");
     return;
-    }
+  }
   modelToWorldNode->SetMatrixTransformToParent(modelToWorldTransform->GetMatrix());
   if (referenceVolumeNode->GetParentTransformNode())
-    {
+  {
     modelToWorldNode->SetAndObserveTransformNodeID(referenceVolumeNode->GetParentTransformNode()->GetID());
-    }
+  }
   modelNode->SetAndObserveTransformNodeID(modelToWorldNode->GetID());
 }
 
@@ -315,9 +315,9 @@ struct SegmentInfo
 void vtkSlicerFreeSurferImporterLogic::ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentationNode)
 {
   if (!segmentationNode)
-    {
+  {
     return;
-    }
+  }
   MRMLNodeModifyBlocker blocker(segmentationNode);
 
   std::string sharedDirectory = this->GetModuleShareDirectory();
@@ -328,36 +328,36 @@ void vtkSlicerFreeSurferImporterLogic::ApplyFreeSurferSegmentationLUT(vtkMRMLSeg
   std::ifstream lutFile;
   lutFile.open(lutDirectory);
   if (!lutFile.is_open())
-    {
+  {
     return;
-    }
+  }
 
   std::map<int, SegmentInfo> segmentInfoMap;
 
   std::string line;
   while (std::getline(lutFile, line))
-    {
+  {
     line = std::regex_replace(line, std::regex("^ +| +$|( ) +"), "$1");
     if (line.empty())
-      {
+    {
       continue;
-      }
+    }
     if (line[0] == '#')
-      {
+    {
       continue;
-      }
+    }
 
     std::vector<std::string> tokens;
     std::stringstream ss(line);;
     std::string token;
     while (std::getline(ss, token, ' '))
-      {
+    {
       tokens.push_back(token);
-      }
+    }
     if (tokens.size() != 6)
-      {
+    {
       continue;
-      }
+    }
 
     int value = vtkVariant(tokens[0]).ToInt();
     SegmentInfo info;
@@ -366,15 +366,15 @@ void vtkSlicerFreeSurferImporterLogic::ApplyFreeSurferSegmentationLUT(vtkMRMLSeg
     info.color[1] = vtkVariant(tokens[3]).ToInt() / 255.0;
     info.color[2] = vtkVariant(tokens[4]).ToInt() / 255.0;
     segmentInfoMap[value] = info;
-    }
+  }
   lutFile.close();
 
   vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
   for (int i = 0; i < segmentation->GetNumberOfSegments(); ++i)
-    {
+  {
     vtkSegment* segment = segmentation->GetNthSegment(i);
     SegmentInfo info = segmentInfoMap[segment->GetLabelValue()];
     segment->SetName(info.name.c_str());
     segment->SetColor(info.color);
-    }
+  }
 }
