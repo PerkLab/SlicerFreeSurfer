@@ -72,11 +72,11 @@ qSlicerIO::IOFileType qSlicerFreeSurferImporterSegmentationReader::fileType() co
 QStringList qSlicerFreeSurferImporterSegmentationReader::extensions() const
 {
   QStringList supportedExtensions = QStringList();
-  supportedExtensions << "FreeSurfer segmentation (aseg.mgz)";
-  supportedExtensions << "FreeSurfer segmentation (aseg.*.mgz)";
-  supportedExtensions << "FreeSurfer segmentation (aparc.*.mgz)";
-  supportedExtensions << "FreeSurfer segmentation (aparc+aseg.mgz)";
-  supportedExtensions << "FreeSurfer segmentation (wmparc.mgz)";
+  supportedExtensions << "FreeSurfer segmentation (*aseg.mgz)";
+  supportedExtensions << "FreeSurfer segmentation (*aseg.*.mgz)";
+  supportedExtensions << "FreeSurfer segmentation (*aparc.*.mgz)";
+  supportedExtensions << "FreeSurfer segmentation (*aparc+aseg.mgz)";
+  supportedExtensions << "FreeSurfer segmentation (*wmparc.mgz)";
   supportedExtensions << "FreeSurfer segmentation (*.mgz)";
   return supportedExtensions;
 }
