@@ -30,6 +30,8 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}ScalarOverlayReader.h
   qSlicer${MODULE_NAME}ScalarOverlayOptionsWidget.cxx
   qSlicer${MODULE_NAME}ScalarOverlayOptionsWidget.h
+  qSlicer${MODULE_NAME}SegmentationReader.cxx
+  qSlicer${MODULE_NAME}SegmentationReader.h
   )
 
 set(MODULE_MOC_SRCS
@@ -39,6 +41,7 @@ set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}ModelOptionsWidget.h
   qSlicer${MODULE_NAME}ScalarOverlayReader.h
   qSlicer${MODULE_NAME}ScalarOverlayOptionsWidget.h
+  qSlicer${MODULE_NAME}SegmentationReader.h
   )
 
 set(MODULE_UI_SRCS
