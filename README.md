@@ -1,9 +1,9 @@
-# SlicerFreeSurferImporter
+# SlicerFreeSurfer
 
-This repository contains the SlicerFreeSurferImporter extension for 3D Slicer.
+This repository contains the SlicerFreeSurfer extension for 3D Slicer.
 The extension implements a module for importing models, scalar overlays, and segmentations from FreeSurfer, as well as handling the transformation of models from FreeSurfer to Slicer coordinates.
 
-![Screenshot of SlicerIGSIO extension](Screenshots/SlicerFreeSurferImporterInterface.png)
+![Screenshot of SlicerFreeSurfer extension](Screenshots/FreeSurferImporterInterface.png)
 
 ## Tutorials
 
