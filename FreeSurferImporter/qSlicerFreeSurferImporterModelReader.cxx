@@ -129,7 +129,7 @@ bool qSlicerFreeSurferImporterModelReader::load(const IOProperties& properties)
 
   if (properties.contains("referenceVolumeID") && this->mrmlScene())
   {
-    std::string referenceVolumeID = properties["referenceVolumeID"].toString().toUtf8();
+    std::string referenceVolumeID = properties["referenceVolumeID"].toString().toStdString();
     vtkMRMLVolumeNode* referenceNode = vtkMRMLVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(referenceVolumeID));
     if (referenceNode)
     {
