@@ -4,12 +4,12 @@ project(SlicerFreeSurfer)
 
 #-----------------------------------------------------------------------------
 # Extension meta-information
-set(EXTENSION_HOMEPAGE "http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/${PROJECT_NAME}")
+set(EXTENSION_HOMEPAGE "https://github.com/PerkLab/SlicerFreeSurfer")
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_CONTRIBUTORS "Kyle Sunderland (Perk Lab (Queen's University)), Andras Lasso (Perk Lab (Queen's University))")
-set(EXTENSION_DESCRIPTION "This is an example of a simple extension")
-set(EXTENSION_ICONURL "http://www.example.com/Slicer/Extensions/${PROJECT_NAME}.png")
-set(EXTENSION_SCREENSHOTURLS "http://www.example.com/Slicer/Extensions/SlicerFreeSurfer/Screenshots/1.png")
+set(EXTENSION_DESCRIPTION "Extension for handling FreeSurfer files in Slicer. Features importer for models, scalar overlay, and segmentations. Handles transformation of models to from FreeSurfer to Slicer coordinate system.")
+set(EXTENSION_ICONURL "https://github.com/PerkLab/SlicerFreeSurfer/raw/master/SlicerFreeSurfer.png")
+set(EXTENSION_SCREENSHOTURLS "https://github.com/PerkLab/SlicerFreeSurfer/raw/master/Screenshots/FreeSurferImporterInterface.png")
 set(EXTENSION_DEPENDS "NA") # Specified as a space separated string, a list or 'NA' if any
 
 #-----------------------------------------------------------------------------
