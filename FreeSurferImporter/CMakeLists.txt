@@ -1,7 +1,7 @@
 
 #-----------------------------------------------------------------------------
 set(MODULE_NAME FreeSurferImporter)
-set(MODULE_TITLE ${MODULE_NAME})
+set(MODULE_TITLE "FreeSurfer Importer")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
