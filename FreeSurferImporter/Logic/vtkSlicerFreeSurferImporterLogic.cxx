@@ -162,6 +162,7 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
 
   vtkMRMLFreeSurferModelStorageNode* surfStorageNode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelStorageNode"));
+  surfStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
   if (surfStorageNode)
   {
     surfNode->SetAndObserveStorageNodeID(surfStorageNode->GetID());
