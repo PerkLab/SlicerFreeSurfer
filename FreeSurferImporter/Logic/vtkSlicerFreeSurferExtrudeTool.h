@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkSlicerFreeSurferExtrudeRule_h
-#define __vtkSlicerFreeSurferExtrudeRule_h
+#ifndef __vtkSlicerFreeSurferExtrudeTool_h
+#define __vtkSlicerFreeSurferExtrudeTool_h
 
 #include "vtkSlicerFreeSurferImporterModuleLogicExport.h"
 
@@ -48,28 +48,28 @@ class vtkTransform;
 class vtkTransformPolyDataFilter;
 class vtkSelectPolyData;
 
-#include "vtkSlicerDynamicModelerRule.h"
+#include "vtkSlicerDynamicModelerTool.h"
 
-/// \brief Dynamic modelling rule for cutting a single surface mesh with planes
+/// \brief Dynamic modelling tool for cutting a single surface mesh with planes
 ///
 /// Has two node inputs (Plane and Surface), and two outputs (Positive/Negative direction surface segments)
-class VTK_SLICER_FREESURFERIMPORTER_MODULE_LOGIC_EXPORT vtkSlicerFreeSurferExtrudeRule : public vtkSlicerDynamicModelerRule
+class VTK_SLICER_FREESURFERIMPORTER_MODULE_LOGIC_EXPORT vtkSlicerFreeSurferExtrudeTool : public vtkSlicerDynamicModelerTool
 {
 public:
-  static vtkSlicerFreeSurferExtrudeRule* New();
-  vtkSlicerDynamicModelerRule* CreateRuleInstance() override;
-  vtkTypeMacro(vtkSlicerFreeSurferExtrudeRule, vtkSlicerDynamicModelerRule);
+  static vtkSlicerFreeSurferExtrudeTool* New();
+  vtkSlicerDynamicModelerTool* CreateToolInstance() override;
+  vtkTypeMacro(vtkSlicerFreeSurferExtrudeTool, vtkSlicerDynamicModelerTool);
 
-  /// Human-readable name of the mesh modification rule
+  /// Human-readable name of the mesh modification tool
   const char* GetName() override;
 
   /// Run the plane cut on the input model node
   bool RunInternal(vtkMRMLDynamicModelerNode* surfaceEditorNode) override;
 
 protected:
-  vtkSlicerFreeSurferExtrudeRule();
-  ~vtkSlicerFreeSurferExtrudeRule() override;
-  void operator=(const vtkSlicerFreeSurferExtrudeRule&);
+  vtkSlicerFreeSurferExtrudeTool();
+  ~vtkSlicerFreeSurferExtrudeTool() override;
+  void operator=(const vtkSlicerFreeSurferExtrudeTool&);
 
 protected:
   //vtkSmartPointer<vtkSelectPolyData>          SelectionFilter;
@@ -78,4 +78,4 @@ protected:
   //vtkSmartPointer<vtkCleanPolyData>           CleanFilter;
 };
 
-#endif // __vtkSlicerFreeSurferExtrudeRule_h
+#endif // __vtkSlicerFreeSurferExtrudeTool_h

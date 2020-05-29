@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-#include "vtkSlicerFreeSurferExtrudeRule.h"
+#include "vtkSlicerFreeSurferExtrudeTool.h"
 
 #include "vtkMRMLDynamicModelerNode.h"
 
@@ -64,10 +64,10 @@
 #include <vtkPolyDataNormals.h>
 
 //----------------------------------------------------------------------------
-vtkRuleNewMacro(vtkSlicerFreeSurferExtrudeRule);
+vtkToolNewMacro(vtkSlicerFreeSurferExtrudeTool);
 
 //----------------------------------------------------------------------------
-vtkSlicerFreeSurferExtrudeRule::vtkSlicerFreeSurferExtrudeRule()
+vtkSlicerFreeSurferExtrudeTool::vtkSlicerFreeSurferExtrudeTool()
 {
   /////////
   // Inputs
@@ -129,17 +129,17 @@ vtkSlicerFreeSurferExtrudeRule::vtkSlicerFreeSurferExtrudeRule()
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerFreeSurferExtrudeRule::~vtkSlicerFreeSurferExtrudeRule()
+vtkSlicerFreeSurferExtrudeTool::~vtkSlicerFreeSurferExtrudeTool()
 = default;
 
 //----------------------------------------------------------------------------
-const char* vtkSlicerFreeSurferExtrudeRule::GetName()
+const char* vtkSlicerFreeSurferExtrudeTool::GetName()
 {
   return "FreeSurfer Extrude";
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerFreeSurferExtrudeRule::RunInternal(vtkMRMLDynamicModelerNode* surfaceEditorNode)
+bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode* surfaceEditorNode)
 {
   if (!this->HasRequiredInputs(surfaceEditorNode))
     {

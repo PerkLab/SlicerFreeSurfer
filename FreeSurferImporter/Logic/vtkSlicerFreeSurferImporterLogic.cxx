@@ -17,7 +17,7 @@
 
 // FreeSurferImporter Logic includes
 #include "vtkSlicerFreeSurferImporterLogic.h"
-#include "vtkSlicerFreeSurferExtrudeRule.h"
+#include "vtkSlicerFreeSurferExtrudeTool.h"
 
 // MRML includes
 #include <vtkMRMLFreeSurferModelStorageNode.h>
@@ -42,7 +42,7 @@
 #include <vtksys/SystemTools.hxx>
 
 // DynamicModeler includes
-#include <vtkSlicerDynamicModelerRuleFactory.h>
+#include <vtkSlicerDynamicModelerToolFactory.h>
 
 // STD includes
 #include <cassert>
@@ -83,8 +83,8 @@ void vtkSlicerFreeSurferImporterLogic::RegisterNodes()
   assert(this->GetMRMLScene() != 0);
 
   // Allocate the singleton
-  vtkSlicerDynamicModelerRuleFactory* ruleFactoryInstance = vtkSlicerDynamicModelerRuleFactory::GetInstance();
-  ruleFactoryInstance->RegisterDynamicModelerRule(vtkSmartPointer<vtkSlicerFreeSurferExtrudeRule>::New());
+  vtkSlicerDynamicModelerToolFactory* toolFactoryInstance = vtkSlicerDynamicModelerToolFactory::GetInstance();
+  toolFactoryInstance->RegisterDynamicModelerTool(vtkSmartPointer<vtkSlicerFreeSurferExtrudeTool>::New());
 }
 
 //---------------------------------------------------------------------------
