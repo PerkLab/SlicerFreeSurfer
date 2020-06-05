@@ -7,27 +7,7 @@ The extension implements a module for importing models, scalar overlays, and seg
 
 ## Tutorials
 
-### Importing models
-To import FreeSurfer mesh into Slicer in the correct position, the MRI volume which contains the mesh coordinate system must already be loaded.
-- Drag and drop the model into Slicer
-- Choose "FreeSurfer model" description
-- Click "Show options"
-- Select the reference volume
-- Click OK
-
-The model is added to a parent transform (named FSModel_XYZToWorld) that translates it from FreeSufer coordinates into Slicer world coordinates.
-
-### Importing scalar overlay
-- Drag and drop the scalar overlay file into Slicer
-- Choose "FreeSurfer scalar overlay" description
-- Click "Show options"
-- Select the mesh that the overlay should be applied to
-- Click OK
-
-### Importing segmentations
-- Drag and drop the segmentation file into Slicer
-- Choose "FreeSurfer segmentation" description
-- Click OK
+Tutorials can be found in the wiki: https://github.com/PerkLab/SlicerFreeSurfer/wiki/Tutorials
 
 ## Resources
 
