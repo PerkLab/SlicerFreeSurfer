@@ -41,8 +41,15 @@ public:
   qSlicerFreeSurferImporterModuleWidget(QWidget* parent = 0);
   virtual ~qSlicerFreeSurferImporterModuleWidget();
 
+  /// Overridden to add node added/removed observer on scene
+  void setMRMLScene(vtkMRMLScene* scene) override;
+
 public slots:
+  /// Adds files to the input selector boxes for the files in the input directory
   void updateFileList();
+  /// Updates the reference volume selector for all currently loaded and to-be-loaded volumes
+  void updateReferenceVolumeSelector();
+  /// Load the selected files
   bool loadSelectedFiles();
 
 protected:

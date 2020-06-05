@@ -104,9 +104,19 @@ void qSlicerFreeSurferImporterModuleWidget::setup()
   // Erase status label
   d->statusLabel->setText("");
 
-  QObject::connect(d->fsDirectoryButton, &ctkDirectoryButton::directoryChanged, this, &qSlicerFreeSurferImporterModuleWidget::updateFileList);
-  QObject::connect(d->loadButton, &QPushButton::clicked, this, &qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles);
+  QObject::connect(d->directoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(updateFileList()));
+  QObject::connect(d->loadButton, SIGNAL(clicked()), this, SLOT(loadSelectedFiles()));
+  QObject::connect(d->volumeSelectorBox, SIGNAL(checkedIndexesChanged()), this, SLOT(updateReferenceVolumeSelector()));
   this->updateFileList();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerFreeSurferImporterModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  Superclass::setMRMLScene(scene);
+  qvtkReconnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(updateReferenceVolumeSelector()));
+  qvtkReconnect(scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(updateReferenceVolumeSelector()));
+  this->updateReferenceVolumeSelector();
 }
 
 //-----------------------------------------------------------------------------
@@ -119,14 +129,7 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
   d->volumeSelectorBox->clear();
   d->scalarOverlaySelectorBox->clear();
 
-  QString directory = d->fsDirectoryButton->directory();
-
-  QString origFile = directory + "/mri/orig.mgz";
-  if (!QFile::exists(origFile))
-  {
-    d->updateStatus(false, "Could not find orig.mgz!");
-    return;
-  }
+  QString directory = d->directoryButton->directory();
 
   QDir mriDirectory(directory + "/mri");
   mriDirectory.setNameFilters(QStringList() << "*.mgz" << "*.cor" << "*.bshort");
@@ -167,6 +170,47 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
   d->updateStatus(true);
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerFreeSurferImporterModuleWidget::updateReferenceVolumeSelector()
+{
+  Q_D(qSlicerFreeSurferImporterModuleWidget);
+
+  if (!this->mrmlScene())
+  {
+    return;
+  }
+
+  QString selectedId = d->referenceVolumeSelector->currentData().toString();
+  QString selectedName = d->referenceVolumeSelector->currentText();
+  d->referenceVolumeSelector->clear();
+
+  // Update list of volume nodes that will be loaded
+  QModelIndexList indexes = d->volumeSelectorBox->checkedIndexes();
+  for (QModelIndex index : indexes)
+  {
+    QString text = d->volumeSelectorBox->itemText(index.row());
+    d->referenceVolumeSelector->addItem(text, "");
+  }
+
+  // Update list of volume nodes in the scene
+  std::vector<vtkMRMLNode*> volumeNodes;
+  this->mrmlScene()->GetNodesByClass("vtkMRMLVolumeNode", volumeNodes);
+  for (vtkMRMLNode* node : volumeNodes)
+  {
+    d->referenceVolumeSelector->addItem(node->GetName(), node->GetID());
+  }
+
+  int index = -1;
+  if (!selectedId.isEmpty())
+  {
+    index = d->referenceVolumeSelector->findData(selectedId);
+  }
+  if (index < 0)
+  {
+    index = d->referenceVolumeSelector->findText(selectedName);
+  }
+  d->referenceVolumeSelector->setCurrentIndex(index);
+}
 
 //-----------------------------------------------------------------------------
 bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
@@ -176,9 +220,16 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   qSlicerFreeSurferImporterModule* module = qobject_cast<qSlicerFreeSurferImporterModule*>(this->module());
   vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(module->logic());
 
-  QString directory = d->fsDirectoryButton->directory();
+  QString directory = d->directoryButton->directory();
   QString mriDirectory = directory + "/mri/";
-  vtkMRMLVolumeNode* origNode = nullptr;
+
+  QString referenceVolumeNodeID = d->referenceVolumeSelector->currentData().toString();
+  vtkMRMLVolumeNode* referenceVolumeNode = nullptr;
+  if (!referenceVolumeNodeID.isEmpty())
+  {
+    referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(referenceVolumeNodeID.toStdString()));
+  }
+  QString referenceVolumeNodeName = d->referenceVolumeSelector->currentText();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -192,11 +243,11 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       d->updateStatus(true, "Could not load surface " + volumeName + "!");
       continue;
     }
-    if (volumeName == "orig.mgz")
+    if (!referenceVolumeNode && referenceVolumeNodeName == volumeName)
     {
-      origNode = volumeNode;
+      referenceVolumeNode = volumeNode;
     }
-    d->segmentationSelectorBox->setCheckState(selectedVolume, Qt::CheckState::Unchecked);
+    d->volumeSelectorBox->setCheckState(selectedVolume, Qt::CheckState::Unchecked);
   }
 
   QModelIndexList selectedSegmentations = d->segmentationSelectorBox->checkedIndexes();
@@ -216,18 +267,6 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   QString surfDirectory = directory + "/surf/";
   QModelIndexList selectedModels = d->modelSelectorBox->checkedIndexes();
 
-  bool removeOrigNode = false;
-  if (!origNode)
-  {
-    removeOrigNode = true;
-    origNode = logic->LoadFreeSurferVolume((mriDirectory + "orig.mgz").toStdString());
-    if (!origNode)
-    {
-      d->updateStatus(true, "Could not find orig.mgz!");
-      return false;
-    }
-  }
-
   for (QModelIndex selectedModel : selectedModels)
   {
     QString modelName = d->modelSelectorBox->itemText(selectedModel.row());
@@ -240,11 +279,12 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     }
     d->modelSelectorBox->setCheckState(selectedModel, Qt::CheckState::Unchecked);
     modelNodes.push_back(modelNode);
-    if (vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".pial"
+    if (referenceVolumeNode &&
+       ( vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".pial"
       || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
-      || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig")
+      || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig"))
     {
-      logic->TransformFreeSurferModelToWorld(modelNode, origNode);
+      logic->TransformFreeSurferModelToWorld(modelNode, referenceVolumeNode);
     }
   }
 
@@ -264,11 +304,6 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       continue;
     }
     d->scalarOverlaySelectorBox->setCheckState(selectedScalarOverlay, Qt::CheckState::Unchecked);
-  }
-
-  if (removeOrigNode)
-  {
-    this->mrmlScene()->RemoveNode(origNode);
   }
 
   QApplication::restoreOverrideCursor();

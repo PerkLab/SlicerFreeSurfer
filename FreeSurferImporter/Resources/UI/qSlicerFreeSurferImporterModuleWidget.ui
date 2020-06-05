@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>319</height>
+    <width>524</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
      <property name="text">
-      <string>Display</string>
+      <string>Directory</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <item row="0" column="0">
@@ -28,77 +28,162 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="ctkDirectoryButton" name="fsDirectoryButton"/>
+       <widget class="ctkDirectoryButton" name="directoryButton"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="statusLabel">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="qMRMLCollapsibleButton" name="MRMLCollapsibleButton">
+     <property name="text">
+      <string>Files</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="filesGroupBox">
+        <property name="enabled">
+         <bool>true</bool>
         </property>
-        <property name="text">
-         <string>Could not find orig.mgz!</string>
+        <property name="title">
+         <string>Volumes</string>
         </property>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Volumes:              </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="ctkCheckableComboBox" name="volumeSelectorBox"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+        <property name="title">
+         <string>Segmentations</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Segmentations:    </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="ctkCheckableComboBox" name="segmentationSelectorBox"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox_2">
+        <property name="title">
+         <string>Models</string>
+        </property>
+        <layout class="QFormLayout" name="formLayout_4">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Models:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="ctkCheckableComboBox" name="modelSelectorBox"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Scalar overlay:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="ctkCheckableComboBox" name="scalarOverlaySelectorBox"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="ctkComboBox" name="referenceVolumeSelector"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Reference volume:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="filesGroupBox">
-     <property name="enabled">
-      <bool>true</bool>
+    <widget class="QPushButton" name="loadButton">
+     <property name="text">
+      <string>Load</string>
      </property>
-     <property name="title">
-      <string>Files</string>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="statusLabel">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="1">
-       <widget class="ctkCheckableComboBox" name="volumeSelectorBox"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="ctkCheckableComboBox" name="modelSelectorBox"/>
-      </item>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="CollapsibleButton">
+     <property name="text">
+      <string>Transform model</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_5">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Volumes:</string>
+         <string>Model:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Models:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QPushButton" name="loadButton">
-        <property name="text">
-         <string>Load</string>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="transformModelSelector">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLModelNode</string>
+         </stringlist>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="ctkCheckableComboBox" name="segmentationSelectorBox"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Segmentations:</string>
+       <widget class="qMRMLNodeComboBox" name="transformReferenceSelector">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLVolumeNode</string>
+         </stringlist>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="ctkCheckableComboBox" name="scalarOverlaySelectorBox"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_5">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Scalar overlay:</string>
+         <string>Reference volume:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="transformButton">
+        <property name="text">
+         <string>Transform</string>
         </property>
        </widget>
       </item>
@@ -121,6 +206,17 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLCollapsibleButton</class>
+   <extends>ctkCollapsibleButton</extends>
+   <header>qMRMLCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
@@ -145,11 +241,49 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkComboBox</class>
+   <extends>QComboBox</extends>
+   <header>ctkComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkDirectoryButton</class>
    <extends>QWidget</extends>
    <header>ctkDirectoryButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qSlicerFreeSurferImporterModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>transformModelSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>439</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerFreeSurferImporterModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>transformReferenceSelector</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
