@@ -107,8 +107,11 @@ void qSlicerFreeSurferImporterModuleWidget::setup()
   QObject::connect(d->directoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(updateFileList()));
   QObject::connect(d->loadButton, SIGNAL(clicked()), this, SLOT(loadSelectedFiles()));
   QObject::connect(d->volumeSelectorBox, SIGNAL(checkedIndexesChanged()), this, SLOT(updateReferenceVolumeSelector()));
+  QObject::connect(d->transformModelSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
+  QObject::connect(d->transformReferenceSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
   QObject::connect(d->transformButton, SIGNAL(clicked()), this, SLOT(transformSelectedModel()));
   this->updateFileList();
+  this->updateTransformWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -310,6 +313,21 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   QApplication::restoreOverrideCursor();
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerFreeSurferImporterModuleWidget::updateTransformWidgets()
+{
+  Q_D(qSlicerFreeSurferImporterModuleWidget);
+  vtkMRMLModelNode* model = vtkMRMLModelNode::SafeDownCast(d->transformModelSelector->currentNode());
+  vtkMRMLVolumeNode* referenceVolume = vtkMRMLVolumeNode::SafeDownCast(d->transformReferenceSelector->currentNode());
+  if (!model || !referenceVolume)
+  {
+    d->transformButton->setEnabled(false);
+    return;
+  }
+
+  d->transformButton->setEnabled(true);
 }
 
 //-----------------------------------------------------------------------------

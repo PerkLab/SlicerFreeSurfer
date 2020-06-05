@@ -51,6 +51,8 @@ public slots:
   void updateReferenceVolumeSelector();
   /// Load the selected files
   bool loadSelectedFiles();
+  /// Update the state of the transform widgets
+  void updateTransformWidgets();
   /// Transform selected model to using the selected reference volume
   void transformSelectedModel();
 
