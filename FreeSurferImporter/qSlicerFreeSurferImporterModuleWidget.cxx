@@ -107,6 +107,7 @@ void qSlicerFreeSurferImporterModuleWidget::setup()
   QObject::connect(d->directoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(updateFileList()));
   QObject::connect(d->loadButton, SIGNAL(clicked()), this, SLOT(loadSelectedFiles()));
   QObject::connect(d->volumeSelectorBox, SIGNAL(checkedIndexesChanged()), this, SLOT(updateReferenceVolumeSelector()));
+  QObject::connect(d->transformButton, SIGNAL(clicked()), this, SLOT(transformSelectedModel()));
   this->updateFileList();
 }
 
@@ -309,4 +310,26 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   QApplication::restoreOverrideCursor();
 
   return true;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerFreeSurferImporterModuleWidget::transformSelectedModel()
+{
+  Q_D(qSlicerFreeSurferImporterModuleWidget);
+  vtkMRMLModelNode* model = vtkMRMLModelNode::SafeDownCast(d->transformModelSelector->currentNode());
+  vtkMRMLVolumeNode* referenceVolume = vtkMRMLVolumeNode::SafeDownCast(d->transformReferenceSelector->currentNode());
+  if (!model || !referenceVolume)
+  {
+    qCritical() << Q_FUNC_INFO << "Invalid model or reference volume!";
+    return;
+  }
+
+  vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(this->logic());
+  if (!logic)
+  {
+    qCritical() << Q_FUNC_INFO << "Could not get logic!";
+    return;
+  }
+
+  logic->TransformFreeSurferModelToWorld(model, referenceVolume);
 }

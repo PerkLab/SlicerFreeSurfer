@@ -51,6 +51,8 @@ public slots:
   void updateReferenceVolumeSelector();
   /// Load the selected files
   bool loadSelectedFiles();
+  /// Transform selected model to using the selected reference volume
+  void transformSelectedModel();
 
 protected:
   QScopedPointer<qSlicerFreeSurferImporterModuleWidgetPrivate> d_ptr;
