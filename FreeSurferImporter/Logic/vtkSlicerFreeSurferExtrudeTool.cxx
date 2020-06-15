@@ -191,7 +191,8 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode* surf
 
   vtkNew<vtkStripper> stripperFilter;
   stripperFilter->SetInputConnection(featureEdgesFilter->GetOutputPort());
-  stripperFilter->Update();  
+  stripperFilter->SetMaximumLength(10000);
+  stripperFilter->Update();
 
   vtkNew<vtkGeneralTransform> inputOrigTransform;
   if (inputOrigModelNode->GetParentTransformNode())
@@ -224,7 +225,6 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode* surf
     {
     vtkNew<vtkIdList> inputIds;
     lines->GetCell(i, inputIds);
-    vtkNew<vtkIdList> outputIds;
     for (int j = 0; j < inputIds->GetNumberOfIds(); ++j)
       {
       vtkIdType id = inputIds->GetId(j);
