@@ -153,6 +153,10 @@ vtkMRMLSegmentationNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferSegment
 vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::string filePath)
 {
   std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
+  std::string extension = vtksys::SystemTools::GetFilenameExtension(filePath);
+  extension.erase(0, 1);
+  name += "_" + extension;
+
   vtkMRMLModelNode* surfNode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode"));
   if (!surfNode)
   {
