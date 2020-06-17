@@ -166,6 +166,12 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
 
   vtkMRMLFreeSurferModelStorageNode* surfStorageNode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelStorageNode"));
+  if (!surfStorageNode)
+  {
+    vtkErrorMacro("LoadFreeSurferModel: Could not add FreeSurfer storage node");
+    return nullptr;
+  }
+
   surfStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
   if (surfStorageNode)
   {
@@ -204,7 +210,8 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
       continue;
     }
 
-    std::string modelNodeHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(modelNode->GetName());
+    std::string modelNodeHemisphere = modelNode->GetName();
+    modelNodeHemisphere = modelNodeHemisphere.substr(0, 2);
     if (modelNodeHemisphere != name)
     {
       continue;
