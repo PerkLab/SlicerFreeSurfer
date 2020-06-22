@@ -41,6 +41,9 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtksys/SystemTools.hxx>
 
+#include <vtkAssignAttribute.h>
+#include <vtkPointData.h>
+
 // DynamicModeler includes
 #include <vtkSlicerDynamicModelerToolFactory.h>
 
@@ -191,7 +194,6 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
 //-----------------------------------------------------------------------------
 bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes)
 {
-  std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
   vtkMRMLFreeSurferModelOverlayStorageNode* overlayStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::SafeDownCast(
     this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelOverlayStorageNode"));
   if (!overlayStorageNode)
@@ -210,13 +212,17 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
       continue;
     }
 
-    std::string modelNodeHemisphere = modelNode->GetName();
+    std::string fileName = vtksys::SystemTools::GetFilenameName(filePath);
+    std::string overlayHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
+    std::string modelNodeHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(modelNode->GetName());
     modelNodeHemisphere = modelNodeHemisphere.substr(0, 2);
-    if (modelNodeHemisphere != name)
+    if (modelNodeHemisphere != overlayHemisphere)
     {
       continue;
     }
 
+    std::string name = vtksys::SystemTools::GetFilenameExtension(filePath);
+    name = name.substr(1, name.length()-1);
     // Scalar overlay is already loaded for this model
     if (modelNode->HasCellScalarName(name.c_str()))
     {
@@ -227,6 +233,21 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
     {
       success = false;
       continue;
+    }
+
+    vtkPointData* data = modelNode->GetPolyData()->GetPointData();
+    if (data)
+    {
+      vtkDataArray* scalarArray = data->GetArray(fileName.c_str());
+      if (scalarArray)
+      {
+        data->RemoveArray(fileName.c_str());
+        scalarArray->SetName(name.c_str());
+        data->AddArray(scalarArray);
+        data->Modified();
+        modelNode->GetPolyData()->Modified();
+        modelNode->Modified();
+      }
     }
     numberOfOverlayLoaded += 1;
   }
