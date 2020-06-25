@@ -18,8 +18,8 @@ endif()
 #
 # VTK
 #
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
 
 #
 # ZLIB
@@ -96,6 +96,13 @@ if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
 
+# Set loadable modules output
+set_target_properties(${lib_name} PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+  )
+
 # --------------------------------------------------------------------------
 # Folder
 # --------------------------------------------------------------------------
@@ -118,13 +125,13 @@ export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
 # Install library
 # --------------------------------------------------------------------------
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
-  set(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
+  set(${PROJECT_NAME}_INSTALL_BIN_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR})
 endif()
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
-  set(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
+  set(${PROJECT_NAME}_INSTALL_LIB_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR})
 endif()
 if(NOT DEFINED ${PROJECT_NAME}_INSTALL_SHARE_DIR)
-  set(${PROJECT_NAME}_INSTALL_SHARE_DIR share/${PROJECT_NAME})
+  set(${PROJECT_NAME}_INSTALL_SHARE_DIR ${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR})
 endif()
 
 install(TARGETS ${lib_name}
@@ -132,6 +139,8 @@ install(TARGETS ${lib_name}
   LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
   )
+
+set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name})
 
 # --------------------------------------------------------------------------
 # Python Wrapping
@@ -153,6 +162,9 @@ if(VTK_WRAP_PYTHON)
       set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
     endif()
   endif()
+
+  # Export target
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python ${PROJECT_NAME}PythonD)
 endif()
 
 # --------------------------------------------------------------------------

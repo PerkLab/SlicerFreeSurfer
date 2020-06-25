@@ -24,7 +24,6 @@ add_subdirectory(FreeSurfer)
 #-----------------------------------------------------------------------------
 # Extension modules
 add_subdirectory(FreeSurferImporter)
-## NEXT_MODULE
 
 #-----------------------------------------------------------------------------
 include(${Slicer_EXTENSION_GENERATE_CONFIG})
