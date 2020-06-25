@@ -16,11 +16,12 @@
 #define __vtkMRMLFreeSurferModelOverlayStorageNode_h
 
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkSlicerFreeSurferImporterModuleMRMLExport.h"
 
 /// \brief MRML node for model storage on disk.
 ///
 /// Storage nodes has methods to read/write vtkPolyData to/from disk.
-class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode
+class VTK_SLICER_FREESURFERIMPORTER_MODULE_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode
   : public vtkMRMLModelStorageNode
 {
 public:

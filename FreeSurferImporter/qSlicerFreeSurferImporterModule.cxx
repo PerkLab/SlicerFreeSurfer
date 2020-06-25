@@ -100,7 +100,7 @@ QStringList qSlicerFreeSurferImporterModule::categories() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerFreeSurferImporterModule::dependencies() const
 {
-  return QStringList();
+  return QStringList() << "Colors";
 }
 
 //-----------------------------------------------------------------------------

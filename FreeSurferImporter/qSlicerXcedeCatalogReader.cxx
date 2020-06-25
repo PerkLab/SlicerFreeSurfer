@@ -28,7 +28,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkMRMLColorLogic.h"
+#include "vtkSlicerFreeSurferImporterLogic.h"
 
 /// MRML includes
 #include <vtkCacheManager.h>
@@ -72,7 +72,7 @@ public:
   bool    computeFIPS2SlicerTransformCorrection();
   void    applyFIPS2SlicerTransformCorrection();
 
-  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
+  vtkSmartPointer<vtkSlicerFreeSurferImporterLogic> FreeSurferImporterLogic;
   QStringList TransformIDStack;
   QString     Directory;
   //QString     ParentId;
@@ -696,7 +696,7 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
     // }else {
     // volumeDisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeGrey");}
     volumeDisplayNode->SetAndObserveColorNodeID(
-      this->ColorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
+      this->FreeSurferImporterLogic->GetDefaultFreeSurferLabelMapColorNodeID());
     }
 
     // } else {
@@ -763,15 +763,15 @@ void qSlicerXcedeCatalogReaderPrivate::importVolumeNode(NodeType node)
   // [$::slicer3::VolumesGUI GetApplicationLogic] PropagateVolumeSelection
   if (labelMap)
     {
-    this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
+    this->FreeSurferImporterLogic->GetMRMLApplicationLogic()->GetSelectionNode()
       ->SetActiveLabelVolumeID(volumeNodeID.toUtf8());
     }
   else
     {
-    this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
+    this->FreeSurferImporterLogic->GetMRMLApplicationLogic()->GetSelectionNode()
       ->SetActiveVolumeID(volumeNodeID.toUtf8());
     }
-  this->ColorLogic->GetMRMLApplicationLogic()->PropagateVolumeSelection();
+  this->FreeSurferImporterLogic->GetMRMLApplicationLogic()->PropagateVolumeSelection();
 }
 
 //----------------------------------------------------------------------------
@@ -1243,28 +1243,28 @@ qSlicerXcedeCatalogReader::qSlicerXcedeCatalogReader(QObject* _parent)
 }
 
 //------------------------------------------------------------------------------
-qSlicerXcedeCatalogReader::qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, QObject* _parent)
+qSlicerXcedeCatalogReader::qSlicerXcedeCatalogReader(vtkSlicerFreeSurferImporterLogic* logic, QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerXcedeCatalogReaderPrivate(*this))
 {
-  this->setColorLogic(logic);
+  this->setFreeSurferImporterLogic(logic);
 }
 
 //------------------------------------------------------------------------------
 qSlicerXcedeCatalogReader::~qSlicerXcedeCatalogReader() = default;
 
 //------------------------------------------------------------------------------
-vtkMRMLColorLogic* qSlicerXcedeCatalogReader::colorLogic()const
+vtkSlicerFreeSurferImporterLogic* qSlicerXcedeCatalogReader::freeSurferImporterLogic()const
 {
   Q_D(const qSlicerXcedeCatalogReader);
-  return d->ColorLogic.GetPointer();
+  return d->FreeSurferImporterLogic.GetPointer();
 }
 
 //------------------------------------------------------------------------------
-void qSlicerXcedeCatalogReader::setColorLogic(vtkMRMLColorLogic* logic)
+void qSlicerXcedeCatalogReader::setFreeSurferImporterLogic(vtkSlicerFreeSurferImporterLogic* logic)
 {
   Q_D(qSlicerXcedeCatalogReader);
-  d->ColorLogic = logic;
+  d->FreeSurferImporterLogic = logic;
 }
 
 //------------------------------------------------------------------------------

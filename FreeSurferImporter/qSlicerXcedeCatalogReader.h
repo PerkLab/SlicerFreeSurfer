@@ -21,27 +21,28 @@
 #ifndef __qSlicerXcedeCatalogReader
 #define __qSlicerXcedeCatalogReader
 
+#include "qSlicerFreeSurferImporterModuleExport.h"
+
 // Slicer includes
 #include "qSlicerFileReader.h"
 
 class qSlicerXcedeCatalogReaderPrivate;
 
 // Slicer Logic
-class vtkMRMLColorLogic;
+class vtkSlicerFreeSurferImporterLogic;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogReader
-  : public qSlicerFileReader
+class Q_SLICER_QTMODULES_FREESURFERIMPORTER_EXPORT qSlicerXcedeCatalogReader : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
   qSlicerXcedeCatalogReader(QObject* parent = nullptr);
-  qSlicerXcedeCatalogReader(vtkMRMLColorLogic* logic, QObject* parent = nullptr);
+  qSlicerXcedeCatalogReader(vtkSlicerFreeSurferImporterLogic* logic, QObject* parent = nullptr);
   ~qSlicerXcedeCatalogReader() override;
 
-  vtkMRMLColorLogic* colorLogic()const;
-  void setColorLogic(vtkMRMLColorLogic* logic);
+  vtkSlicerFreeSurferImporterLogic* freeSurferImporterLogic()const;
+  void setFreeSurferImporterLogic(vtkSlicerFreeSurferImporterLogic* logic);
 
   QString description()const override;
   IOFileType fileType()const override;

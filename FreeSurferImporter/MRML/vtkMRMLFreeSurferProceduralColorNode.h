@@ -16,6 +16,8 @@
 #define __vtkMRMLFreeSurferProceduralColorNode_h
 
 #include "vtkMRMLProceduralColorNode.h"
+#include "vtkSlicerFreeSurferImporterModuleMRMLExport.h"
+
 class vtkFSLookupTable;
 
 /// \brief MRML node to represent FreeSurfer color information.
@@ -24,7 +26,7 @@ class vtkFSLookupTable;
 /// this node to provide the default FS look up tables (heat, red/green,
 /// blue/red etc). More than one model or label volume or editor can access the prebuilt
 /// nodes.
-class VTK_MRML_EXPORT vtkMRMLFreeSurferProceduralColorNode : public vtkMRMLProceduralColorNode
+class VTK_SLICER_FREESURFERIMPORTER_MODULE_MRML_EXPORT vtkMRMLFreeSurferProceduralColorNode : public vtkMRMLProceduralColorNode
 {
 public:
   static vtkMRMLFreeSurferProceduralColorNode *New();
@@ -123,6 +125,8 @@ public:
 
   int GetNumberOfColors() override;
   bool GetColor(int entry, double color[4]) override;
+
+  vtkLookupTable* CreateLookupTableCopy() override;
 
 protected:
   vtkMRMLFreeSurferProceduralColorNode();

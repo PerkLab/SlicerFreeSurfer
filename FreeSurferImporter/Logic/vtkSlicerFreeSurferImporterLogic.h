@@ -32,8 +32,12 @@ class vtkMRMLVolumeNode;
 class vtkMRMLSegmentationNode;
 class vtkMRMLModelNode;
 
+class vtkMRMLFreeSurferProceduralColorNode;
+class vtkMRMLColorTableNode;
+
 // STD includes
 #include <cstdlib>
+#include <string>
 
 #include "vtkSlicerFreeSurferImporterModuleLogicExport.h"
 
@@ -56,9 +60,19 @@ public:
   void TransformFreeSurferModelToWorld(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
 
+  /// Return the default freesurfer color node id for a given type
+  static const char* GetFreeSurferColorNodeID(int type);
+
+  /// Return a default color node id for a freesurfer label map volume
+  virtual const char* GetDefaultFreeSurferLabelMapColorNodeID();
+
 protected:
   vtkSlicerFreeSurferImporterLogic();
   virtual ~vtkSlicerFreeSurferImporterLogic();
+
+  /// Called when the scene fires vtkMRMLScene::NewSceneEvent.
+  /// We add the default LUTs.
+  virtual void OnMRMLSceneNewEvent();
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
@@ -66,6 +80,16 @@ protected:
   virtual void UpdateFromMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+
+  vtkMRMLFreeSurferProceduralColorNode* CreateFreeSurferNode(int type);
+  vtkMRMLColorTableNode* CreateFreeSurferFileNode(const char* fileName);
+  void AddFreeSurferNode(int type);
+  void AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode);
+  void AddFreeSurferNodes();
+  vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
+
+  static std::string TempColorNodeID;
+
 private:
 
   vtkSlicerFreeSurferImporterLogic(const vtkSlicerFreeSurferImporterLogic&); // Not implemented

@@ -18,6 +18,10 @@ find_package(Slicer REQUIRED)
 include(${Slicer_USE_FILE})
 
 #-----------------------------------------------------------------------------
+# FreeSurfer library
+add_subdirectory(FreeSurfer)
+
+#-----------------------------------------------------------------------------
 # Extension modules
 add_subdirectory(FreeSurferImporter)
 ## NEXT_MODULE
