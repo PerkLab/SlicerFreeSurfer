@@ -155,28 +155,28 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode * sur
   }
 
   vtkMRMLModelNode* inputPatchModelNode = vtkMRMLModelNode::SafeDownCast(this->GetNthInputNode(0, surfaceEditorNode));
-  if (!inputPatchModelNode || !inputPatchModelNode->GetMesh())
+  if (!inputPatchModelNode || !inputPatchModelNode->GetPolyData())
   {
     // Nothing to output
     return true;
   }
 
   vtkMRMLModelNode* inputOrigModelNode = vtkMRMLModelNode::SafeDownCast(this->GetNthInputNode(1, surfaceEditorNode));
-  if (!inputOrigModelNode || !inputOrigModelNode->GetMesh())
+  if (!inputOrigModelNode || !inputOrigModelNode->GetPolyData())
   {
     // Nothing to output
     return true;
   }
 
   vtkMRMLModelNode* inputPialModelNode = vtkMRMLModelNode::SafeDownCast(this->GetNthInputNode(2, surfaceEditorNode));
-  if (!inputPialModelNode || !inputPialModelNode->GetMesh())
+  if (!inputPialModelNode || !inputPialModelNode->GetPolyData())
   {
     // Nothing to output
     return true;
   }
 
   vtkNew<vtkCleanPolyData> inputPatchCleaner;
-  inputPatchCleaner->SetInputData(inputPatchModelNode->GetMesh());
+  inputPatchCleaner->SetInputData(inputPatchModelNode->GetPolyData());
   inputPatchCleaner->SetTolerance(1e-6);
 
   vtkNew<vtkGeneralTransform> inputPatchTransform;
@@ -186,7 +186,6 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode * sur
   }
 
   vtkNew<vtkTransformPolyDataFilter> inputPatchTransformFilter;
-  inputPatchTransformFilter->SetInputData(inputPatchModelNode->GetMesh());
   inputPatchTransformFilter->SetInputConnection(inputPatchCleaner->GetOutputPort());
   inputPatchTransformFilter->SetTransform(inputPatchTransform);
 
@@ -207,7 +206,7 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode * sur
     inputOrigModelNode->GetParentTransformNode()->GetTransformToWorld(inputOrigTransform);
   }
   vtkNew<vtkTransformPolyDataFilter> inputOrigTransformFilter;
-  inputOrigTransformFilter->SetInputData(inputOrigModelNode->GetMesh());
+  inputOrigTransformFilter->SetInputData(inputOrigModelNode->GetPolyData());
   inputOrigTransformFilter->SetTransform(inputOrigTransform);
   inputOrigTransformFilter->Update();
 
@@ -217,7 +216,7 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode * sur
     inputPialModelNode->GetParentTransformNode()->GetTransformToWorld(inputPialTransform);
   }
   vtkNew<vtkTransformPolyDataFilter> inputPialTransformFilter;
-  inputPialTransformFilter->SetInputData(inputPialModelNode->GetMesh());
+  inputPialTransformFilter->SetInputData(inputPialModelNode->GetPolyData());
   inputPialTransformFilter->SetTransform(inputOrigTransform);
   inputPialTransformFilter->Update();
 
@@ -314,6 +313,7 @@ bool vtkSlicerFreeSurferExtrudeTool::RunInternal(vtkMRMLDynamicModelerNode * sur
 
   vtkNew<vtkPolyData> outputPolyData;
   outputPolyData->DeepCopy(cleanPolyData->GetOutput());
+  outputPolyData->SetLines(vtkNew<vtkCellArray>()); // Remove lines added by vtkCleanPolyData
   outputModelNode->SetAndObservePolyData(outputPolyData);
 
   return true;
