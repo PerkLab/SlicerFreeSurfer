@@ -62,6 +62,7 @@
 #include <regex>
 
 //----------------------------------------------------------------------------
+const static std::string DEFAULT_FREESURFER_LABEL_FILENAME = "FreeSurferColorLUT20150729.txt";
 std::string vtkSlicerFreeSurferImporterLogic::TempColorNodeID;
 
 //----------------------------------------------------------------------------
@@ -401,9 +402,7 @@ void vtkSlicerFreeSurferImporterLogic::ApplyFreeSurferSegmentationLUT(vtkMRMLSeg
   MRMLNodeModifyBlocker blocker(segmentationNode);
 
   std::string sharedDirectory = this->GetModuleShareDirectory();
-  std::string lutFilename = "FreeSurferColorLUT.txt";
-
-  std::string lutDirectory = sharedDirectory + "/" + lutFilename;
+  std::string lutDirectory = sharedDirectory + "/" + DEFAULT_FREESURFER_LABEL_FILENAME;
 
   std::ifstream lutFile;
   lutFile.open(lutDirectory);
@@ -524,11 +523,11 @@ vtkMRMLColorTableNode* vtkSlicerFreeSurferImporterLogic::CreateFreeSurferFileNod
 //--------------------------------------------------------------------------------
 vtkMRMLColorTableNode* vtkSlicerFreeSurferImporterLogic::CreateFileNode(const char* fileName)
 {
-  vtkMRMLColorTableNode* ctnode = vtkMRMLColorTableNode::New();
-  ctnode->SetTypeToFile();
-  ctnode->SaveWithSceneOff();
-  ctnode->HideFromEditorsOn();
-  ctnode->SetScene(this->GetMRMLScene());
+  vtkMRMLColorTableNode* ctNode = vtkMRMLColorTableNode::New();
+  ctNode->SetTypeToFile();
+  ctNode->SaveWithSceneOff();
+  ctNode->HideFromEditorsOn();
+  ctNode->SetScene(this->GetMRMLScene());
 
   // make a storage node
   vtkNew<vtkMRMLColorTableStorageNode> colorStorageNode;
@@ -536,41 +535,53 @@ vtkMRMLColorTableNode* vtkSlicerFreeSurferImporterLogic::CreateFileNode(const ch
   if (this->GetMRMLScene())
   {
     this->GetMRMLScene()->AddNode(colorStorageNode.GetPointer());
-    ctnode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
+    ctNode->SetAndObserveStorageNodeID(colorStorageNode->GetID());
   }
 
-  ctnode->GetStorageNode()->SetFileName(fileName);
+  ctNode->GetStorageNode()->SetFileName(fileName);
   std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(fileName);
   if (this->GetMRMLScene())
   {
     std::string uname(this->GetMRMLScene()->GetUniqueNameByString(basename.c_str()));
-    ctnode->SetName(uname.c_str());
+    ctNode->SetName(uname.c_str());
   }
   else
   {
-    ctnode->SetName(basename.c_str());
+    ctNode->SetName(basename.c_str());
   }
   vtkDebugMacro("CreateFileNode: About to read user file " << fileName);
 
-  if (ctnode->GetStorageNode()->ReadData(ctnode) == 0)
+  if (ctNode->GetStorageNode()->ReadData(ctNode) == 0)
   {
-    vtkErrorMacro("Unable to read file as color table " << (ctnode->GetFileName() ? ctnode->GetFileName() : ""));
+    vtkErrorMacro("Unable to read file as color table " << (ctNode->GetFileName() ? ctNode->GetFileName() : ""));
 
     if (this->GetMRMLScene())
     {
-      ctnode->SetAndObserveStorageNodeID(nullptr);
-      ctnode->SetScene(nullptr);
+      ctNode->SetAndObserveStorageNodeID(nullptr);
+      ctNode->SetScene(nullptr);
       this->GetMRMLScene()->RemoveNode(colorStorageNode.GetPointer());
     }
 
-    ctnode->Delete();
+    ctNode->Delete();
     return nullptr;
   }
+
+  // Latest version of FreeSurferLut have alpha of 0.0 for all colors.
+  // Manually assign alpha of 1.0.
+  MRMLNodeModifyBlocker blocker(ctNode);
+  for (int i = 0; i < ctNode->GetNumberOfColors(); ++i)
+  {
+    double color[4] = { 0.0, 0.0, 0.0, 0.0 };
+    ctNode->GetColor(i, color);
+    color[3] = 1.0;
+    ctNode->SetColor(i, color[0], color[1], color[2], color[3]);
+  }
+
   vtkDebugMacro("CreateFileNode: finished reading user file " << fileName);
-  ctnode->SetSingletonTag(
+  ctNode->SetSingletonTag(
     vtkMRMLColorLogic::GetFileColorNodeSingletonTag(fileName).c_str());
 
-  return ctnode;
+  return ctNode;
 }
 
 //----------------------------------------------------------------------------------------
@@ -591,9 +602,9 @@ void vtkSlicerFreeSurferImporterLogic::AddFreeSurferNode(int type)
 }
 
 //----------------------------------------------------------------------------------------
-void vtkSlicerFreeSurferImporterLogic::AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode)
+void vtkSlicerFreeSurferImporterLogic::AddFreeSurferLabelNodeFromFile(const char* fileName)
 {
-  vtkMRMLColorTableNode* node = this->CreateFreeSurferFileNode(basicFSNode->GetLabelsFileName());
+  vtkMRMLColorTableNode* node = this->CreateFreeSurferFileNode(fileName);
   if (node)
   {
     //if (this->GetMRMLScene()->GetNodeByID(node->GetSingletonTag()) == nullptr)
@@ -616,7 +627,7 @@ void vtkSlicerFreeSurferImporterLogic::AddFreeSurferFileNode(vtkMRMLFreeSurferPr
 void vtkSlicerFreeSurferImporterLogic::AddFreeSurferNodes()
 {
   vtkDebugMacro("AddDefaultColorNodes: Adding Freesurfer nodes");
-  vtkMRMLFreeSurferProceduralColorNode* basicFSNode = vtkMRMLFreeSurferProceduralColorNode::New();
+  vtkNew<vtkMRMLFreeSurferProceduralColorNode> basicFSNode;
   vtkDebugMacro("AddDefaultColorNodes: first type = " << basicFSNode->GetFirstType() << ", last type = " << basicFSNode->GetLastType());
   for (int type = basicFSNode->GetFirstType(); type <= basicFSNode->GetLastType(); ++type)
   {
@@ -625,8 +636,13 @@ void vtkSlicerFreeSurferImporterLogic::AddFreeSurferNodes()
 
   // add a regular colour tables holding the freesurfer volume file colours and
   // surface colours
-  this->AddFreeSurferFileNode(basicFSNode);
-  basicFSNode->Delete();
+  // get the colour file in the freesurfer share dir
+  std::vector<std::string> filePath;
+  filePath.emplace_back(""); // for relative path
+  filePath.push_back(this->GetModuleShareDirectory());
+  filePath.emplace_back(DEFAULT_FREESURFER_LABEL_FILENAME);
+  std::string lutFileName = vtksys::SystemTools::JoinPath(filePath);
+  this->AddFreeSurferLabelNodeFromFile(lutFileName.c_str());
 }
 
 //----------------------------------------------------------------------------

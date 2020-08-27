@@ -32,17 +32,6 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
 {
   this->LookupTable = nullptr;
   this->HideFromEditors = 1;
-  this->LabelsFileName = nullptr;
-
-  // get the colour file in the freesurfer share dir
-  std::vector<std::string> filesVector;
-  filesVector.emplace_back(""); // for relative path
-  filesVector.push_back(vtkMRMLLogic::GetApplicationHomeDirectory());
-  filesVector.emplace_back("share/FreeSurfer/FreeSurferColorLUT20120827.txt");
-  std::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
-  this->SetLabelsFileName(colorFileName.c_str());
-
-  //this->DebugOn();
 }
 
 //----------------------------------------------------------------------------
@@ -51,11 +40,6 @@ vtkMRMLFreeSurferProceduralColorNode::~vtkMRMLFreeSurferProceduralColorNode()
   if (this->LookupTable)
     {
     this->LookupTable->Delete();
-    }
-
-  if (this->LabelsFileName)
-    {
-    delete [] this->LabelsFileName;
     }
 }
 
@@ -171,10 +155,6 @@ void vtkMRMLFreeSurferProceduralColorNode::PrintSelf(ostream& os, vtkIndent inde
     {
     os << indent << "Look up table:\n";
     this->LookupTable->PrintSelf(os, indent.GetNextIndent());
-    }
-  if (this->LabelsFileName)
-    {
-    os << indent << "Volume label map color file: " << this->GetLabelsFileName() << endl;
     }
 }
 

@@ -168,32 +168,6 @@ if(VTK_WRAP_PYTHON)
 endif()
 
 # --------------------------------------------------------------------------
-# Install support files
-# --------------------------------------------------------------------------
-# Should this location change, update Libs\MRML\vtkMRMLFreeSurferProceduralColorNode.cxx
-
-# Copy the resource files to the build directory
-
-set(RESFILES
-  FreeSurferColorLUT20060522.txt
-  FreeSurferColorLUT20120827.txt
-  Simple_surface_labels2002.txt
-  )
-foreach(file ${RESFILES})
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
-    COPYONLY
-    )
-endforeach()
-
-install(
-  FILES ${RESFILES}
-  DESTINATION ${${PROJECT_NAME}_INSTALL_SHARE_DIR}
-  COMPONENT Runtime
-  )
-
-# --------------------------------------------------------------------------
 # Testing (requires some of the examples)
 # --------------------------------------------------------------------------
 # if(BUILD_TESTING)

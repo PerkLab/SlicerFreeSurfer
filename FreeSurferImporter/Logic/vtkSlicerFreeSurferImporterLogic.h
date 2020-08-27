@@ -84,7 +84,7 @@ protected:
   vtkMRMLFreeSurferProceduralColorNode* CreateFreeSurferNode(int type);
   vtkMRMLColorTableNode* CreateFreeSurferFileNode(const char* fileName);
   void AddFreeSurferNode(int type);
-  void AddFreeSurferFileNode(vtkMRMLFreeSurferProceduralColorNode* basicFSNode);
+  void AddFreeSurferLabelNodeFromFile(const char* fileName);
   void AddFreeSurferNodes();
   vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
 

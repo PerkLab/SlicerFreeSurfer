@@ -64,15 +64,33 @@ set(MODULE_RESOURCES
   Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
-#-----------------------------------------------------------------------------
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Data/FreeSurferColorLUT.txt
-  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/FreeSurferColorLUT.txt
-  COPYONLY)
+# --------------------------------------------------------------------------
+# Install support files
+# --------------------------------------------------------------------------
+# Should this location change, update Libs\MRML\vtkMRMLFreeSurferProceduralColorNode.cxx
 
-install(
-  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/FreeSurferColorLUT.txt
-  DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME} COMPONENT Runtime)
+# Copy the resource files to the build directory
+
+set(DATA_RESOURCE_DIR Resources/Data)
+set(RESFILES
+  FreeSurferColorLUT20060522.txt
+  FreeSurferColorLUT20120827.txt
+  FreeSurferColorLUT20150729.txt
+  Simple_surface_labels2002.txt
+  )
+foreach(file ${RESFILES})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${DATA_RESOURCE_DIR}/${file}
+    ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/${file}
+    COPYONLY
+    )
+
+  install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/${DATA_RESOURCE_DIR}/${file}
+    DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}
+    COMPONENT Runtime
+    )
+endforeach()
 
 #-----------------------------------------------------------------------------
 slicerMacroBuildLoadableModule(

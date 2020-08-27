@@ -118,11 +118,6 @@ public:
       DisplayModifiedEvent = 20000
     };
 
-  ///
-  /// default file name for freesurfer labels
-  vtkGetStringMacro(LabelsFileName);
-  vtkSetStringMacro(LabelsFileName);
-
   int GetNumberOfColors() override;
   bool GetColor(int entry, double color[4]) override;
 
@@ -142,8 +137,6 @@ protected:
   ///
   /// a lookup table tailored with FreeSurfer colours, constructed according to Type
   vtkFSLookupTable *LookupTable;
-
-  char *LabelsFileName;
 };
 
 #endif
