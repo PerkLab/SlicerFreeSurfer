@@ -28,12 +28,12 @@
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-class vtkMRMLVolumeNode;
-class vtkMRMLSegmentationNode;
-class vtkMRMLModelNode;
-
-class vtkMRMLFreeSurferProceduralColorNode;
 class vtkMRMLColorTableNode;
+class vtkMRMLFreeSurferProceduralColorNode;
+class vtkMRMLMarkupsNode;
+class vtkMRMLModelNode;
+class vtkMRMLSegmentationNode;
+class vtkMRMLVolumeNode;
 
 // STD includes
 #include <cstdlib>
@@ -56,6 +56,7 @@ public:
   vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string filePath);
   vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
   bool LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes);
+  vtkMRMLMarkupsNode* LoadFreeSurferLabel(std::string fileName);
 
   void TransformFreeSurferModelToWorld(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);

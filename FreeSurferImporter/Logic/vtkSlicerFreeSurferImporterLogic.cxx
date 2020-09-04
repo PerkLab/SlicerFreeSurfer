@@ -15,26 +15,26 @@
 
 ==============================================================================*/
 
-#include <vtkMRMLColorLogic.h>
-
-#include <vtkMRMLFreeSurferProceduralColorNode.h>
-#include <vtkMRMLColorTableStorageNode.h>
-
 // FreeSurferImporter Logic includes
 #include "vtkSlicerFreeSurferImporterLogic.h"
 #include "vtkSlicerFreeSurferExtrudeTool.h"
 
 // MRML includes
-#include <vtkMRMLFreeSurferModelStorageNode.h>
-#include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
+#include <vtkMRMLColorTableStorageNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelStorageNode.h>
-#include <vtkMRMLVolumeNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSegmentationNode.h>
 #include <vtkMRMLSegmentationStorageNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLVolumeNode.h>
+
+// Markups includes
+#include <vtkMRMLMarkupsNode.h>
+
+// Slicer includes
+#include <vtkMRMLColorLogic.h>
 
 // FreeSurfer MRML
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
@@ -42,17 +42,16 @@
 #include <vtkMRMLFreeSurferProceduralColorNode.h>
 
 // VTK includes
+#include <vtkAssignAttribute.h>
 #include <vtkImageData.h>
 #include <vtkIntArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtksys/SystemTools.hxx>
-
-#include <vtkAssignAttribute.h>
-#include <vtkPointData.h>
 
 // DynamicModeler includes
 #include <vtkSlicerDynamicModelerToolFactory.h>
@@ -645,4 +644,10 @@ void vtkSlicerFreeSurferImporterLogic::AddFreeSurferNodes()
 const char* vtkSlicerFreeSurferImporterLogic::GetDefaultFreeSurferLabelMapColorNodeID()
 {
   return vtkSlicerFreeSurferImporterLogic::GetFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferLabel(std::string fileName)
+{
+  return nullptr;
 }

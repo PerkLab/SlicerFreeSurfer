@@ -20,6 +20,8 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
+  qSlicer${MODULE_NAME}LabelReader.cxx
+  qSlicer${MODULE_NAME}LabelReader.h
   qSlicer${MODULE_NAME}Module.cxx
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.cxx
@@ -39,6 +41,7 @@ set(MODULE_SRCS
   )
 
 set(MODULE_MOC_SRCS
+  qSlicer${MODULE_NAME}LabelReader.h
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicer${MODULE_NAME}ModelReader.h
