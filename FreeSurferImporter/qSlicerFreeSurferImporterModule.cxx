@@ -23,6 +23,7 @@
 #include <vtkSlicerFreeSurferImporterLogic.h>
 
 // FreeSurferImporter includes
+#include "qSlicerFreeSurferImporterLabelReader.h"
 #include "qSlicerFreeSurferImporterModule.h"
 #include "qSlicerFreeSurferImporterModuleWidget.h"
 #include "qSlicerFreeSurferImporterModelReader.h"
@@ -113,6 +114,7 @@ void qSlicerFreeSurferImporterModule::setup()
   // Register the IO
   vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(this->logic());
   app->coreIOManager()->registerIO(new qSlicerFreeSurferImporterModelReader(logic, this));
+  app->coreIOManager()->registerIO(new qSlicerFreeSurferImporterLabelReader(logic, this));
   app->coreIOManager()->registerIO(new qSlicerFreeSurferImporterScalarOverlayReader(logic, this));
   app->coreIOManager()->registerIO(new qSlicerFreeSurferImporterSegmentationReader(logic, this));
 }

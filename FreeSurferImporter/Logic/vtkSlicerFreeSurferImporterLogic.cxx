@@ -31,7 +31,9 @@
 #include <vtkMRMLVolumeNode.h>
 
 // Markups includes
-#include <vtkMRMLMarkupsNode.h>
+#include <vtkCurveGenerator.h>
+#include <vtkMRMLMarkupsCurveNode.h>
+#include <vtkMRMLMarkupsFiducialNode.h>
 
 // Slicer includes
 #include <vtkMRMLColorLogic.h>
@@ -43,18 +45,24 @@
 
 // VTK includes
 #include <vtkAssignAttribute.h>
+#include <vtkDoubleArray.h>
+#include <vtkFloatArray.h>
 #include <vtkImageData.h>
 #include <vtkIntArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkSortDataArray.h>
+#include <vtksys/SystemTools.hxx>
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtksys/SystemTools.hxx>
 
 // DynamicModeler includes
 #include <vtkSlicerDynamicModelerToolFactory.h>
+
+// FreeSurfer includes
+#include <vtkFSSurfaceLabelReader.h>
 
 // STD includes
 #include <cassert>
@@ -254,9 +262,9 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
     std::string fileName = vtksys::SystemTools::GetFilenameName(filePath);
     std::string name = vtksys::SystemTools::GetFilenameExtension(filePath);
     if (name[0] == '.' && name.size() > 1)
-      {
+    {
       name = name.substr(1, name.length() - 1);
-      }
+    }
 
     // Scalar overlay is already loaded for this model
     if (modelNode->HasCellScalarName(name.c_str()))
@@ -649,5 +657,57 @@ const char* vtkSlicerFreeSurferImporterLogic::GetDefaultFreeSurferLabelMapColorN
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferLabel(std::string fileName)
 {
-  return nullptr;
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("Invalid scene");
+    return nullptr;
+    }
+
+  vtkNew<vtkFloatArray> floatArray;
+  vtkNew<vtkPoints> points;
+
+  vtkNew<vtkFSSurfaceLabelReader> reader;
+  reader->SetFileName(fileName.c_str());
+  reader->SetOutput(floatArray.GetPointer());
+  reader->SetPoints(points);
+  reader->UseFileIndicesOff();
+  int errorCode = reader->ReadLabel();
+  if (errorCode != 0)
+  {
+    // Reading failed
+    std::string errorDetail;
+    switch (errorCode)
+    {
+    case 1: errorDetail = "Output is null"; break;
+    case 2: errorDetail = "FileName not specified"; break;
+    case 3: errorDetail = "Could not open file"; break;
+    case 4: errorDetail = "Number of values in the file is 0 or negative, or greater than number of vertices in the associated scalar file"; break;
+    case 5: errorDetail = "Error allocating the array of floats"; break;
+    case 6: errorDetail = "Unexpected EOF"; break;
+    default: errorDetail = "Unknown error"; break;
+    }
+    vtkErrorMacro("Error reading FreeSurfer scalar overlay file " << fileName.c_str() << ": " << errorDetail << " (" << errorCode << ")");
+    return nullptr;
+  }
+
+  if (points->GetNumberOfPoints() == 0)
+    {
+    vtkErrorMacro("No points found in label");
+    return nullptr;
+    }
+
+  std::string nodeName = vtksys::SystemTools::GetFilenameName(fileName);
+  vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsCurveNode", nodeName));
+  //vtkMRMLMarkupsFiducialNode* fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", nodeName));
+  if (!curveNode)
+    {
+    vtkErrorMacro("Could not create curve node");
+    return nullptr;
+    }
+
+  vtkNew<vtkDoubleArray> weights;
+  vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
+  vtkSortDataArray::Sort(weights, points->GetData());
+  curveNode->SetControlPointPositionsWorld(points);
+  return curveNode;
 }
