@@ -253,16 +253,12 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
     }
 
     std::string fileName = vtksys::SystemTools::GetFilenameName(filePath);
-    std::string overlayHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
-    std::string modelNodeHemisphere = vtksys::SystemTools::GetFilenameWithoutExtension(modelNode->GetName());
-    modelNodeHemisphere = modelNodeHemisphere.substr(0, 2);
-    if (modelNodeHemisphere != overlayHemisphere)
-    {
-      continue;
-    }
-
     std::string name = vtksys::SystemTools::GetFilenameExtension(filePath);
-    name = name.substr(1, name.length() - 1);
+    if (name[0] == '.' && name.size() > 1)
+      {
+      name = name.substr(1, name.length() - 1);
+      }
+
     // Scalar overlay is already loaded for this model
     if (modelNode->HasCellScalarName(name.c_str()))
     {
