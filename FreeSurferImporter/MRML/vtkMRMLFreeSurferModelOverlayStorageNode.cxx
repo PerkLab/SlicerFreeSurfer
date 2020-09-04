@@ -217,7 +217,7 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot(const std:
     {
     vtkDebugMacro("No Internal Color Table in " << fullName.c_str() << ", trying the default colours");
     vtkMRMLColorTableNode *cnode = nullptr;
-    vtkSmartPointer<vtkCollection> labelNodes = vtkSmartPointer<vtkCollection>::Take(this->Scene->GetNodesByClassByName("vtkMRMLColorTableNode", "FSLabels"));
+    vtkSmartPointer<vtkCollection> labelNodes = vtkSmartPointer<vtkCollection>::Take(this->Scene->GetNodesByClassByName("vtkMRMLColorTableNode", "FreeSurferLabels"));
     if (labelNodes->GetNumberOfItems() > 0)
       {
       cnode = vtkMRMLColorTableNode::SafeDownCast(labelNodes->GetItemAsObject(0));
@@ -372,7 +372,6 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayVolume(const std
 int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
-
   if (modelNode == nullptr ||
       modelNode->GetPolyData() == nullptr ||
       modelNode->GetPolyData()->GetPointData() == nullptr)
