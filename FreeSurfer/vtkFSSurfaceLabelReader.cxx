@@ -26,16 +26,21 @@ vtkStandardNewMacro(vtkFSSurfaceLabelReader);
 vtkFSSurfaceLabelReader::vtkFSSurfaceLabelReader()
 {
   this->Scalars = nullptr;
+  this->Points = nullptr;
   this->NumberOfVertices = 0;
   this->NumberOfValues = 0;
   // from the freesurfer colour table, this is the index for the Left-Cerebral-Cortex
   this->LabelOn = 3.0;
   // from the freesurfer colour table, this is the index for ctx-lh-unknown
   this->LabelOff = 1000.0;
+  this->UseFileIndices = true;
 }
 
 //-------------------------------------------------------------------------
-vtkFSSurfaceLabelReader::~vtkFSSurfaceLabelReader() = default;
+vtkFSSurfaceLabelReader::~vtkFSSurfaceLabelReader()
+{
+  this->SetPoints(nullptr);
+}
 
 //-------------------------------------------------------------------------
 // Returns error codes depending on failure
@@ -98,7 +103,10 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   if (this->NumberOfVertices == 0)
     {
     // it wasn't set, use numValues
-    vtkErrorMacro(<<"vtkFSSurfaceLabelReader: Number of vertices in the associated scalar file has not been set, using number of values in the file");
+    if (this->UseFileIndices)
+      {
+      vtkWarningMacro(<< "vtkFSSurfaceLabelReader: Number of vertices in the associated scalar file has not been set, using number of values in the file");
+      }
     this->NumberOfVertices = numValues;
     }
 
@@ -121,6 +129,11 @@ int vtkFSSurfaceLabelReader::ReadLabel()
       {
       scalars[i] = this->LabelOff;
       }
+    }
+
+  if (this->Points)
+    {
+    this->Points->SetNumberOfPoints(numValues);
     }
 
   this->NumberOfValues = 0;
@@ -156,15 +169,27 @@ int vtkFSSurfaceLabelReader::ReadLabel()
     // is a reason for being able to load a mismatched file. But this
     // should raise some kind of message to the user like, "This file
     // appears to be for a different surface; continue loading?"
-    if (vIndexFromFile < 0 || vIndexFromFile >= this->NumberOfVertices)
+    if (this->UseFileIndices && (vIndexFromFile < 0 || vIndexFromFile >= this->NumberOfVertices))
       {
       vtkErrorMacro (<< "ReadLabel: value #" << this->NumberOfValues << ": Read an index that is out of bounds (" << vIndexFromFile << " not in 0-" << this->NumberOfVertices << "), ignoring.");
       break;
       }
 
+    if (this->Points)
+      {
+      this->Points->SetPoint(vIndex, xValue, yValue, zValue);
+      }
+
     // Set the value in the scalars array based on the index we read
     // in, not the index in our for loop.
-    scalars[vIndexFromFile] = this->LabelOn;
+    if (this->UseFileIndices)
+      {
+      scalars[vIndexFromFile] = this->LabelOn;
+      }
+    else
+      {
+      scalars[vIndex] = this->LabelOn;
+      }
 
     if (numValues < 10000 ||
         (vIndex % 100) == 0)

@@ -15,6 +15,7 @@
 
 // VTK includes
 #include <vtkDataReader.h>
+#include <vtkPoints.h>
 
 class vtkFloatArray;
 
@@ -37,6 +38,9 @@ public:
       {return this->Scalars; };
   void SetOutput(vtkFloatArray *output)
       {this->Scalars = output; };
+
+  vtkGetObjectMacro(Points, vtkPoints);
+  vtkSetObjectMacro(Points, vtkPoints);
 
   int ReadLabel();
 
@@ -62,6 +66,14 @@ public:
   vtkGetMacro(LabelOff, float);
   vtkSetMacro(LabelOff, float);
 
+  ///
+  /// Use the file indices read from the file as the indices for the values in the array
+  /// If this is off, the indices of the values in the file will be the index that
+  /// Default is on.
+  vtkGetMacro(UseFileIndices, bool);
+  vtkSetMacro(UseFileIndices, bool);
+  vtkBooleanMacro(UseFileIndices, bool);
+
   enum
   {
     /// error codes
@@ -80,8 +92,8 @@ protected:
   vtkFSSurfaceLabelReader();
   ~vtkFSSurfaceLabelReader() override;
 
-  vtkFloatArray *Scalars;
-
+  vtkFloatArray* Scalars;
+  vtkPoints* Points;
 
   ///
   /// this is the number of vertices in the associated model file,
@@ -94,6 +106,8 @@ protected:
 
   float LabelOff;
   float LabelOn;
+
+  bool UseFileIndices;
 /*
   int ReadInt3 (FILE* iFile, int& oInt);
   int ReadInt2 (FILE* iFile, int& oInt);
