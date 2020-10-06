@@ -655,7 +655,7 @@ const char* vtkSlicerFreeSurferImporterLogic::GetDefaultFreeSurferLabelMapColorN
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferLabel(std::string fileName)
+vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::string fileName)
 {
   if (!this->GetMRMLScene())
     {
@@ -698,7 +698,6 @@ vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferLabel(std::s
 
   std::string nodeName = vtksys::SystemTools::GetFilenameName(fileName);
   vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsCurveNode", nodeName));
-  //vtkMRMLMarkupsFiducialNode* fiducialNode = vtkMRMLMarkupsFiducialNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsFiducialNode", nodeName));
   if (!curveNode)
     {
     vtkErrorMacro("Could not create curve node");

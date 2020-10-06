@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFreeSurferImporterLabelReader_h
-#define __qSlicerFreeSurferImporterLabelReader_h
+#ifndef __qSlicerFreeSurferImporterCurveReader_h
+#define __qSlicerFreeSurferImporterCurveReader_h
 
 // SlicerFreeSurferImporter includes
 #include "qSlicerFreeSurferImporterModuleExport.h"
@@ -27,18 +27,18 @@
 // SlicerQt includes
 #include "qSlicerFileReader.h"
 
-class qSlicerFreeSurferImporterLabelReaderPrivate;
+class qSlicerFreeSurferImporterCurveReaderPrivate;
 class vtkSlicerFreeSurferImporterLogic;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_QTMODULES_FREESURFERIMPORTER_EXPORT qSlicerFreeSurferImporterLabelReader
+class Q_SLICER_QTMODULES_FREESURFERIMPORTER_EXPORT qSlicerFreeSurferImporterCurveReader
   : public qSlicerFileReader
 {
   Q_OBJECT
 public:
   typedef qSlicerFileReader Superclass;
-  qSlicerFreeSurferImporterLabelReader(vtkSlicerFreeSurferImporterLogic* logic, QObject* parent = nullptr);
-  ~qSlicerFreeSurferImporterLabelReader() override;
+  qSlicerFreeSurferImporterCurveReader(vtkSlicerFreeSurferImporterLogic* logic, QObject* parent = nullptr);
+  ~qSlicerFreeSurferImporterCurveReader() override;
 
   void setLogic(vtkSlicerFreeSurferImporterLogic* newFreeSurferImporterLogic);
   vtkSlicerFreeSurferImporterLogic* Logic() const;
@@ -51,11 +51,11 @@ public:
   bool load(const IOProperties& properties) override;
 
 protected:
-  QScopedPointer<qSlicerFreeSurferImporterLabelReaderPrivate> d_ptr;
+  QScopedPointer<qSlicerFreeSurferImporterCurveReaderPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerFreeSurferImporterLabelReader);
-  Q_DISABLE_COPY(qSlicerFreeSurferImporterLabelReader);
+  Q_DECLARE_PRIVATE(qSlicerFreeSurferImporterCurveReader);
+  Q_DISABLE_COPY(qSlicerFreeSurferImporterCurveReader);
 };
 
 #endif

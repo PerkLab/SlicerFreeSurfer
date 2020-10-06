@@ -22,7 +22,7 @@
 #include <QDebug>
 
 // 
-#include "qSlicerFreeSurferImporterLabelReader.h"
+#include "qSlicerFreeSurferImporterCurveReader.h"
 #include "vtkSlicerFreeSurferImporterLogic.h"
 #include "qSlicerFreeSurferImporterScalarOverlayOptionsWidget.h"
 
@@ -36,53 +36,53 @@
 #include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerFreeSurferImporterLabelReaderPrivate
+class qSlicerFreeSurferImporterCurveReaderPrivate
 {
 public:
   vtkSmartPointer<vtkSlicerFreeSurferImporterLogic> Logic;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerFreeSurferImporterLabelReader::qSlicerFreeSurferImporterLabelReader(
+qSlicerFreeSurferImporterCurveReader::qSlicerFreeSurferImporterCurveReader(
   vtkSlicerFreeSurferImporterLogic* _logic, QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerFreeSurferImporterLabelReaderPrivate)
+  , d_ptr(new qSlicerFreeSurferImporterCurveReaderPrivate)
 {
   this->setLogic(_logic);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFreeSurferImporterLabelReader::~qSlicerFreeSurferImporterLabelReader()
+qSlicerFreeSurferImporterCurveReader::~qSlicerFreeSurferImporterCurveReader()
 = default;
 
 //-----------------------------------------------------------------------------
-void qSlicerFreeSurferImporterLabelReader::setLogic(vtkSlicerFreeSurferImporterLogic * logic)
+void qSlicerFreeSurferImporterCurveReader::setLogic(vtkSlicerFreeSurferImporterLogic * logic)
 {
-  Q_D(qSlicerFreeSurferImporterLabelReader);
+  Q_D(qSlicerFreeSurferImporterCurveReader);
   d->Logic = logic;
 }
 
 //-----------------------------------------------------------------------------
-vtkSlicerFreeSurferImporterLogic* qSlicerFreeSurferImporterLabelReader::Logic() const
+vtkSlicerFreeSurferImporterLogic* qSlicerFreeSurferImporterCurveReader::Logic() const
 {
-  Q_D(const qSlicerFreeSurferImporterLabelReader);
+  Q_D(const qSlicerFreeSurferImporterCurveReader);
   return d->Logic;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerFreeSurferImporterLabelReader::description()const
+QString qSlicerFreeSurferImporterCurveReader::description()const
 {
-  return "FreeSurfer label";
+  return "FreeSurfer Curve";
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIO::IOFileType qSlicerFreeSurferImporterLabelReader::fileType()const
+qSlicerIO::IOFileType qSlicerFreeSurferImporterCurveReader::fileType()const
 {
-  return QString("FreeSurferLabelFile");
+  return QString("FreeSurferCurveFile");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerFreeSurferImporterLabelReader::extensions()const
+QStringList qSlicerFreeSurferImporterCurveReader::extensions()const
 {
   QStringList supportedExtensions;
   supportedExtensions << "*.label";
@@ -90,7 +90,7 @@ QStringList qSlicerFreeSurferImporterLabelReader::extensions()const
 }
 
 //-----------------------------------------------------------------------------
-qSlicerIOOptions* qSlicerFreeSurferImporterLabelReader::options()const
+qSlicerIOOptions* qSlicerFreeSurferImporterCurveReader::options()const
 {
   qSlicerIOOptionsWidget* options = new qSlicerFreeSurferImporterScalarOverlayOptionsWidget;
   options->setMRMLScene(this->mrmlScene());
@@ -98,9 +98,9 @@ qSlicerIOOptions* qSlicerFreeSurferImporterLabelReader::options()const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerFreeSurferImporterLabelReader::load(const IOProperties & properties)
+bool qSlicerFreeSurferImporterCurveReader::load(const IOProperties & properties)
 {
-  Q_D(qSlicerFreeSurferImporterLabelReader);
+  Q_D(qSlicerFreeSurferImporterCurveReader);
   Q_ASSERT(properties.contains("fileName"));
   if (d->Logic == nullptr)
   {
@@ -120,7 +120,7 @@ bool qSlicerFreeSurferImporterLabelReader::load(const IOProperties & properties)
   }
 
   QStringList loadedNodes;
-  vtkMRMLMarkupsNode* markupNode = d->Logic->LoadFreeSurferLabel(fileName.toStdString());
+  vtkMRMLMarkupsNode* markupNode = d->Logic->LoadFreeSurferCurve(fileName.toStdString());
   if (markupNode)
   {
     loadedNodes << QString(markupNode->GetID());

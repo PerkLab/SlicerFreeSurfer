@@ -56,7 +56,7 @@ public:
   vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string filePath);
   vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
   bool LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes);
-  vtkMRMLMarkupsNode* LoadFreeSurferLabel(std::string fileName);
+  vtkMRMLMarkupsNode* LoadFreeSurferCurve(std::string fileName);
 
   void TransformFreeSurferModelToWorld(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
