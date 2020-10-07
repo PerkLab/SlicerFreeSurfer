@@ -44,6 +44,8 @@ public:
   /// Return true if reference node can be written from
   bool CanWriteFromReferenceNode(vtkMRMLNode *refNode) override;
 
+  static std::string GetOverlayNameFromFileName(const std::string& fullName);
+
 protected:
   vtkMRMLFreeSurferModelOverlayStorageNode();
   ~vtkMRMLFreeSurferModelOverlayStorageNode() override;

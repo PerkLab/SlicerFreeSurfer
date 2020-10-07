@@ -259,38 +259,12 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
       continue;
     }
 
-    std::string fileName = vtksys::SystemTools::GetFilenameName(filePath);
-    std::string name = vtksys::SystemTools::GetFilenameExtension(filePath);
-    if (name[0] == '.' && name.size() > 1)
-    {
-      name = name.substr(1, name.length() - 1);
-    }
-
-    // Scalar overlay is already loaded for this model
-    if (modelNode->HasCellScalarName(name.c_str()))
-    {
-      continue;
-    }
+    std::string overlayName = overlayStorageNode->GetOverlayNameFromFileName(filePath);
 
     if (!overlayStorageNode->ReadData(modelNode))
     {
       success = false;
       continue;
-    }
-
-    vtkPointData* data = modelNode->GetPolyData()->GetPointData();
-    if (data)
-    {
-      vtkDataArray* scalarArray = data->GetArray(fileName.c_str());
-      if (scalarArray)
-      {
-        data->RemoveArray(fileName.c_str());
-        scalarArray->SetName(name.c_str());
-        data->AddArray(scalarArray);
-        data->Modified();
-        modelNode->GetPolyData()->Modified();
-        modelNode->Modified();
-      }
     }
     numberOfOverlayLoaded += 1;
   }

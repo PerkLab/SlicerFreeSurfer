@@ -65,11 +65,30 @@ void vtkMRMLFreeSurferModelOverlayStorageNode::PrintSelf(ostream& os, vtkIndent 
 }
 
 //----------------------------------------------------------------------------
+std::string vtkMRMLFreeSurferModelOverlayStorageNode::GetOverlayNameFromFileName(const std::string& fullName)
+{
+  std::string fileName = vtksys::SystemTools::GetFilenameName(fullName);
+  std::string extension = vtkMRMLStorageNode::GetLowercaseExtensionFromFileName(fullName);
+  if (extension[0] == '.' && extension.size() > 1)
+  {
+    extension = extension.substr(1, extension.length() - 1);
+  }
+
+  std::string overlayName = extension; // By default the name of the array is the extension
+  if (vtksys::SystemTools::LowerCase(extension) == "label")
+  {
+    overlayName = fileName;
+  }
+
+  return overlayName;
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlay(const std::string& fullName, vtkMRMLModelNode* modelNode)
 {
   // the array to read into
   vtkNew<vtkFloatArray> floatArray;
-  std::string scalarName = vtksys::SystemTools::GetFilenameName(fullName);
+  std::string scalarName = this->GetOverlayNameFromFileName(fullName);
   floatArray->SetName(scalarName.c_str());
   int numVertices = modelNode->GetPolyData()->GetPointData()->GetNumberOfTuples();
 
