@@ -145,26 +145,45 @@ set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name})
 # --------------------------------------------------------------------------
 # Python Wrapping
 # --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${lib_name}
-    KIT_SRCS ${FreeSurfer_SRCS}
-    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
+if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
+
+  set(Slicer_Wrapped_LIBRARIES
     )
-  # Export target
-  export(TARGETS ${lib_name}Python ${lib_name}PythonD APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
-  # Folder
-  if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
-    set_target_properties(${lib_name}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    set_target_properties(${lib_name}PythonD PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    if(TARGET ${lib_name}Hierarchy)
-      set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    endif()
+
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    foreach(library ${lib_name})
+      if(TARGET ${library}PythonD)
+        list(APPEND Slicer_Wrapped_LIBRARIES ${library}PythonD)
+      endif()
+    endforeach()
+  endif()
+
+  SlicerMacroPythonWrapModuleVTKLibrary(
+    NAME ${PROJECT_NAME}
+    SRCS ${${PROJECT_NAME}_SRCS}
+    WRAPPED_TARGET_LIBRARIES ${Slicer_Wrapped_LIBRARIES}
+    RELATIVE_PYTHON_DIR "."
+    )
+
+  # Set python module logic output
+  set_target_properties(${PROJECT_NAME}Python ${PROJECT_NAME}Python PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+    )
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    set_target_properties(${PROJECT_NAME}PythonD PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}"
+      )
   endif()
 
   # Export target
-  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python ${PROJECT_NAME}PythonD)
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python)
+  if(${VTK_VERSION} VERSION_LESS "8.90")
+    set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}PythonD)
+  endif()
 endif()
 
 # --------------------------------------------------------------------------
