@@ -122,7 +122,6 @@ void vtkSlicerFreeSurferImporterLogic::OnMRMLSceneNewEvent()
   this->AddFreeSurferNodes();
 }
 
-
 //-----------------------------------------------------------------------------
 void vtkSlicerFreeSurferImporterLogic::RegisterNodes()
 {
