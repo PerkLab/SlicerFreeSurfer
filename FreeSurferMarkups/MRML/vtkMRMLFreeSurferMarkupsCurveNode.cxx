@@ -96,6 +96,12 @@ void vtkMRMLFreeSurferMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(curvatureSulcalHeightWeight, CurvatureSulcalHeightWeight);
   vtkMRMLWriteXMLFloatMacro(distanceCurvatureSulcalHeightWeight, DistanceCurvatureSulcalHeightWeight);
   vtkMRMLWriteXMLFloatMacro(directionWeight, DirectionWeight);
+  vtkMRMLWriteXMLFloatMacro(curvaturePenalty, CurvaturePenalty);
+  vtkMRMLWriteXMLFloatMacro(sulcalHeightPenalty, SulcalHeightPenalty);
+  vtkMRMLWriteXMLFloatMacro(distanceCurvaturePenalty, DistanceCurvaturePenalty);
+  vtkMRMLWriteXMLFloatMacro(distanceSulcalHeightPenalty, DistanceSulcalHeightPenalty);
+  vtkMRMLWriteXMLFloatMacro(curvatureSulcalHeightPenalty, CurvatureSulcalHeightPenalty);
+  vtkMRMLWriteXMLFloatMacro(distanceCurvatureSulcalHeightPenalty, DistanceCurvatureSulcalHeightPenalty);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -115,6 +121,12 @@ void vtkMRMLFreeSurferMarkupsCurveNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(curvatureSulcalHeightWeight, CurvatureSulcalHeightWeight);
   vtkMRMLReadXMLFloatMacro(distanceCurvatureSulcalHeightWeight, DistanceCurvatureSulcalHeightWeight);
   vtkMRMLReadXMLFloatMacro(directionWeight, DirectionWeight);
+  vtkMRMLReadXMLFloatMacro(curvaturePenalty, CurvaturePenalty);
+  vtkMRMLReadXMLFloatMacro(sulcalHeightPenalty, SulcalHeightPenalty);
+  vtkMRMLReadXMLFloatMacro(distanceCurvaturePenalty, DistanceCurvaturePenalty);
+  vtkMRMLReadXMLFloatMacro(distanceSulcalHeightPenalty, DistanceSulcalHeightPenalty);
+  vtkMRMLReadXMLFloatMacro(curvatureSulcalHeightPenalty, CurvatureSulcalHeightPenalty);
+  vtkMRMLReadXMLFloatMacro(distanceCurvatureSulcalHeightPenalty, DistanceCurvatureSulcalHeightPenalty);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -133,6 +145,12 @@ void vtkMRMLFreeSurferMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool dee
   vtkMRMLCopyFloatMacro(CurvatureSulcalHeightWeight);
   vtkMRMLCopyFloatMacro(DistanceCurvatureSulcalHeightWeight);
   vtkMRMLCopyFloatMacro(DirectionWeight);
+  vtkMRMLCopyFloatMacro(CurvaturePenalty);
+  vtkMRMLCopyFloatMacro(SulcalHeightPenalty);
+  vtkMRMLCopyFloatMacro(DistanceCurvaturePenalty);
+  vtkMRMLCopyFloatMacro(DistanceSulcalHeightPenalty);
+  vtkMRMLCopyFloatMacro(CurvatureSulcalHeightPenalty);
+  vtkMRMLCopyFloatMacro(DistanceCurvatureSulcalHeightPenalty);
   vtkMRMLCopyEndMacro();
 }
 
@@ -150,6 +168,12 @@ void vtkMRMLFreeSurferMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(CurvatureSulcalHeightWeight);
   vtkMRMLPrintFloatMacro(DistanceCurvatureSulcalHeightWeight);
   vtkMRMLPrintFloatMacro(DirectionWeight);
+  vtkMRMLPrintFloatMacro(CurvaturePenalty);
+  vtkMRMLPrintFloatMacro(SulcalHeightPenalty);
+  vtkMRMLPrintFloatMacro(DistanceCurvaturePenalty);
+  vtkMRMLPrintFloatMacro(DistanceSulcalHeightPenalty);
+  vtkMRMLPrintFloatMacro(CurvatureSulcalHeightPenalty);
+  vtkMRMLPrintFloatMacro(DistanceCurvatureSulcalHeightPenalty);
   vtkMRMLPrintEndMacro();
 }
 
