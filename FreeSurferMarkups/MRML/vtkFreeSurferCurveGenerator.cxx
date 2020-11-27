@@ -63,18 +63,18 @@ void vtkFreeSurferCurveGenerator::PrintSelf(std::ostream & os, vtkIndent indent)
 
 //------------------------------------------------------------------------------
 #define FreeSurferPathFilterPropertyMacro(propertyName)\
-void vtkFreeSurferCurveGenerator::Set##propertyName##(double weight)\
+void vtkFreeSurferCurveGenerator::Set##propertyName(double weight)\
 {\
-  if (weight == this->Get##propertyName##())\
+  if (weight == this->Get##propertyName())\
   {\
     return;\
   }\
-  this->FreeSurferSurfacePathFilter->Set##propertyName##(weight);\
+  this->FreeSurferSurfacePathFilter->Set##propertyName(weight);\
   this->Modified();\
 }\
-double vtkFreeSurferCurveGenerator::Get##propertyName##()\
+double vtkFreeSurferCurveGenerator::Get##propertyName()\
 {\
-  return this->FreeSurferSurfacePathFilter->Get##propertyName##();\
+  return this->FreeSurferSurfacePathFilter->Get##propertyName();\
 }
 
 //------------------------------------------------------------------------------
