@@ -28,13 +28,11 @@ SlicerConfigureDisplayableManagerObjectFactory(
 set(${KIT}_SRCS
   ${displayable_manager_instantiator_SRCS}
   ${displayable_manager_SRCS}
-  #vtkMRML${MODULE_NAME}DisplayableManagerHelper.cxx
   )
 
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
   vtkSlicer${MODULE_NAME}ModuleMRML
-  #vtkSlicer${MODULE_NAME}ModuleVTKWidgets
   vtkSlicerMarkupsModuleMRMLDisplayableManager
 )
 
