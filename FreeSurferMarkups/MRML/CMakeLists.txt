@@ -11,8 +11,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   vtkFreeSurferCurveGenerator.cxx
   vtkFreeSurferCurveGenerator.h
-  vtkMRMLFreeSurferMarkupsCurveNode.cxx
-  vtkMRMLFreeSurferMarkupsCurveNode.h
+  vtkMRMLMarkupsFreeSurferCurveNode.cxx
+  vtkMRMLMarkupsFreeSurferCurveNode.h
   vtkSlicerFreeSurferDijkstraGraphGeodesicPath.cxx
   vtkSlicerFreeSurferDijkstraGraphGeodesicPath.h
   )

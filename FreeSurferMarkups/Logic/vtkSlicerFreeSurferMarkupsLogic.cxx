@@ -26,7 +26,7 @@
 #include <vtkMRMLColorLogic.h>
 
 // FreeSurfer Markups MRML includes
-#include <vtkMRMLFreeSurferMarkupsCurveNode.h>
+#include <vtkMRMLMarkupsFreeSurferCurveNode.h>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerFreeSurferMarkupsLogic);
@@ -61,7 +61,7 @@ void vtkSlicerFreeSurferMarkupsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScen
 void vtkSlicerFreeSurferMarkupsLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != 0);
-  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLFreeSurferMarkupsCurveNode>::New());
+  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFreeSurferCurveNode>::New());
 }
 
 //---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ void vtkSlicerFreeSurferMarkupsLogic::ObserveMRMLScene()
   if (selectionNode)
   {
     selectionNode->AddNewPlaceNodeClassNameToList(
-      "vtkMRMLFreeSurferMarkupsCurveNode",
+      "vtkMRMLMarkupsFreeSurferCurveNode",
       ":/Icons/MarkupsCurveMouseModePlace.png",
       "FreeSurfer curve");
   }

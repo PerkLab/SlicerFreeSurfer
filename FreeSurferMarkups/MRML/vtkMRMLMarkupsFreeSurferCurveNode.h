@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLFreeSurferMarkupsCurveNode_h
-#define __vtkMRMLFreeSurferMarkupsCurveNode_h
+#ifndef __vtkMRMLMarkupsFreeSurferCurveNode_h
+#define __vtkMRMLMarkupsFreeSurferCurveNode_h
 
 // MRML includes
 #include "vtkMRMLDisplayableNode.h"
@@ -42,11 +42,11 @@ class vtkFreeSurferCurveGenerator;
 /// Curve Markups nodes contain N control points.
 ///
 /// \ingroup Slicer_QtModules_Markups
-class VTK_SLICER_FREESURFERMARKUPS_MODULE_MRML_EXPORT vtkMRMLFreeSurferMarkupsCurveNode : public vtkMRMLMarkupsCurveNode
+class VTK_SLICER_FREESURFERMARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFreeSurferCurveNode : public vtkMRMLMarkupsCurveNode
 {
 public:
-  static vtkMRMLFreeSurferMarkupsCurveNode *New();
-  vtkTypeMacro(vtkMRMLFreeSurferMarkupsCurveNode, vtkMRMLMarkupsCurveNode);
+  static vtkMRMLMarkupsFreeSurferCurveNode *New();
+  vtkTypeMacro(vtkMRMLMarkupsFreeSurferCurveNode, vtkMRMLMarkupsCurveNode);
   /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -66,7 +66,7 @@ public:
 
   /// Copy node content (excludes basic data, such as name and node references).
   /// \sa vtkMRMLNode::CopyContent
-  vtkMRMLCopyContentMacro(vtkMRMLFreeSurferMarkupsCurveNode);
+  vtkMRMLCopyContentMacro(vtkMRMLMarkupsFreeSurferCurveNode);
 
   void SetDistanceWeight(double weight);
   void SetCurvatureWeight(double weight);
@@ -102,10 +102,10 @@ protected:
   vtkSmartPointer<vtkFreeSurferCurveGenerator> FreeSurferCurveGenerator;
 
 protected:
-  vtkMRMLFreeSurferMarkupsCurveNode();
-  ~vtkMRMLFreeSurferMarkupsCurveNode() override;
-  vtkMRMLFreeSurferMarkupsCurveNode(const vtkMRMLFreeSurferMarkupsCurveNode&);
-  void operator=(const vtkMRMLFreeSurferMarkupsCurveNode&);
+  vtkMRMLMarkupsFreeSurferCurveNode();
+  ~vtkMRMLMarkupsFreeSurferCurveNode() override;
+  vtkMRMLMarkupsFreeSurferCurveNode(const vtkMRMLMarkupsFreeSurferCurveNode&);
+  void operator=(const vtkMRMLMarkupsFreeSurferCurveNode&);
 };
 
 #endif

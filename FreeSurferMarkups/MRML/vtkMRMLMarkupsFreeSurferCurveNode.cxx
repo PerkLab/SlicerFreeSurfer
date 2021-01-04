@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-#include "vtkMRMLFreeSurferMarkupsCurveNode.h"
+#include "vtkMRMLMarkupsFreeSurferCurveNode.h"
 
 // MRML includes
 #include <vtkFreeSurferCurveGenerator.h>
@@ -59,10 +59,10 @@
 #include <sstream>
 
 //----------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLFreeSurferMarkupsCurveNode);
+vtkMRMLNodeNewMacro(vtkMRMLMarkupsFreeSurferCurveNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLFreeSurferMarkupsCurveNode::vtkMRMLFreeSurferMarkupsCurveNode()
+vtkMRMLMarkupsFreeSurferCurveNode::vtkMRMLMarkupsFreeSurferCurveNode()
 {
   this->FreeSurferCurveGenerator = vtkSmartPointer<vtkFreeSurferCurveGenerator>::New();
 
@@ -80,10 +80,10 @@ vtkMRMLFreeSurferMarkupsCurveNode::vtkMRMLFreeSurferMarkupsCurveNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLFreeSurferMarkupsCurveNode::~vtkMRMLFreeSurferMarkupsCurveNode() = default;
+vtkMRMLMarkupsFreeSurferCurveNode::~vtkMRMLMarkupsFreeSurferCurveNode() = default;
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLMarkupsFreeSurferCurveNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of,nIndent);
 
@@ -106,7 +106,7 @@ void vtkMRMLFreeSurferMarkupsCurveNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferMarkupsCurveNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLMarkupsFreeSurferCurveNode::ReadXMLAttributes(const char** atts)
 {
   MRMLNodeModifyBlocker blocker(this);
 
@@ -131,7 +131,7 @@ void vtkMRMLFreeSurferMarkupsCurveNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
+void vtkMRMLMarkupsFreeSurferCurveNode::CopyContent(vtkMRMLNode* anode, bool deepCopy/*=true*/)
 {
   MRMLNodeModifyBlocker blocker(this);
   Superclass::CopyContent(anode, deepCopy);
@@ -155,7 +155,7 @@ void vtkMRMLFreeSurferMarkupsCurveNode::CopyContent(vtkMRMLNode* anode, bool dee
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLMarkupsFreeSurferCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
@@ -179,7 +179,7 @@ void vtkMRMLFreeSurferMarkupsCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //------------------------------------------------------------------------------
 #define FreeSurferCurveGeneratorPropertyMacro(propertyName)\
-void vtkMRMLFreeSurferMarkupsCurveNode::Set##propertyName(double weight)\
+void vtkMRMLMarkupsFreeSurferCurveNode::Set##propertyName(double weight)\
 {\
   if (weight == this->Get##propertyName())\
   {\
@@ -188,7 +188,7 @@ void vtkMRMLFreeSurferMarkupsCurveNode::Set##propertyName(double weight)\
   this->FreeSurferCurveGenerator->Set##propertyName(weight);\
   this->Modified();\
 }\
-double vtkMRMLFreeSurferMarkupsCurveNode::Get##propertyName()\
+double vtkMRMLMarkupsFreeSurferCurveNode::Get##propertyName()\
 {\
   return this->FreeSurferCurveGenerator->Get##propertyName();\
 }
