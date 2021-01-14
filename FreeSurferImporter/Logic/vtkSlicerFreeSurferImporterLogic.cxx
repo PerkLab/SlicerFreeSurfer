@@ -34,6 +34,7 @@
 #include <vtkCurveGenerator.h>
 #include <vtkMRMLMarkupsCurveNode.h>
 #include <vtkMRMLMarkupsFiducialNode.h>
+#include <vtkMRMLMarkupsPlaneNode.h>
 
 // Slicer includes
 #include <vtkMRMLColorLogic.h>
@@ -631,10 +632,10 @@ const char* vtkSlicerFreeSurferImporterLogic::GetDefaultFreeSurferLabelMapColorN
 vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::string fileName)
 {
   if (!this->GetMRMLScene())
-    {
+  {
     vtkErrorMacro("Invalid scene");
     return nullptr;
-    }
+  }
 
   vtkNew<vtkFloatArray> floatArray;
   vtkNew<vtkPoints> points;
@@ -664,22 +665,55 @@ vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::s
   }
 
   if (points->GetNumberOfPoints() == 0)
-    {
+  {
     vtkErrorMacro("No points found in label");
     return nullptr;
-    }
+  }
 
   std::string nodeName = vtksys::SystemTools::GetFilenameName(fileName);
   vtkMRMLMarkupsCurveNode* curveNode = vtkMRMLMarkupsCurveNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsCurveNode", nodeName));
   if (!curveNode)
-    {
+  {
     vtkErrorMacro("Could not create curve node");
     return nullptr;
-    }
+  }
 
   vtkNew<vtkDoubleArray> weights;
   vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
   vtkSortDataArray::Sort(weights, points->GetData());
   curveNode->SetControlPointPositionsWorld(points);
   return curveNode;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLMarkupsPlaneNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferPlane(std::string fileName)
+{
+  std::ifstream filestream(fileName.c_str());
+  std::string line;
+
+  double planeOrigin[3] = { 0.0, 0.0, 0.0 };
+  if (std::getline(filestream, line))
+  {
+    std::stringstream linestream;
+    linestream << line;
+    linestream >> planeOrigin[0] >> planeOrigin[1] >> planeOrigin[2];
+  }
+  else
+  {
+    vtkErrorMacro("LoadFreeSurferPlane: Could not load plane");
+    return nullptr;
+  }
+
+  std::string nodeName = vtksys::SystemTools::GetFilenameName(fileName);
+  vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneNode", nodeName));
+  if (!planeNode)
+  {
+    vtkErrorMacro("Could not create plane node");
+    return nullptr;
+  }
+
+  double planeNormal[3] = { 0.0, 1.0, 0.0 };
+  planeNode->SetNormalWorld(planeNormal);
+  planeNode->SetOriginWorld(planeOrigin);
+  return planeNode;
 }

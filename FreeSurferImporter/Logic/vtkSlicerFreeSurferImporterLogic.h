@@ -32,6 +32,7 @@ class vtkMRMLColorTableNode;
 class vtkMRMLFreeSurferProceduralColorNode;
 class vtkMRMLMarkupsNode;
 class vtkMRMLModelNode;
+class vtkMRMLMarkupsPlaneNode;
 class vtkMRMLSegmentationNode;
 class vtkMRMLVolumeNode;
 
@@ -57,6 +58,7 @@ public:
   vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
   bool LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes);
   vtkMRMLMarkupsNode* LoadFreeSurferCurve(std::string fileName);
+  vtkMRMLMarkupsPlaneNode* LoadFreeSurferPlane(std::string fileName);
 
   void TransformFreeSurferModelToWorld(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);

@@ -30,6 +30,8 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}ModelReader.h
   qSlicer${MODULE_NAME}ModelOptionsWidget.cxx
   qSlicer${MODULE_NAME}ModelOptionsWidget.h
+  qSlicer${MODULE_NAME}PlaneReader.cxx
+  qSlicer${MODULE_NAME}PlaneReader.h
   qSlicer${MODULE_NAME}ScalarOverlayReader.cxx
   qSlicer${MODULE_NAME}ScalarOverlayReader.h
   qSlicer${MODULE_NAME}ScalarOverlayOptionsWidget.cxx
@@ -48,6 +50,7 @@ set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}ModelOptionsWidget.h
   qSlicer${MODULE_NAME}ScalarOverlayReader.h
   qSlicer${MODULE_NAME}ScalarOverlayOptionsWidget.h
+  qSlicer${MODULE_NAME}PlaneReader.h
   qSlicer${MODULE_NAME}SegmentationReader.h
   qSlicerXcedeCatalogReader.h
   )
