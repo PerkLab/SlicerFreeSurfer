@@ -117,8 +117,6 @@ void qSlicerFreeSurferMarkupsModule::setup()
 
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLFreeSurferMarkupsDisplayableManager");
   vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLFreeSurferMarkupsDisplayableManager");
-
-  qSlicerCoreApplication* app = qSlicerCoreApplication::application();
 }
 
 //-----------------------------------------------------------------------------
