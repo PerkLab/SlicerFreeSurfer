@@ -428,7 +428,7 @@ bool vtkMRMLFreeSurferProceduralColorNode::GetColor(int entry, double color[4])
 //---------------------------------------------------------------------------
 vtkLookupTable* vtkMRMLFreeSurferProceduralColorNode::CreateLookupTableCopy()
 {
-  vtkFSLookupTable* copiedLut = copiedLut = vtkFSLookupTable::New();
+  vtkFSLookupTable* copiedLut = vtkFSLookupTable::New();
   copiedLut->DeepCopy(this->GetLookupTable());
 
   // Workaround for VTK bug in vtkLookupTable::DeepCopy
