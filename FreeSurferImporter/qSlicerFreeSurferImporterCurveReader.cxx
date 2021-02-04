@@ -110,15 +110,6 @@ bool qSlicerFreeSurferImporterCurveReader::load(const IOProperties & properties)
 
   QString fileName = properties["fileName"].toString();
 
-  vtkMRMLModelNode* modelNode = nullptr;
-  
-  if (properties.contains("modelNodeId"))
-  {
-    QString modelNodeId = properties["modelNodeId"].toString();
-    modelNode = vtkMRMLModelNode::SafeDownCast(
-      this->mrmlScene()->GetNodeByID(modelNodeId.toUtf8()));
-  }
-
   QStringList loadedNodes;
   vtkMRMLMarkupsNode* markupNode = d->Logic->LoadFreeSurferCurve(fileName.toStdString());
   if (markupNode)
