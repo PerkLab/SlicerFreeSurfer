@@ -62,7 +62,7 @@ void vtkSlicerFreeSurferDijkstraGraphGeodesicPath::PrintSelf(std::ostream & os, 
 
 //------------------------------------------------------------------------------
 double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateStaticEdgeCost(
-  vtkDataSet * inData, vtkIdType u, vtkIdType v)
+  vtkDataSet * vtkNotUsed(inData), vtkIdType vtkNotUsed(u), vtkIdType vtkNotUsed(v))
 {
   return 0.0;
 }
