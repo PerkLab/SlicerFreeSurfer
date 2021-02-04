@@ -92,8 +92,6 @@ double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateDynamicEdgeCost(
   double sulcalHeight = 0.0;
   float sulcalHeightRange[2] = { 0.0, 0.0 };
 
-  double antiGreedyWeightFactor = 1.0;
-
   vtkPointData* pointData = inData->GetPointData();
   if (pointData)
   {
