@@ -93,6 +93,15 @@ protected:
   int ReadExternalColorTable (char* fileName, int* numEntries,
                   int*** rgbValues, char*** names);
 
+  /// Creates a color table from the RGB values specified by the labels.
+  /// The caller is responsible for disposing of the memory.
+  int GenerateColorTable(
+    int numLabels,
+    int* labels,
+    int* labelColors,
+    int* numEntries,
+    int*** rgbValues,
+    char*** names);
 
 private:
   vtkFSSurfaceAnnotationReader(const vtkFSSurfaceAnnotationReader&) = delete;

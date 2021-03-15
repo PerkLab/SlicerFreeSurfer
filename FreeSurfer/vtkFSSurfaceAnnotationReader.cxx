@@ -225,18 +225,10 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
                                       &numColorTableEntries,
                                       &colorTableRGBs,
                                       &colorTableNames);
-      if (0 != error)
+      if (error)
       {
-          vtkDebugMacro( << "ReadFSAnnotation: Got an error on reading embedded colour table " << error << endl);
-          // Return vtkFSSurfaceAnnotationReader::FS_NO_COLOR_TABLE here so that the caller can
-          // see that while the annotation file was loaded
-          // correctly, there was no embedded color table, so the
-          // user must specify one.
-          fclose (annotFile);
-          //free (rgbs);
-          //free (labels);
-          vtkDebugMacro( << "ReadFSAnnotation: Returning fs no color table: " << vtkFSSurfaceAnnotationReader::FS_NO_COLOR_TABLE << endl);
-          return vtkFSSurfaceAnnotationReader::FS_NO_COLOR_TABLE;
+        vtkDebugMacro(<< "ReadFSAnnotation: Got an error on reading embedded colour table " << error << endl);
+        error = GenerateColorTable(numLabels, labels, rgbs, &numColorTableEntries, &colorTableRGBs, &colorTableNames);
       }
   }
 
@@ -249,7 +241,8 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
   unassignedEntry = false;
   for (labelIndex = 0; labelIndex < numLabels; labelIndex++)
   {
-    if (labelIndex % 1000 == 0) {
+    if (labelIndex % 1000 == 0)
+    {
       vtkDebugMacro( << "ReadFSAnnotation: rgbs[" << labelIndex << "] = " << rgbs[labelIndex] << " (numLabels = " << numLabels << ")" << endl);
     }
       // Expand the rgb value into separate values.
@@ -980,6 +973,77 @@ int vtkFSSurfaceAnnotationReader::ReadExternalColorTable (char* fileName,
   *onumEntries = numColorTableEntries;
   *orgbValues = rgbValues;
   *onames = names;
+
+  return 0;
+}
+
+//-------------------------------------------------------------------------
+int vtkFSSurfaceAnnotationReader::GenerateColorTable(
+  int numLabels,
+  int* labels,
+  int* labelColors,
+  int* numEntries,
+  int*** rgbValues,
+  char*** names)
+{
+  std::vector<std::vector<int>> colors;
+  bool currentColorIndex = 0;
+  for (int labelIndex = 0; labelIndex < numLabels; labelIndex++)
+  {
+    if (labelIndex % 1000 == 0)
+    {
+      vtkDebugMacro(<< "ReadFSAnnotation: rgbs[" << labelIndex << "] = " << rgbs[labelIndex] << " (numLabels = " << numLabels << ")" << endl);
+    }
+    // Expand the rgb value into separate values.
+    int r = labelColors[labelIndex] & 0xff;
+    int g = (labelColors[labelIndex] >> 8) & 0xff;
+    int b = (labelColors[labelIndex] >> 16) & 0xff;
+
+    bool found = false;
+    for (int colorTableEntryIndex = 0;
+      (found == false) && (colorTableEntryIndex < colors.size());
+      colorTableEntryIndex++)
+    {
+      if (r == colors[colorTableEntryIndex][0] &&
+        g == colors[colorTableEntryIndex][1] &&
+        b == colors[colorTableEntryIndex][2])
+      {
+        labels[labelIndex] = colorTableEntryIndex;
+        found = true;
+        continue;
+      }
+    }
+    if (!found)
+    {
+      std::vector<int> color;
+      color.push_back(r);
+      color.push_back(g);
+      color.push_back(b);
+      colors.push_back(color);
+      labels[labelIndex] = currentColorIndex;
+      ++currentColorIndex;
+    }
+  }
+  int numColorTableEntries = colors.size();
+  int** colorTableRGBs = (int**)calloc(numColorTableEntries, sizeof(int*));
+  char** colorTableNames = (char**)calloc(numColorTableEntries, sizeof(char*));
+  for (int colorTableEntryIndex = 0; (colorTableEntryIndex < colors.size());
+    colorTableEntryIndex++)
+  {
+    int* color = (int*)calloc(3, sizeof(int));
+    color[0] = colors[colorTableEntryIndex][0];
+    color[1] = colors[colorTableEntryIndex][1];
+    color[2] = colors[colorTableEntryIndex][2];
+    colorTableRGBs[colorTableEntryIndex] = color;
+    std::string name = std::to_string(colorTableEntryIndex);
+    char* c = (char*)calloc(strlen(name.c_str()) + 1, sizeof(char));
+    strcpy(c, name.c_str());
+    colorTableNames[colorTableEntryIndex] = c;
+  }
+
+  *numEntries = colors.size();
+  *rgbValues = colorTableRGBs;
+  *names = colorTableNames;
 
   return 0;
 }
