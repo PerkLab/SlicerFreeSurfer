@@ -184,14 +184,15 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlay(const std::stri
 //----------------------------------------------------------------------------
 bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot(const std::string& fullName, vtkMRMLModelNode* modelNode)
 {
-  int scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars("labels");
+  std::string scalarName = vtksys::SystemTools::GetFilenameName(fullName);
+  int scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars(scalarName.c_str());
   if (scalaridx == -1)
     {
     // make a new array
     vtkNew<vtkIntArray> newScalars;
-    newScalars->SetName("labels");
+    newScalars->SetName(scalarName.c_str());
     modelNode->AddPointScalars(newScalars.GetPointer());
-    scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars("labels");
+    scalaridx = modelNode->GetPolyData()->GetPointData()->SetActiveScalars(scalarName.c_str());
     }
   vtkIntArray* scalars = vtkIntArray::SafeDownCast(modelNode->GetPolyData()->GetPointData()->GetArray(scalaridx));
   if (scalars == nullptr)
@@ -307,7 +308,7 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot(const std:
   if (displayNode)
     {
     displayNode->SetAndObserveColorNodeID(colorNodeId);
-    displayNode->SetActiveScalarName("labels");
+    displayNode->SetActiveScalarName(scalarName.c_str());
     displayNode->SetScalarVisibility(1);
     }
 
