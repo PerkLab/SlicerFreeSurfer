@@ -30,8 +30,6 @@ vtkStandardNewMacro (vtkMRMLFreeSurferMarkupsDisplayableManager);
 //---------------------------------------------------------------------------
 vtkMRMLFreeSurferMarkupsDisplayableManager::vtkMRMLFreeSurferMarkupsDisplayableManager()
 {
-  this->Focus.clear();
-  this->Focus.insert("vtkMRMLMarkupsFreeSurferCurveNode");
 }
 
 //---------------------------------------------------------------------------
