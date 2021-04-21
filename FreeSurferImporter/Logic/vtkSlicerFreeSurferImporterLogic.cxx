@@ -46,6 +46,7 @@
 
 // VTK includes
 #include <vtkAssignAttribute.h>
+#include <vtkCleanPolyData.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 #include <vtkImageData.h>
@@ -677,6 +678,25 @@ vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::s
     vtkErrorMacro("Could not create curve node");
     return nullptr;
   }
+
+  // Need to add a cell to prevent "unused" points from being deleted by vtkCleanPolyData
+  vtkNew<vtkCellArray> lines;
+  vtkNew<vtkIdList> line;
+  for (int i = 0; i < points->GetNumberOfPoints(); ++i)
+  {
+    line->InsertNextId(i);
+  }
+  lines->InsertNextCell(line);
+
+  vtkNew<vtkPolyData> curvePolyData;
+  curvePolyData->SetPoints(points);
+  curvePolyData->SetLines(lines);
+
+  // Remove duplicate points from input
+  vtkNew<vtkCleanPolyData> cleanFilter;
+  cleanFilter->SetInputData(curvePolyData);
+  cleanFilter->Update();
+  points->ShallowCopy(cleanFilter->GetOutput()->GetPoints());
 
   vtkNew<vtkDoubleArray> weights;
   vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
