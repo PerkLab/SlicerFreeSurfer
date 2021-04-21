@@ -701,6 +701,8 @@ vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::s
   vtkNew<vtkDoubleArray> weights;
   vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
   vtkSortDataArray::Sort(weights, points->GetData());
+
+  curveNode->SetCurveTypeToLinear();
   curveNode->SetControlPointPositionsWorld(points);
   return curveNode;
 }
