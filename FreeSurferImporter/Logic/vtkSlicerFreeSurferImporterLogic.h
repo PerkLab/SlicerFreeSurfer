@@ -29,10 +29,12 @@
 
 // MRML includes
 class vtkMRMLColorTableNode;
+class vtkDoubleArray;
 class vtkMRMLFreeSurferProceduralColorNode;
 class vtkMRMLMarkupsNode;
 class vtkMRMLModelNode;
 class vtkMRMLMarkupsPlaneNode;
+class vtkPoints;
 class vtkMRMLSegmentationNode;
 class vtkMRMLVolumeNode;
 
@@ -90,6 +92,8 @@ protected:
   void AddFreeSurferLabelNodeFromFile(const char* fileName);
   void AddFreeSurferNodes();
   vtkMRMLColorTableNode* CreateFileNode(const char* fileName);
+
+  static void SortByBranchlessMinimumSpanningTreePosition(vtkPoints* points, vtkDoubleArray* parameters);
 
   static std::string TempColorNodeID;
 

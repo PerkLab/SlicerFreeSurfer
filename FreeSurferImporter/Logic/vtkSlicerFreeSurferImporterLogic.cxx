@@ -629,6 +629,196 @@ const char* vtkSlicerFreeSurferImporterLogic::GetDefaultFreeSurferLabelMapColorN
   return vtkSlicerFreeSurferImporterLogic::GetFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);
 }
 
+//------------------------------------------------------------------------------
+void vtkSlicerFreeSurferImporterLogic::SortByBranchlessMinimumSpanningTreePosition(vtkPoints* points, vtkDoubleArray* parameters)
+{
+  /// Based on vtkCurveGenerator::SortByMinimumSpanningTreePosition().
+  /// Restricts tree expansion to the current start/end points of the curve to prevent branching.
+  if (points == nullptr)
+  {
+    vtkGenericWarningMacro("Input points are null. Returning");
+    return;
+  }
+
+  if (parameters == nullptr)
+  {
+    vtkGenericWarningMacro("Output point parameters are null. Returning");
+    return;
+  }
+
+  int numberOfPoints = points->GetNumberOfPoints();
+  // redundant error checking, to be safe
+  if (numberOfPoints < 2)
+  {
+    vtkGenericWarningMacro("Not enough points to compute polynomial parameters. Need at least 2 points but " << numberOfPoints << " are provided.");
+    return;
+  }
+
+  // vtk boost algorithms cannot be used because they are not built with 3D Slicer
+  // so this is a custom implementation of:
+  // 1. constructing an undirected graph as a 2D array
+  // 2. Finding the two vertices that are the farthest apart
+  // 3. running prim's algorithm on the graph
+  // 4. extract the "trunk" path from the last vertex to the first
+  // 5. based on the distance along that path, assign each vertex a polynomial parameter value
+
+
+  // in the following code, construct an undirected graph
+  std::vector< double > distances(numberOfPoints * numberOfPoints);
+  distances.assign(numberOfPoints * numberOfPoints, 0.0);
+  // iterate through all points
+  for (int v = 0; v < numberOfPoints; v++)
+  {
+    double pointV[3];
+    points->GetPoint(v, pointV);
+    for (int u = 0; u < numberOfPoints; u++)
+    {
+      double pointU[3];
+      points->GetPoint(u, pointU);
+      double distanceSquared = vtkMath::Distance2BetweenPoints(pointU, pointV);
+      double distance = sqrt(distanceSquared);
+      distances[v * numberOfPoints + u] = distance;
+    }
+  }
+
+  // use the 1D vector as a 2D vector
+  std::vector< double* > graph(numberOfPoints);
+  for (int v = 0; v < numberOfPoints; v++)
+  {
+    graph[v] = &(distances[v * numberOfPoints]);
+  }
+
+  // implementation of Prim's algorithm heavily based on:
+  // http://www.geeksforgeeks.org/greedy-algorithms-set-5-prims-minimum-spanning-tree-mst-2/
+  std::vector< int > parent(numberOfPoints); // Array to store constructed MST
+  parent.assign(numberOfPoints, -1);
+
+  std::vector< bool > mstSet(numberOfPoints);  // To represent set of vertices not yet included in MST
+
+  // The current start and end points of the curve that we can use to expand the tree
+  std::vector< int > endPoints(2);
+  endPoints.assign(2, 0);
+  endPoints[0] = 0;
+  endPoints[1] = 0;
+
+  // Initialize all keys as INFINITE (or at least as close as we can get)
+  for (int i = 0; i < numberOfPoints; i++)
+  {
+    mstSet[i] = false;
+  }
+  mstSet[0] = true;
+
+  // The MST will have numberOfPoints vertices
+  for (int count = 0; count < numberOfPoints - 1; count++)
+  {
+    // Pick the minimum key vertex from the set of vertices
+    // not yet included in MST
+    int nextPointIndex = -1;
+    double minDistance = VTK_DOUBLE_MAX;
+    int endPointIndex = 0;
+    for (int currentEndPointIndex = 0; currentEndPointIndex < 2; ++currentEndPointIndex)
+    {
+      if (currentEndPointIndex == 1 && endPoints[0] == endPoints[1])
+      {
+        continue;
+      }
+
+      for (int v = 0; v < numberOfPoints; v++)
+      {
+        double currentDistance = graph[endPoints[currentEndPointIndex]][v];
+        if (mstSet[v] == false && currentDistance < minDistance)
+        {
+          minDistance = currentDistance;
+          nextPointIndex = v;
+          endPointIndex = currentEndPointIndex;
+        }
+      }
+    }
+
+    // Add the picked vertex to the MST Set
+    mstSet[nextPointIndex] = true;
+    if (endPointIndex == 0)
+    {
+      parent[endPoints[endPointIndex]] = nextPointIndex;
+    }
+    else
+    {
+      parent[nextPointIndex] = endPoints[endPointIndex];
+    }
+    endPoints[endPointIndex] = nextPointIndex;
+
+  }
+
+  // determine the "trunk" path of the tree, from first index to last index
+  std::vector< int > pathIndices;
+  int currentPathIndex = endPoints[1];
+  while (currentPathIndex != -1)
+  {
+    pathIndices.push_back(currentPathIndex);
+    currentPathIndex = parent[currentPathIndex]; // go up the tree one layer
+  }
+
+  // find the sum of distances along the trunk path of the tree
+  double sumOfDistances = 0.0;
+  for (unsigned int i = 0; i < pathIndices.size() - 1; i++)
+  {
+    int pathVertexIndexI = pathIndices[i];
+    int pathVertexIndexIPlus1 = pathIndices[i + 1];
+    sumOfDistances += graph[pathVertexIndexI][pathVertexIndexIPlus1];
+  }
+
+  // check this to prevent a division by zero (in case all points are duplicates)
+  if (sumOfDistances == 0)
+  {
+    vtkGenericWarningMacro("Minimum spanning tree path has distance zero. No parameters will be assigned. Check inputs (are there duplicate points?).");
+    return;
+  }
+
+  // find the parameters along the trunk path of the tree
+  std::vector< double > pathParameters;
+  double currentDistance = 0.0;
+  for (unsigned int i = 0; i < pathIndices.size() - 1; i++)
+  {
+    pathParameters.push_back(currentDistance / sumOfDistances);
+    int pathVertexIndexI = pathIndices[i];
+    int pathVertexIndexIPlus1 = pathIndices[i + 1];
+    currentDistance += graph[pathVertexIndexI][pathVertexIndexIPlus1];
+  }
+  pathParameters.push_back(currentDistance / sumOfDistances); // this should be 1.0
+
+  // finally assign polynomial parameters to each point, and store in the output array
+  parameters->Reset();
+  for (int i = 0; i < numberOfPoints; i++)
+  {
+    int currentIndex = i;
+    bool alongPath = false;
+    int indexAlongPath = -1;
+    for (unsigned int j = 0; j < pathIndices.size(); j++)
+    {
+      if (pathIndices[j] == currentIndex)
+      {
+        alongPath = true;
+        indexAlongPath = j;
+        break;
+      }
+    }
+    while (!alongPath)
+    {
+      currentIndex = parent[currentIndex];
+      for (unsigned int j = 0; j < pathIndices.size(); j++)
+      {
+        if (pathIndices[j] == currentIndex)
+        {
+          alongPath = true;
+          indexAlongPath = j;
+          break;
+        }
+      }
+    }
+    parameters->InsertNextTuple1(pathParameters[indexAlongPath]);
+  }
+}
+
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::string fileName)
 {
@@ -699,7 +889,8 @@ vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::s
   points->ShallowCopy(cleanFilter->GetOutput()->GetPoints());
 
   vtkNew<vtkDoubleArray> weights;
-  vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
+  vtkSlicerFreeSurferImporterLogic::SortByBranchlessMinimumSpanningTreePosition(points, weights);
+  //vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
   vtkSortDataArray::Sort(weights, points->GetData());
 
   curveNode->SetCurveTypeToLinear();
