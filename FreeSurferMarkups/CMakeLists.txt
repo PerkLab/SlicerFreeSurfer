@@ -7,7 +7,6 @@ string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
 add_subdirectory(MRML)
-add_subdirectory(MRMLDM)
 add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
@@ -15,7 +14,10 @@ set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 # Current_{source,binary} and Slicer_{Libs,Base} already included
 set(MODULE_INCLUDE_DIRECTORIES
-  vtkSlicerFreeSurferMarkupsModuleMRMLDisplayableManager
+  ${vtkSlicerMarkupsModuleLogic_INCLUDE_DIRS}
+  ${vtkSlicerMarkupsModuleMRML_INCLUDE_DIRS}
+  ${vtkSlicerMarkupsModuleVTKWidgets_INCLUDE_DIRS}
+  ${qSlicerMarkupsModuleWidgets_INCLUDE_DIRS}
   )
 
 set(MODULE_SRCS
@@ -33,8 +35,11 @@ set(MODULE_UI_SRCS
 set(MODULE_TARGET_LIBRARIES
   vtkSlicerMarkupsModuleMRML
   vtkSlicer${MODULE_NAME}ModuleMRML
-  vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
   vtkSlicer${MODULE_NAME}ModuleLogic
+  vtkSlicerMarkupsModuleLogic
+  vtkSlicerMarkupsModuleMRML
+  vtkSlicerMarkupsModuleVTKWidgets
+  qSlicerMarkupsModuleWidgets
   )
 
 set(MODULE_RESOURCES

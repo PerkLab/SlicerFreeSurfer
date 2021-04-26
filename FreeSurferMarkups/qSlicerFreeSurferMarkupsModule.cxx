@@ -29,15 +29,20 @@
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 
-// FreeSurferMarkupsDisplayableManager
-#include <vtkMRMLFreeSurferMarkupsDisplayableManager.h>
+// MRML includes
+#include <vtkMRMLMarkupsFreeSurferCurveNode.h>
 
 // Logic includes
 #include <vtkSlicerFreeSurferMarkupsLogic.h>
 
-// DisplayableManager initialization
-#include <vtkAutoInit.h>
-VTK_MODULE_INIT(vtkSlicerFreeSurferMarkupsModuleMRMLDisplayableManager)
+// Markups includes
+#include <qSlicerMarkupsAdditionalOptionsWidgetsFactory.h>
+
+// Markups logic includes
+#include <vtkSlicerMarkupsLogic.h>
+
+// Markups VTKWidgets includes
+#include <vtkSlicerCurveWidget.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
@@ -115,8 +120,16 @@ void qSlicerFreeSurferMarkupsModule::setup()
 {
   this->Superclass::setup();
 
-  vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLFreeSurferMarkupsDisplayableManager");
-  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLFreeSurferMarkupsDisplayableManager");
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic()->GetMRMLApplicationLogic()->GetModuleLogic("Markups"));
+  if (!markupsLogic)
+  {
+    qCritical("Could not find Markups logic");
+    return;
+  }
+
+  vtkNew<vtkSlicerCurveWidget> curveWidget;
+  vtkNew< vtkMRMLMarkupsFreeSurferCurveNode> curveNode;
+  markupsLogic->RegisterMarkupsNode(curveNode, curveWidget, true);
 }
 
 //-----------------------------------------------------------------------------

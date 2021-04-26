@@ -89,8 +89,9 @@ void vtkSlicerFreeSurferMarkupsLogic::ObserveMRMLScene()
   vtkMRMLSelectionNode* selectionNode = mrmlAppLogic->GetSelectionNode();
   if (selectionNode)
   {
+    vtkNew<vtkMRMLMarkupsFreeSurferCurveNode> freeSurferCurve;
     selectionNode->AddNewPlaceNodeClassNameToList(
-      "vtkMRMLMarkupsFreeSurferCurveNode",
+      freeSurferCurve->GetClassName(),
       ":/Icons/MarkupsCurveMouseModePlace.png",
       "FreeSurfer curve");
   }
