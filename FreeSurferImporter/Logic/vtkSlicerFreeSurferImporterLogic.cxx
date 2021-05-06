@@ -60,6 +60,9 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 
+// vtkAddon includes
+#include <vtkAddonMathUtilities.h>
+
 // DynamicModeler includes
 #include <vtkSlicerDynamicModelerToolFactory.h>
 
@@ -820,7 +823,7 @@ void vtkSlicerFreeSurferImporterLogic::SortByBranchlessMinimumSpanningTreePositi
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::string fileName)
+vtkMRMLMarkupsCurveNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::string fileName)
 {
   if (!this->GetMRMLScene())
   {
@@ -901,32 +904,65 @@ vtkMRMLMarkupsNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(std::s
 //----------------------------------------------------------------------------
 vtkMRMLMarkupsPlaneNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferPlane(std::string fileName)
 {
-  std::ifstream filestream(fileName.c_str());
-  std::string line;
+  double planeOrigin_Node[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double planeNormal_Node[4] = { 0.0, 0.0, 1.0, 0.0 };
 
-  double planeOrigin[3] = { 0.0, 0.0, 0.0 };
-  if (std::getline(filestream, line))
+  std::string extension = vtksys::SystemTools::GetFilenameExtension(fileName);
+  if (extension == ".label")
   {
-    std::stringstream linestream;
-    linestream << line;
-    linestream >> planeOrigin[0] >> planeOrigin[1] >> planeOrigin[2];
+    vtkMRMLMarkupsCurveNode* curveNode = this->LoadFreeSurferCurve(fileName);
+
+    bool success = false;
+    if (curveNode)
+    {
+      vtkNew<vtkMatrix4x4> transformToBestFitPlane;
+      success = vtkAddonMathUtilities::FitPlaneToPoints(curveNode->GetCurvePoints(), transformToBestFitPlane);
+      if (success)
+      {
+        transformToBestFitPlane->MultiplyPoint(planeOrigin_Node, planeOrigin_Node);
+        transformToBestFitPlane->MultiplyPoint(planeNormal_Node, planeNormal_Node);
+      }
+
+      this->GetMRMLScene()->RemoveNode(curveNode);
+    }
+
+    if (!success)
+    {
+      vtkErrorMacro("LoadFreeSurferPlane: Could not load plane from curve");
+      return nullptr;
+    }
   }
   else
   {
-    vtkErrorMacro("LoadFreeSurferPlane: Could not load plane");
-    return nullptr;
+    std::ifstream filestream(fileName.c_str());
+    std::string line;
+
+    if (std::getline(filestream, line))
+    {
+      std::stringstream linestream;
+      linestream << line;
+      linestream >> planeOrigin_Node[0] >> planeOrigin_Node[1] >> planeOrigin_Node[2];
+    }
+    else
+    {
+      vtkErrorMacro("LoadFreeSurferPlane: Could not load plane");
+      return nullptr;
+    }
+
+    // TODO: Update plane normal from file
+    planeNormal_Node[0] = 0.0;
+    planeNormal_Node[1] = 1.0;
+    planeNormal_Node[2] = 0.0;
   }
 
   std::string nodeName = vtksys::SystemTools::GetFilenameName(fileName);
   vtkMRMLMarkupsPlaneNode* planeNode = vtkMRMLMarkupsPlaneNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLMarkupsPlaneNode", nodeName));
   if (!planeNode)
   {
-    vtkErrorMacro("Could not create plane node");
+    vtkErrorMacro("LoadFreeSurferPlane: Could not create plane node");
     return nullptr;
   }
-
-  double planeNormal[3] = { 0.0, 1.0, 0.0 };
-  planeNode->SetNormalWorld(planeNormal);
-  planeNode->SetOriginWorld(planeOrigin);
+  planeNode->SetNormalWorld(planeNormal_Node);
+  planeNode->SetOriginWorld(planeOrigin_Node);
   return planeNode;
 }

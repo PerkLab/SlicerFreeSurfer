@@ -27,10 +27,8 @@
 #include "qSlicerFreeSurferImporterScalarOverlayOptionsWidget.h"
 
 // MRML includes
-#include <vtkMRMLMarkupsNode.h>
-#include <vtkMRMLModelNode.h>
+#include <vtkMRMLMarkupsCurveNode.h>
 #include <vtkMRMLScene.h>
-#include <vtkMRMLStorageNode.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -111,7 +109,7 @@ bool qSlicerFreeSurferImporterCurveReader::load(const IOProperties & properties)
   QString fileName = properties["fileName"].toString();
 
   QStringList loadedNodes;
-  vtkMRMLMarkupsNode* markupNode = d->Logic->LoadFreeSurferCurve(fileName.toStdString());
+  vtkMRMLMarkupsCurveNode* markupNode = d->Logic->LoadFreeSurferCurve(fileName.toStdString());
   if (markupNode)
   {
     loadedNodes << QString(markupNode->GetID());
