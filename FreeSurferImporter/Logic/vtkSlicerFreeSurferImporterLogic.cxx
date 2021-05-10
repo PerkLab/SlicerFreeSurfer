@@ -893,7 +893,6 @@ vtkMRMLMarkupsCurveNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferCurve(s
 
   vtkNew<vtkDoubleArray> weights;
   vtkSlicerFreeSurferImporterLogic::SortByBranchlessMinimumSpanningTreePosition(points, weights);
-  //vtkCurveGenerator::SortByMinimumSpanningTreePosition(points, weights);
   vtkSortDataArray::Sort(weights, points->GetData());
 
   curveNode->SetCurveTypeToLinear();
@@ -964,5 +963,9 @@ vtkMRMLMarkupsPlaneNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferPlane(s
   }
   planeNode->SetNormalWorld(planeNormal_Node);
   planeNode->SetOriginWorld(planeOrigin_Node);
+
+  double defaultPlaneSizeMm = 50.0;
+  planeNode->SetSizeMode(vtkMRMLMarkupsPlaneNode::SizeModeAbsolute);
+  planeNode->SetPlaneBounds(-defaultPlaneSizeMm, defaultPlaneSizeMm, -defaultPlaneSizeMm, defaultPlaneSizeMm, 0.0, 0.0);
   return planeNode;
 }
