@@ -58,6 +58,9 @@ public:
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsFreeSurferCurve";}
 
+  /// Get markup name
+  const char* GetMarkupType() override { return "FreeSurferCurve"; };
+
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;
 

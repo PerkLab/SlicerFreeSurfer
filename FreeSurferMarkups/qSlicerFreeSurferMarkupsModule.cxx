@@ -128,7 +128,7 @@ void qSlicerFreeSurferMarkupsModule::setup()
   }
 
   vtkNew<vtkSlicerCurveWidget> curveWidget;
-  vtkNew< vtkMRMLMarkupsFreeSurferCurveNode> curveNode;
+  vtkNew<vtkMRMLMarkupsFreeSurferCurveNode> curveNode;
   markupsLogic->RegisterMarkupsNode(curveNode, curveWidget, true);
 }
 
