@@ -38,6 +38,7 @@
 #include <vtkMRMLSegmentationNode.h>
 #include <vtkMRMLSegmentationDisplayNode.h>
 #include <vtkMRMLSegmentationStorageNode.h>
+#include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 
 // VTK include
@@ -229,6 +230,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
 
   QString referenceVolumeNodeID = d->referenceVolumeSelector->currentData().toString();
   vtkMRMLVolumeNode* referenceVolumeNode = nullptr;
+  vtkMRMLVolumeNode* focusVolumeNode = nullptr;
   if (!referenceVolumeNodeID.isEmpty())
   {
     referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(referenceVolumeNodeID.toStdString()));
@@ -247,11 +249,20 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       d->updateStatus(true, "Could not load surface " + volumeName + "!");
       continue;
     }
+
+    // If we are loading a volume, then show the first volume in the slice view
+    // when loading is complete.
+    if (!focusVolumeNode)
+    {
+      focusVolumeNode = volumeNode;
+    }
+
     if (!referenceVolumeNode && referenceVolumeNodeName == volumeName)
     {
       referenceVolumeNode = volumeNode;
     }
     d->volumeSelectorBox->setCheckState(selectedVolume, Qt::CheckState::Unchecked);
+
   }
 
   QModelIndexList selectedSegmentations = d->segmentationSelectorBox->checkedIndexes();
@@ -308,6 +319,26 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
       continue;
     }
     d->scalarOverlaySelectorBox->setCheckState(selectedScalarOverlay, Qt::CheckState::Unchecked);
+  }
+
+  if (referenceVolumeNode)
+  {
+    // If a particular node is being used as reference for the models, then show that volume in the slice views.
+    focusVolumeNode = referenceVolumeNode;
+  }
+  if (focusVolumeNode)
+  {
+    // Show the focused volume in the slice views
+    vtkMRMLSelectionNode* selectionNode =
+      this->appLogic() ? this->appLogic()->GetSelectionNode() : nullptr;
+    if (selectionNode)
+    {
+      selectionNode->SetActiveVolumeID(focusVolumeNode->GetID());
+      if (this->appLogic())
+      {
+        this->appLogic()->PropagateVolumeSelection(); // includes FitSliceToAll by default
+      }
+    }
   }
 
   QApplication::restoreOverrideCursor();
