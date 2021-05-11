@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
-    <height>450</height>
+    <width>236</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,26 +15,33 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="directoryCollapsibleButton">
      <property name="text">
       <string>Directory</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>FreeSurfer directory:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="ctkDirectoryButton" name="directoryButton"/>
+      <item row="1" column="1">
+       <widget class="ctkPathLineEdit" name="pathLineEdit">
+        <property name="filters">
+         <set>ctkPathLineEdit::Dirs|ctkPathLineEdit::Drives|ctkPathLineEdit::Executable|ctkPathLineEdit::NoDot|ctkPathLineEdit::NoDotDot|ctkPathLineEdit::Readable</set>
+        </property>
+        <property name="settingKey">
+         <string>FreeSurferImporterDir</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="qMRMLCollapsibleButton" name="MRMLCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="filesCollapsibleButton">
      <property name="text">
       <string>Files</string>
      </property>
@@ -106,15 +113,15 @@
          <item row="1" column="1">
           <widget class="ctkCheckableComboBox" name="scalarOverlaySelectorBox"/>
          </item>
-         <item row="2" column="1">
-          <widget class="ctkComboBox" name="referenceVolumeSelector"/>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_6">
            <property name="text">
             <string>Reference volume:</string>
            </property>
           </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="ctkComboBox" name="referenceVolumeSelector"/>
          </item>
         </layout>
        </widget>
@@ -143,7 +150,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="CollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="transformCollapsibleButton">
      <property name="text">
       <string>Transform model</string>
      </property>
@@ -222,23 +229,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLCollapsibleButton</class>
-   <extends>ctkCollapsibleButton</extends>
-   <header>qMRMLCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkCheckableComboBox</class>
    <extends>QComboBox</extends>
    <header>ctkCheckableComboBox.h</header>
@@ -261,9 +251,21 @@
    <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkDirectoryButton</class>
+   <class>ctkPathLineEdit</class>
    <extends>QWidget</extends>
-   <header>ctkDirectoryButton.h</header>
+   <header>ctkPathLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -297,6 +299,22 @@
     <hint type="destinationlabel">
      <x>310</x>
      <y>465</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pathLineEdit</sender>
+   <signal>currentPathChanged(QString)</signal>
+   <receiver>pathLineEdit</receiver>
+   <slot>addCurrentPathToHistory()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>171</x>
+     <y>56</y>
     </hint>
    </hints>
   </connection>

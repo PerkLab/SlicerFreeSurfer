@@ -105,7 +105,7 @@ void qSlicerFreeSurferImporterModuleWidget::setup()
   // Erase status label
   d->statusLabel->setText("");
 
-  QObject::connect(d->directoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(updateFileList()));
+  QObject::connect(d->pathLineEdit, SIGNAL(currentPathChanged(QString)), this, SLOT(updateFileList()));
   QObject::connect(d->loadButton, SIGNAL(clicked()), this, SLOT(loadSelectedFiles()));
   QObject::connect(d->volumeSelectorBox, SIGNAL(checkedIndexesChanged()), this, SLOT(updateReferenceVolumeSelector()));
   QObject::connect(d->transformModelSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
@@ -134,7 +134,7 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
   d->volumeSelectorBox->clear();
   d->scalarOverlaySelectorBox->clear();
 
-  QString directory = d->directoryButton->directory();
+  QString directory = d->pathLineEdit->currentPath();
 
   QDir mriDirectory(directory + "/mri");
   mriDirectory.setNameFilters(QStringList() << "*.mgz" << "*.cor" << "*.bshort");
@@ -225,7 +225,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   qSlicerFreeSurferImporterModule* module = qobject_cast<qSlicerFreeSurferImporterModule*>(this->module());
   vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(module->logic());
 
-  QString directory = d->directoryButton->directory();
+  QString directory = d->pathLineEdit->currentPath();
   QString mriDirectory = directory + "/mri/";
 
   QString referenceVolumeNodeID = d->referenceVolumeSelector->currentData().toString();
