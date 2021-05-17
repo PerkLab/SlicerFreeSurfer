@@ -74,11 +74,12 @@ qSlicerIO::IOFileType qSlicerFreeSurferImporterModelReader::fileType() const
 QStringList qSlicerFreeSurferImporterModelReader::extensions() const
 {
   QStringList supportedExtensions = QStringList();
-  supportedExtensions << "FreeSurfer model (*.white)";
-  supportedExtensions << "FreeSurfer model (*.pial)";
-  supportedExtensions << "FreeSurfer model (*.orig)";
-  supportedExtensions << "FreeSurfer model (*.inflated)";
-  supportedExtensions << "FreeSurfer model (*.sphere)";
+  supportedExtensions << "*.white";
+  supportedExtensions << "*.pial";
+  supportedExtensions << "*.orig";
+  supportedExtensions << "*.inflated";
+  supportedExtensions << "*.sphere";
+  supportedExtensions << "*.*";
   return supportedExtensions;
 }
 
