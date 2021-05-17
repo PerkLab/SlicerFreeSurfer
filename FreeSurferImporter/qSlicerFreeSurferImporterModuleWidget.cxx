@@ -111,6 +111,7 @@ void qSlicerFreeSurferImporterModuleWidget::setup()
   QObject::connect(d->transformModelSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
   QObject::connect(d->transformReferenceSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
   QObject::connect(d->transformButton, SIGNAL(clicked()), this, SLOT(transformSelectedModel()));
+  QObject::connect(d->modelShowAllCheckBox, SIGNAL(clicked()), this, SLOT(updateFileList()));
   this->updateFileList();
   this->updateTransformWidgets();
 }
@@ -157,7 +158,15 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
   }
 
   QDir surfDirectory(directory + "/surf");
-  surfDirectory.setNameFilters(QStringList() << "*h.white" << "*h.pial" << "*h.inflated" << "*h.sphere" << "*h.sphere.reg" << "*h.orig");
+  if (!d->modelShowAllCheckBox->isChecked())
+  {
+    surfDirectory.setNameFilters(QStringList() << "*h.white" << "*h.pial" << "*h.inflated" << "*h.sphere" << "*h.sphere.reg" << "*h.orig");
+  }
+  else
+  {
+    surfDirectory.setNameFilters(QStringList() << "*.*");
+  }
+  surfDirectory.setFilter(QDir::Files);
   QStringList surfFiles = surfDirectory.entryList();
   for (QString surfFile : surfFiles)
   {
@@ -295,9 +304,9 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     d->modelSelectorBox->setCheckState(selectedModel, Qt::CheckState::Unchecked);
     modelNodes.push_back(modelNode);
     if (referenceVolumeNode &&
-       ( vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".pial"
-      || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
-      || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig"))
+      (vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".pial"
+        || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
+        || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig"))
     {
       logic->TransformFreeSurferModelToWorld(modelNode, referenceVolumeNode);
     }
