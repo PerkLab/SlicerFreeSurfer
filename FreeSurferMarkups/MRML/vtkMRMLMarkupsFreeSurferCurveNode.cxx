@@ -102,6 +102,7 @@ void vtkMRMLMarkupsFreeSurferCurveNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(distanceSulcalHeightPenalty, DistanceSulcalHeightPenalty);
   vtkMRMLWriteXMLFloatMacro(curvatureSulcalHeightPenalty, CurvatureSulcalHeightPenalty);
   vtkMRMLWriteXMLFloatMacro(distanceCurvatureSulcalHeightPenalty, DistanceCurvatureSulcalHeightPenalty);
+  vtkMRMLWriteXMLBooleanMacro(invertScalars, InvertScalars);
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -127,6 +128,7 @@ void vtkMRMLMarkupsFreeSurferCurveNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(distanceSulcalHeightPenalty, DistanceSulcalHeightPenalty);
   vtkMRMLReadXMLFloatMacro(curvatureSulcalHeightPenalty, CurvatureSulcalHeightPenalty);
   vtkMRMLReadXMLFloatMacro(distanceCurvatureSulcalHeightPenalty, DistanceCurvatureSulcalHeightPenalty);
+  vtkMRMLReadXMLBooleanMacro(invertScalars, InvertScalars);
   vtkMRMLReadXMLEndMacro();
 }
 
@@ -151,6 +153,7 @@ void vtkMRMLMarkupsFreeSurferCurveNode::CopyContent(vtkMRMLNode* anode, bool dee
   vtkMRMLCopyFloatMacro(DistanceSulcalHeightPenalty);
   vtkMRMLCopyFloatMacro(CurvatureSulcalHeightPenalty);
   vtkMRMLCopyFloatMacro(DistanceCurvatureSulcalHeightPenalty);
+  vtkMRMLCopyBooleanMacro(InvertScalars);
   vtkMRMLCopyEndMacro();
 }
 
@@ -174,39 +177,43 @@ void vtkMRMLMarkupsFreeSurferCurveNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(DistanceSulcalHeightPenalty);
   vtkMRMLPrintFloatMacro(CurvatureSulcalHeightPenalty);
   vtkMRMLPrintFloatMacro(DistanceCurvatureSulcalHeightPenalty);
+  vtkMRMLPrintBooleanMacro(InvertScalars);
   vtkMRMLPrintEndMacro();
 }
 
 //------------------------------------------------------------------------------
-#define FreeSurferCurveGeneratorPropertyMacro(propertyName)\
-void vtkMRMLMarkupsFreeSurferCurveNode::Set##propertyName(double weight)\
+#define FreeSurferCurveGeneratorPropertyMacro(propertyName, type)\
+void vtkMRMLMarkupsFreeSurferCurveNode::Set##propertyName(##type value)\
 {\
-  if (weight == this->Get##propertyName())\
+  if (value == this->Get##propertyName())\
   {\
     return;\
   }\
-  this->FreeSurferCurveGenerator->Set##propertyName(weight);\
+  this->FreeSurferCurveGenerator->Set##propertyName(value);\
   this->Modified();\
 }\
-double vtkMRMLMarkupsFreeSurferCurveNode::Get##propertyName()\
+##type vtkMRMLMarkupsFreeSurferCurveNode::Get##propertyName()\
 {\
   return this->FreeSurferCurveGenerator->Get##propertyName();\
 }
 
 //------------------------------------------------------------------------------
-FreeSurferCurveGeneratorPropertyMacro(DistanceWeight);
-FreeSurferCurveGeneratorPropertyMacro(CurvatureWeight);
-FreeSurferCurveGeneratorPropertyMacro(SulcalHeightWeight);
-FreeSurferCurveGeneratorPropertyMacro(DistanceCurvatureWeight);
-FreeSurferCurveGeneratorPropertyMacro(DistanceSulcalHeightWeight);
-FreeSurferCurveGeneratorPropertyMacro(CurvatureSulcalHeightWeight);
-FreeSurferCurveGeneratorPropertyMacro(DistanceCurvatureSulcalHeightWeight);
-FreeSurferCurveGeneratorPropertyMacro(DirectionWeight);
+FreeSurferCurveGeneratorPropertyMacro(DistanceWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(CurvatureWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(SulcalHeightWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(DistanceCurvatureWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(DistanceSulcalHeightWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(CurvatureSulcalHeightWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(DistanceCurvatureSulcalHeightWeight, double);
+FreeSurferCurveGeneratorPropertyMacro(DirectionWeight, double);
 
 //------------------------------------------------------------------------------
-FreeSurferCurveGeneratorPropertyMacro(CurvaturePenalty);
-FreeSurferCurveGeneratorPropertyMacro(SulcalHeightPenalty);
-FreeSurferCurveGeneratorPropertyMacro(DistanceCurvaturePenalty);
-FreeSurferCurveGeneratorPropertyMacro(DistanceSulcalHeightPenalty);
-FreeSurferCurveGeneratorPropertyMacro(CurvatureSulcalHeightPenalty);
-FreeSurferCurveGeneratorPropertyMacro(DistanceCurvatureSulcalHeightPenalty);
+FreeSurferCurveGeneratorPropertyMacro(CurvaturePenalty, double);
+FreeSurferCurveGeneratorPropertyMacro(SulcalHeightPenalty, double);
+FreeSurferCurveGeneratorPropertyMacro(DistanceCurvaturePenalty, double);
+FreeSurferCurveGeneratorPropertyMacro(DistanceSulcalHeightPenalty, double);
+FreeSurferCurveGeneratorPropertyMacro(CurvatureSulcalHeightPenalty, double);
+FreeSurferCurveGeneratorPropertyMacro(DistanceCurvatureSulcalHeightPenalty, double);
+
+//------------------------------------------------------------------------------
+FreeSurferCurveGeneratorPropertyMacro(InvertScalars, bool);

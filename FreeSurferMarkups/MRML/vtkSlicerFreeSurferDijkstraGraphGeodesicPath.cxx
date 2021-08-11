@@ -49,6 +49,8 @@ vtkSlicerFreeSurferDijkstraGraphGeodesicPath::vtkSlicerFreeSurferDijkstraGraphGe
   this->DistanceSulcalHeightPenalty = 10.0;
   this->CurvatureSulcalHeightPenalty = 10.0;
   this->DistanceCurvatureSulcalHeightPenalty = 1.0;
+
+  this->InvertScalars = false;
 }
 
 //------------------------------------------------------------------------------
@@ -132,7 +134,8 @@ double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateDynamicEdgeCost(
   double distanceCurvatureSulcalHeightWeight = this->DistanceCurvatureSulcalHeightWeight;
   double directionWeight = this->DirectionWeight;
 
-  if (curvature < 0)
+  if ((!this->InvertScalars && curvature < 0) ||
+        this->InvertScalars && curvature > 0)
   {
     curvatureWeight *= this ->CurvaturePenalty;
     distanceCurvatureWeight *= this->DistanceCurvaturePenalty;
@@ -140,7 +143,8 @@ double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateDynamicEdgeCost(
     distanceCurvatureSulcalHeightWeight *= this->DistanceCurvatureSulcalHeightPenalty;
   }
 
-  if (sulcalHeight < 0)
+  if ((!this->InvertScalars && sulcalHeight < 0) ||
+    this->InvertScalars && sulcalHeight > 0)
   {
     sulcalHeightWeight *= this->SulcalHeightPenalty;
     distanceSulcalHeightWeight *= this->DistanceSulcalHeightPenalty;
@@ -149,8 +153,16 @@ double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateDynamicEdgeCost(
   }
 
   // Set curvature and sulcal height to strictly positive ranges
-  curvature = curvatureRange[1] - curvature;
-  sulcalHeight = sulcalHeightRange[1] - sulcalHeight;
+  if (this->InvertScalars)
+  {
+    curvature = curvature - curvatureRange[0];
+    sulcalHeight = sulcalHeight - sulcalHeightRange[0];
+  }
+  else
+  {
+    curvature = curvatureRange[1] - curvature;
+    sulcalHeight = sulcalHeightRange[1] - sulcalHeight;
+  }
 
   double cost = 0.0;
   cost += distanceWeight * distance;

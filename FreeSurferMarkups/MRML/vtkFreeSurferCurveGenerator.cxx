@@ -58,39 +58,43 @@ void vtkFreeSurferCurveGenerator::PrintSelf(std::ostream & os, vtkIndent indent)
   vtkMRMLPrintFloatMacro(DistanceSulcalHeightPenalty);
   vtkMRMLPrintFloatMacro(CurvatureSulcalHeightPenalty);
   vtkMRMLPrintFloatMacro(DistanceCurvatureSulcalHeightPenalty);
+  vtkMRMLPrintBooleanMacro(InvertScalars);
   vtkMRMLPrintEndMacro();
 }
 
 //------------------------------------------------------------------------------
-#define FreeSurferPathFilterPropertyMacro(propertyName)\
-void vtkFreeSurferCurveGenerator::Set##propertyName(double weight)\
+#define FreeSurferPathFilterPropertyMacro(propertyName, type)\
+void vtkFreeSurferCurveGenerator::Set##propertyName(##type value)\
 {\
-  if (weight == this->Get##propertyName())\
+  if (value == this->Get##propertyName())\
   {\
     return;\
   }\
-  this->FreeSurferSurfacePathFilter->Set##propertyName(weight);\
+  this->FreeSurferSurfacePathFilter->Set##propertyName(value);\
   this->Modified();\
 }\
-double vtkFreeSurferCurveGenerator::Get##propertyName()\
+##type vtkFreeSurferCurveGenerator::Get##propertyName()\
 {\
   return this->FreeSurferSurfacePathFilter->Get##propertyName();\
 }
 
 //------------------------------------------------------------------------------
-FreeSurferPathFilterPropertyMacro(DistanceWeight);
-FreeSurferPathFilterPropertyMacro(CurvatureWeight);
-FreeSurferPathFilterPropertyMacro(SulcalHeightWeight);
-FreeSurferPathFilterPropertyMacro(DistanceCurvatureWeight);
-FreeSurferPathFilterPropertyMacro(DistanceSulcalHeightWeight);
-FreeSurferPathFilterPropertyMacro(CurvatureSulcalHeightWeight);
-FreeSurferPathFilterPropertyMacro(DistanceCurvatureSulcalHeightWeight);
-FreeSurferPathFilterPropertyMacro(DirectionWeight);
+FreeSurferPathFilterPropertyMacro(DistanceWeight, double);
+FreeSurferPathFilterPropertyMacro(CurvatureWeight, double);
+FreeSurferPathFilterPropertyMacro(SulcalHeightWeight, double);
+FreeSurferPathFilterPropertyMacro(DistanceCurvatureWeight, double);
+FreeSurferPathFilterPropertyMacro(DistanceSulcalHeightWeight, double);
+FreeSurferPathFilterPropertyMacro(CurvatureSulcalHeightWeight, double);
+FreeSurferPathFilterPropertyMacro(DistanceCurvatureSulcalHeightWeight, double);
+FreeSurferPathFilterPropertyMacro(DirectionWeight, double);
 
 //------------------------------------------------------------------------------
-FreeSurferPathFilterPropertyMacro(CurvaturePenalty);
-FreeSurferPathFilterPropertyMacro(SulcalHeightPenalty);
-FreeSurferPathFilterPropertyMacro(DistanceCurvaturePenalty);
-FreeSurferPathFilterPropertyMacro(DistanceSulcalHeightPenalty);
-FreeSurferPathFilterPropertyMacro(CurvatureSulcalHeightPenalty);
-FreeSurferPathFilterPropertyMacro(DistanceCurvatureSulcalHeightPenalty);
+FreeSurferPathFilterPropertyMacro(CurvaturePenalty, double);
+FreeSurferPathFilterPropertyMacro(SulcalHeightPenalty, double);
+FreeSurferPathFilterPropertyMacro(DistanceCurvaturePenalty, double);
+FreeSurferPathFilterPropertyMacro(DistanceSulcalHeightPenalty, double);
+FreeSurferPathFilterPropertyMacro(CurvatureSulcalHeightPenalty, double);
+FreeSurferPathFilterPropertyMacro(DistanceCurvatureSulcalHeightPenalty, double);
+
+//------------------------------------------------------------------------------
+FreeSurferPathFilterPropertyMacro(InvertScalars, bool);

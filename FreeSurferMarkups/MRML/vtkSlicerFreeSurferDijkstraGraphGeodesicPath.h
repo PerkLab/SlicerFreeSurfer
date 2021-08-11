@@ -114,6 +114,10 @@ public:
   vtkSetMacro(DistanceCurvatureSulcalHeightPenalty, double);
   vtkGetMacro(DistanceCurvatureSulcalHeightPenalty, double);
 
+  /// If true, then the curvature and sulcal depth scalars will be inverted
+  vtkSetMacro(InvertScalars, bool);
+  vtkGetMacro(InvertScalars, bool);
+
 protected:
   /// The fixed cost going from vertex u to v.
   /// Reimplemented to provide additonal cost function types.
@@ -146,6 +150,8 @@ protected:
   double DistanceSulcalHeightPenalty;
   double CurvatureSulcalHeightPenalty;
   double DistanceCurvatureSulcalHeightPenalty;
+
+  bool InvertScalars;
 };
 
 #endif

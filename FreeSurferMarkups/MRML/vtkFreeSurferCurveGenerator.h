@@ -56,6 +56,7 @@ public:
   void SetDistanceSulcalHeightPenalty(double weight);
   void SetCurvatureSulcalHeightPenalty(double weight);
   void SetDistanceCurvatureSulcalHeightPenalty(double weight);
+  void SetInvertScalars(bool invert);
 
   double GetDistanceWeight();
   double GetCurvatureWeight();
@@ -71,6 +72,7 @@ public:
   double GetDistanceSulcalHeightPenalty();
   double GetCurvatureSulcalHeightPenalty();
   double GetDistanceCurvatureSulcalHeightPenalty();
+  bool GetInvertScalars();
 
 protected:
 
