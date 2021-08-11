@@ -1419,8 +1419,6 @@ bool qSlicerXcedeCatalogReader::load(const qSlicerIO::IOProperties& properties)
 
   //--- clean up.
   //$parser Delete
-  //$::slicer3::MRMLScene SetErrorCode 0
-  this->mrmlScene()->SetErrorCode(0);
   this->setLoadedNodes(d->LoadedNodes);
   //puts "...done reading $xcedeFile."
   qDebug() << "... done reading" << fileName;
