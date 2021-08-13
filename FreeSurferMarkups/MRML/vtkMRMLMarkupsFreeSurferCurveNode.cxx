@@ -183,7 +183,7 @@ void vtkMRMLMarkupsFreeSurferCurveNode::PrintSelf(ostream& os, vtkIndent indent)
 
 //------------------------------------------------------------------------------
 #define FreeSurferCurveGeneratorPropertyMacro(propertyName, type)\
-void vtkMRMLMarkupsFreeSurferCurveNode::Set##propertyName(##type value)\
+void vtkMRMLMarkupsFreeSurferCurveNode::Set##propertyName(type value)\
 {\
   if (value == this->Get##propertyName())\
   {\
@@ -192,7 +192,7 @@ void vtkMRMLMarkupsFreeSurferCurveNode::Set##propertyName(##type value)\
   this->FreeSurferCurveGenerator->Set##propertyName(value);\
   this->Modified();\
 }\
-##type vtkMRMLMarkupsFreeSurferCurveNode::Get##propertyName()\
+type vtkMRMLMarkupsFreeSurferCurveNode::Get##propertyName()\
 {\
   return this->FreeSurferCurveGenerator->Get##propertyName();\
 }

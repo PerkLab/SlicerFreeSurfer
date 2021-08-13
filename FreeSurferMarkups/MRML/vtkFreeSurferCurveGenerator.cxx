@@ -64,7 +64,7 @@ void vtkFreeSurferCurveGenerator::PrintSelf(std::ostream & os, vtkIndent indent)
 
 //------------------------------------------------------------------------------
 #define FreeSurferPathFilterPropertyMacro(propertyName, type)\
-void vtkFreeSurferCurveGenerator::Set##propertyName(##type value)\
+void vtkFreeSurferCurveGenerator::Set##propertyName(type value)\
 {\
   if (value == this->Get##propertyName())\
   {\
@@ -73,7 +73,7 @@ void vtkFreeSurferCurveGenerator::Set##propertyName(##type value)\
   this->FreeSurferSurfacePathFilter->Set##propertyName(value);\
   this->Modified();\
 }\
-##type vtkFreeSurferCurveGenerator::Get##propertyName()\
+type vtkFreeSurferCurveGenerator::Get##propertyName()\
 {\
   return this->FreeSurferSurfacePathFilter->Get##propertyName();\
 }
