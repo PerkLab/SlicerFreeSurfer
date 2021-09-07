@@ -445,6 +445,10 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
     return 0;
     }
 
+  vtkInfoMacro("Loaded scalar overlay from file: " << fullName \
+    << ". Model node: " << modelNode->GetName() << "(" << modelNode->GetID() << ")" \
+    << ".");
+
   vtkDebugMacro("ReadData: success");
   return (success ? 1 : 0);
 }
