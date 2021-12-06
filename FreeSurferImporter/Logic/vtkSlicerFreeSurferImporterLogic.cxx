@@ -966,6 +966,6 @@ vtkMRMLMarkupsPlaneNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferPlane(s
 
   double defaultPlaneSizeMm = 50.0;
   planeNode->SetSizeMode(vtkMRMLMarkupsPlaneNode::SizeModeAbsolute);
-  planeNode->SetPlaneBounds(-defaultPlaneSizeMm, defaultPlaneSizeMm, -defaultPlaneSizeMm, defaultPlaneSizeMm, 0.0, 0.0);
+  planeNode->SetPlaneBounds(-defaultPlaneSizeMm, defaultPlaneSizeMm, -defaultPlaneSizeMm, defaultPlaneSizeMm);
   return planeNode;
 }

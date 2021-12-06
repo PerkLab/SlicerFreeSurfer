@@ -35,9 +35,6 @@
 // Logic includes
 #include <vtkSlicerFreeSurferMarkupsLogic.h>
 
-// Markups includes
-#include <qSlicerMarkupsAdditionalOptionsWidgetsFactory.h>
-
 // Markups logic includes
 #include <vtkSlicerMarkupsLogic.h>
 
