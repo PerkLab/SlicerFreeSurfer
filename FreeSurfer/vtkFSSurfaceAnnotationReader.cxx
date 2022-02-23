@@ -990,10 +990,6 @@ int vtkFSSurfaceAnnotationReader::GenerateColorTable(
   bool currentColorIndex = 0;
   for (int labelIndex = 0; labelIndex < numLabels; labelIndex++)
   {
-    if (labelIndex % 1000 == 0)
-    {
-      vtkDebugMacro(<< "ReadFSAnnotation: rgbs[" << labelIndex << "] = " << rgbs[labelIndex] << " (numLabels = " << numLabels << ")" << endl);
-    }
     // Expand the rgb value into separate values.
     int r = labelColors[labelIndex] & 0xff;
     int g = (labelColors[labelIndex] >> 8) & 0xff;
