@@ -54,12 +54,22 @@ public:
   // MRMLNode methods
   //--------------------------------------------------------------------------
 
+  const char* GetIcon() override { return ":/Icons/MarkupsFreeSurferCurve.png"; }
+  const char* GetAddIcon() override { return ":/Icons/MarkupsFreeSurferCurveMouseModePlace.png"; }
+  const char* GetPlaceAddIcon() override { return ":/Icons/MarkupsFreeSurferCurveMouseModePlaceAdd.png"; }
+
   vtkMRMLNode* CreateNodeInstance() override;
   /// Get node XML tag name (like Volume, Model)
   const char* GetNodeTagName() override {return "MarkupsFreeSurferCurve";}
 
   /// Get markup name
   const char* GetMarkupType() override { return "FreeSurferCurve"; };
+
+  // Get markup type GUI display name
+  const char* GetTypeDisplayName() override { return "FreeSurfer Curve"; };
+
+  /// Get markup short name
+  const char* GetDefaultNodeNamePrefix() override { return "FSC"; };
 
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;

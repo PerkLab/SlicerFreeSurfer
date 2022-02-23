@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource>
+    <file>Icons/MarkupsFreeSurferCurve.png</file>
+    <file>Icons/MarkupsFreeSurferCurveMouseModePlace.png</file>
+    <file>Icons/MarkupsFreeSurferCurveMouseModePlaceAdd.png</file>
+  </qresource>
+</RCC>
