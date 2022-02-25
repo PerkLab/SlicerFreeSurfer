@@ -526,8 +526,6 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::WriteDataInternal(vtkMRMLNode * vt
 int vtkMRMLFreeSurferModelOverlayStorageNode::CopyData(vtkMRMLNode *refNode,
                                                        const char *newFileName)
 {
-  bool copyOK;
-
   // test whether refNode is a valid node to hold a model
   if (!refNode->IsA("vtkMRMLModelNode") )
     {
@@ -555,7 +553,7 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::CopyData(vtkMRMLNode *refNode,
     }
 
   //--- try copying to destination always
-  copyOK = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), true );
+  bool copyOK = static_cast<bool>(itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), true ));
   //--- try copying to destination if different
   //tst = itksys::SystemTools::CopyAFile ( fullName.c_str(), newName.c_str(), 0 );
 
