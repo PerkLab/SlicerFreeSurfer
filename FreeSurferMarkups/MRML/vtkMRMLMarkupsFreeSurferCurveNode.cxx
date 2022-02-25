@@ -17,43 +17,18 @@
 
 #include "vtkMRMLMarkupsFreeSurferCurveNode.h"
 
-// MRML includes
-#include <vtkFreeSurferCurveGenerator.h>
-#include "vtkCurveMeasurementsCalculator.h"
-#include "vtkMRMLMarkupsDisplayNode.h"
-#include "vtkMRMLMeasurementLength.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLUnitNode.h"
-#include "vtkSlicerDijkstraGraphGeodesicPath.h"
+// Markups MRML includes
+#include <vtkCurveMeasurementsCalculator.h>
+#include <vtkSlicerDijkstraGraphGeodesicPath.h>
+
+// FreeSurferMarkups MRML includes
+#include "vtkFreeSurferCurveGenerator.h"
 
 // VTK includes
 #include <vtkArrayCalculator.h>
-#include <vtkAssignAttribute.h>
-#include <vtkBoundingBox.h>
 #include <vtkCallbackCommand.h>
-#include <vtkCellLocator.h>
-#include <vtkCleanPolyData.h>
 #include <vtkCommand.h>
-#include <vtkCutter.h>
-#include <vtkDoubleArray.h>
-#include <vtkFrenetSerretFrame.h>
-#include <vtkGeneralTransform.h>
-#include <vtkGenericCell.h>
-#include <vtkLine.h>
-#include <vtkMatrix4x4.h>
-#include <vtkNew.h>
-#include <vtkOBBTree.h>
-#include <vtkObjectFactory.h>
-#include <vtkPassThroughFilter.h>
-#include <vtkPlane.h>
-#include <vtkPointData.h>
-#include <vtkPointLocator.h>
-#include <vtkPolyData.h>
-#include <vtkPolyDataNormals.h>
-#include <vtkStringArray.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkTriangleFilter.h>
 
 // STD includes
 #include <sstream>
