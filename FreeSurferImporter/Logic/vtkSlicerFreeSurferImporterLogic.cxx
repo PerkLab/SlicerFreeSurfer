@@ -243,42 +243,52 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
 }
 
 //-----------------------------------------------------------------------------
-bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes)
+bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string filePath, vtkMRMLModelNode* modelNode)
 {
-  vtkMRMLFreeSurferModelOverlayStorageNode* overlayStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::SafeDownCast(
-    this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelOverlayStorageNode"));
-  if (!overlayStorageNode)
+  if (!modelNode)
   {
     return false;
   }
 
-  overlayStorageNode->SetFileName(filePath.c_str());
+  vtkMRMLFreeSurferModelOverlayStorageNode* overlayStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::SafeDownCast(
+    this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelOverlayStorageNode"));
+  if (!overlayStorageNode)
+  {
+    vtkErrorMacro("LoadFreeSurferScalarOverlay: Could not add FreeSurfer overlay storage node");
+    return false;
+  }
 
   bool success = true;
-  int numberOfOverlayLoaded = 0;
-  for (vtkMRMLModelNode* modelNode : modelNodes)
+  overlayStorageNode->SetFileName(filePath.c_str());
+  if (!overlayStorageNode->ReadData(modelNode))
   {
-    if (!modelNode->GetName())
-    {
-      continue;
-    }
+    vtkErrorMacro("LoadFreeSurferScalarOverlay: Could not add FreeSurfer overlay");
+    success = false;
+  }
 
-    std::string overlayName = overlayStorageNode->GetOverlayNameFromFileName(filePath);
+  this->GetMRMLScene()->RemoveNode(overlayStorageNode);
+  return success;
+}
 
-    if (!overlayStorageNode->ReadData(modelNode))
+//-----------------------------------------------------------------------------
+bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string filePath, vtkCollection* modelNodes)
+{
+  int numberOfOverlayLoaded = 0;
+  for (int i = 0; i < modelNodes->GetNumberOfItems(); ++i)
+  {
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(modelNodes->GetItemAsObject(i)); 
+    if (!this->LoadFreeSurferScalarOverlay(filePath, modelNode))
     {
-      success = false;
       continue;
     }
     numberOfOverlayLoaded += 1;
   }
 
-  this->GetMRMLScene()->RemoveNode(overlayStorageNode);
   if (numberOfOverlayLoaded == 0)
   {
-    success = false;
+    return false;
   }
-  return success;
+  return true;
 }
 
 //-----------------------------------------------------------------------------

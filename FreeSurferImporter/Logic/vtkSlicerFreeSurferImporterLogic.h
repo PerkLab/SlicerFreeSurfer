@@ -27,6 +27,9 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
+// VTK includes
+class vtkCollection;
+
 // MRML includes
 class vtkMRMLColorTableNode;
 class vtkDoubleArray;
@@ -58,7 +61,8 @@ public:
   vtkMRMLVolumeNode* LoadFreeSurferVolume(std::string filePath);
   vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string filePath);
   vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
-  bool LoadFreeSurferScalarOverlay(std::string filePath, std::vector<vtkMRMLModelNode*> modelNodes);
+  bool LoadFreeSurferScalarOverlay(std::string filePath, vtkCollection* modelNodes);
+  bool LoadFreeSurferScalarOverlay(std::string filePath, vtkMRMLModelNode* modelNode);
   vtkMRMLMarkupsCurveNode* LoadFreeSurferCurve(std::string fileName);
   vtkMRMLMarkupsPlaneNode* LoadFreeSurferPlane(std::string fileName);
 
