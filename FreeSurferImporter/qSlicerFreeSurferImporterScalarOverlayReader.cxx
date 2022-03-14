@@ -130,9 +130,7 @@ bool qSlicerFreeSurferImporterScalarOverlayReader::load(const IOProperties & pro
   }
 
   QStringList loadedNodes;
-  std::vector<vtkMRMLModelNode*> modelNodes = { modelNode };
-
-  bool success = d->Logic->LoadFreeSurferScalarOverlay(fileName.toStdString(), modelNodes);
+  bool success = d->Logic->LoadFreeSurferScalarOverlay(fileName.toStdString(), modelNode);
   if (success)
   {
     loadedNodes << QString(modelNodeId);

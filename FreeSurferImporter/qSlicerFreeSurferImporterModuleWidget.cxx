@@ -312,16 +312,18 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     }
   }
 
+  vtkNew<vtkCollection> modelNodeCollection;
   for (vtkMRMLModelNode* modelNode : modelNodes)
   {
     modelNode->CreateDefaultDisplayNodes();
-  }
+    modelNodeCollection->AddItem(modelNode);
+  } 
 
   QModelIndexList selectedScalarOverlays = d->scalarOverlaySelectorBox->checkedIndexes();
   for (QModelIndex selectedScalarOverlay : selectedScalarOverlays)
   {
     QString scalarOverlayName = d->scalarOverlaySelectorBox->itemText(selectedScalarOverlay.row());
-    bool success = logic->LoadFreeSurferScalarOverlay((surfDirectory + scalarOverlayName).toStdString(), modelNodes);
+    bool success = logic->LoadFreeSurferScalarOverlay((surfDirectory + scalarOverlayName).toStdString(), modelNodeCollection);
     if (!success)
     {
       d->updateStatus(true, "Could not load scalar overlay " + scalarOverlayName + "!");
