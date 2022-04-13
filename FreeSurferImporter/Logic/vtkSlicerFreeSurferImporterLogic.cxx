@@ -211,15 +211,16 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
   extension.erase(0, 1);
   name += "_" + extension;
 
-  vtkMRMLModelNode* surfNode = vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLModelNode"));
+  vtkSmartPointer<vtkMRMLModelNode> surfNode = vtkSmartPointer<vtkMRMLModelNode>::Take(
+    vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLModelNode")));
   if (!surfNode)
   {
     return nullptr;
   }
   surfNode->SetName(name.c_str());
 
-  vtkMRMLFreeSurferModelStorageNode* surfStorageNode = vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
-    this->GetMRMLScene()->AddNewNodeByClass("vtkMRMLFreeSurferModelStorageNode"));
+  vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> surfStorageNode = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::Take(vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
+    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFreeSurferModelStorageNode")));
   if (!surfStorageNode)
   {
     vtkErrorMacro("LoadFreeSurferModel: Could not add FreeSurfer storage node");
@@ -233,12 +234,12 @@ vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::str
     surfStorageNode->SetFileName(filePath.c_str());
     if (surfStorageNode->ReadData(surfNode))
     {
+      this->GetMRMLScene()->AddNode(surfStorageNode);
+      this->GetMRMLScene()->AddNode(surfNode);
       return surfNode;
     }
   }
 
-  this->GetMRMLScene()->RemoveNode(surfStorageNode);
-  this->GetMRMLScene()->RemoveNode(surfNode);
   return nullptr;
 }
 
