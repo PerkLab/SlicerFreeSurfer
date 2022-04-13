@@ -28,11 +28,11 @@ Version:   $Revision: 1.2 $
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
 
-
-
 #include "itksys/SystemTools.hxx"
 
 #include "vtkStringArray.h"
+
+const char* FREESURFER_FILE_TYPE_ATTRIBUTE = "FreeSurfer.FileType";
 
 // Initialize static member that controls resampling --
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer
@@ -105,7 +105,7 @@ void vtkMRMLFreeSurferModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
+  vtkMRMLModelNode* modelNode = dynamic_cast<vtkMRMLModelNode*>(refNode);
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
     {
@@ -179,10 +179,10 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     result = 0;
     }
 
-  if (modelNode->GetPolyData() != nullptr)
-    {
-    //modelNode->GetPolyData()->Modified();
-    }
+  if (result != 0)
+  {
+    modelNode->SetAttribute(FREESURFER_FILE_TYPE_ATTRIBUTE, extension.c_str());
+  }
 
   return result;
 }
@@ -243,4 +243,10 @@ void vtkMRMLFreeSurferModelStorageNode::InitializeSupportedReadFileTypes()
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer WhiteMatter (.white)");
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer SmoothWM (.smoothwm)");
   this->SupportedReadFileTypes->InsertNextValue("FreeSurfer Pial (.pial)");
+}
+
+//------------------------------------------------------------------------------
+const char* vtkMRMLFreeSurferModelStorageNode::GetFreeSurferFileTypeAttributeName()
+{
+  return FREESURFER_FILE_TYPE_ATTRIBUTE;
 }

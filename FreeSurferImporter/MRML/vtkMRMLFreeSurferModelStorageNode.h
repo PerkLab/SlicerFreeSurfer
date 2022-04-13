@@ -59,6 +59,8 @@ class VTK_SLICER_FREESURFERIMPORTER_MODULE_MRML_EXPORT vtkMRMLFreeSurferModelSto
   vtkGetMacro(UseStripper, int);
   vtkSetMacro(UseStripper, int);
 
+  static const char* GetFreeSurferFileTypeAttributeName();
+
 protected:
   vtkMRMLFreeSurferModelStorageNode();
   ~vtkMRMLFreeSurferModelStorageNode() override;
