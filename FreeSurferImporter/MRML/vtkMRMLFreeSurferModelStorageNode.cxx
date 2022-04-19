@@ -152,7 +152,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
-        modelNode->SetPolyDataConnection(stripper->GetOutputPort());
+        modelNode->SetAndObservePolyData(stripper->GetOutput());
         }
       }
     else
@@ -166,7 +166,7 @@ int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         }
       else
         {
-        modelNode->SetPolyDataConnection(normals->GetOutputPort());
+        modelNode->SetAndObservePolyData(normals->GetOutput());
         }
       }
 
