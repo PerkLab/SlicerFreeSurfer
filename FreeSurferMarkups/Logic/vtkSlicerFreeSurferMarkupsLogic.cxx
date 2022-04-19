@@ -61,7 +61,6 @@ void vtkSlicerFreeSurferMarkupsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScen
 void vtkSlicerFreeSurferMarkupsLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != 0);
-  this->GetMRMLScene()->RegisterNodeClass(vtkSmartPointer<vtkMRMLMarkupsFreeSurferCurveNode>::New());
 }
 
 //---------------------------------------------------------------------------
