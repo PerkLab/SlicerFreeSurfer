@@ -231,6 +231,12 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
 {
   Q_D(qSlicerFreeSurferImporterModuleWidget);
 
+  vtkSlicerApplicationLogic* applicationLogic = this->appLogic();
+  if (applicationLogic)
+  {
+    applicationLogic->PauseRender();
+  }
+
   qSlicerFreeSurferImporterModule* module = qobject_cast<qSlicerFreeSurferImporterModule*>(this->module());
   vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(module->logic());
 
@@ -317,7 +323,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   {
     modelNode->CreateDefaultDisplayNodes();
     modelNodeCollection->AddItem(modelNode);
-  } 
+  }
 
   QModelIndexList selectedScalarOverlays = d->scalarOverlaySelectorBox->checkedIndexes();
   for (QModelIndex selectedScalarOverlay : selectedScalarOverlays)
@@ -354,6 +360,10 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
 
   QApplication::restoreOverrideCursor();
 
+  if (applicationLogic)
+  {
+    applicationLogic->ResumeRender();
+  }
   return true;
 }
 
