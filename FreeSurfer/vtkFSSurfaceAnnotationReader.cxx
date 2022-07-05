@@ -987,7 +987,7 @@ int vtkFSSurfaceAnnotationReader::GenerateColorTable(
   char*** names)
 {
   std::vector<std::vector<int>> colors;
-  bool currentColorIndex = 0;
+  int currentColorIndex = 0;
   for (int labelIndex = 0; labelIndex < numLabels; labelIndex++)
   {
     // Expand the rgb value into separate values.
