@@ -135,7 +135,7 @@ double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateDynamicEdgeCost(
   double directionWeight = this->DirectionWeight;
 
   if ((!this->InvertScalars && curvature < 0) ||
-        this->InvertScalars && curvature > 0)
+      (this->InvertScalars && curvature > 0))
   {
     curvatureWeight *= this ->CurvaturePenalty;
     distanceCurvatureWeight *= this->DistanceCurvaturePenalty;
@@ -144,7 +144,7 @@ double vtkSlicerFreeSurferDijkstraGraphGeodesicPath::CalculateDynamicEdgeCost(
   }
 
   if ((!this->InvertScalars && sulcalHeight < 0) ||
-    this->InvertScalars && sulcalHeight > 0)
+      (this->InvertScalars && sulcalHeight > 0))
   {
     sulcalHeightWeight *= this->SulcalHeightPenalty;
     distanceSulcalHeightWeight *= this->DistanceSulcalHeightPenalty;
