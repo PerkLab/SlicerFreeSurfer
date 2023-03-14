@@ -21,6 +21,7 @@ set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
   vtkSlicerMarkupsModuleMRML
   FreeSurfer
+  vtkAddon
   )
 
 # --------------------------------------------------------------------------
