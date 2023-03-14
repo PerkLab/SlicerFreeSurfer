@@ -997,7 +997,7 @@ int vtkFSSurfaceAnnotationReader::GenerateColorTable(
 
     bool found = false;
     for (int colorTableEntryIndex = 0;
-      (found == false) && (colorTableEntryIndex < colors.size());
+      (found == false) && (colorTableEntryIndex < static_cast<int>(colors.size()));
       colorTableEntryIndex++)
     {
       if (r == colors[colorTableEntryIndex][0] &&
@@ -1023,7 +1023,7 @@ int vtkFSSurfaceAnnotationReader::GenerateColorTable(
   int numColorTableEntries = colors.size();
   int** colorTableRGBs = (int**)calloc(numColorTableEntries, sizeof(int*));
   char** colorTableNames = (char**)calloc(numColorTableEntries, sizeof(char*));
-  for (int colorTableEntryIndex = 0; (colorTableEntryIndex < colors.size());
+  for (int colorTableEntryIndex = 0; (colorTableEntryIndex < static_cast<int>(colors.size()));
     colorTableEntryIndex++)
   {
     int* color = (int*)calloc(3, sizeof(int));
