@@ -28,6 +28,7 @@
 // SlicerQt includes
 #include "qSlicerFreeSurferImporterModuleWidget.h"
 #include "ui_qSlicerFreeSurferImporterModuleWidget.h"
+#include <qSlicerIOManager.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -107,22 +108,14 @@ void qSlicerFreeSurferImporterModuleWidget::setup()
 
   QObject::connect(d->pathLineEdit, SIGNAL(currentPathChanged(QString)), this, SLOT(updateFileList()));
   QObject::connect(d->loadButton, SIGNAL(clicked()), this, SLOT(loadSelectedFiles()));
-  QObject::connect(d->volumeSelectorBox, SIGNAL(checkedIndexesChanged()), this, SLOT(updateReferenceVolumeSelector()));
-  QObject::connect(d->transformModelSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
-  QObject::connect(d->transformReferenceSelector, SIGNAL(currentNodeChanged(bool)), this, SLOT(updateTransformWidgets()));
-  QObject::connect(d->transformButton, SIGNAL(clicked()), this, SLOT(transformSelectedModel()));
   QObject::connect(d->modelShowAllCheckBox, SIGNAL(clicked()), this, SLOT(updateFileList()));
   this->updateFileList();
-  this->updateTransformWidgets();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerFreeSurferImporterModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   Superclass::setMRMLScene(scene);
-  qvtkReconnect(scene, vtkMRMLScene::NodeAddedEvent, this, SLOT(updateReferenceVolumeSelector()));
-  qvtkReconnect(scene, vtkMRMLScene::NodeRemovedEvent, this, SLOT(updateReferenceVolumeSelector()));
-  this->updateReferenceVolumeSelector();
 }
 
 //-----------------------------------------------------------------------------
@@ -185,48 +178,6 @@ void qSlicerFreeSurferImporterModuleWidget::updateFileList()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFreeSurferImporterModuleWidget::updateReferenceVolumeSelector()
-{
-  Q_D(qSlicerFreeSurferImporterModuleWidget);
-
-  if (!this->mrmlScene())
-  {
-    return;
-  }
-
-  QString selectedId = d->referenceVolumeSelector->currentData().toString();
-  QString selectedName = d->referenceVolumeSelector->currentText();
-  d->referenceVolumeSelector->clear();
-
-  // Update list of volume nodes that will be loaded
-  QModelIndexList indexes = d->volumeSelectorBox->checkedIndexes();
-  for (QModelIndex index : indexes)
-  {
-    QString text = d->volumeSelectorBox->itemText(index.row());
-    d->referenceVolumeSelector->addItem(text, "");
-  }
-
-  // Update list of volume nodes in the scene
-  std::vector<vtkMRMLNode*> volumeNodes;
-  this->mrmlScene()->GetNodesByClass("vtkMRMLVolumeNode", volumeNodes);
-  for (vtkMRMLNode* node : volumeNodes)
-  {
-    d->referenceVolumeSelector->addItem(node->GetName(), node->GetID());
-  }
-
-  int index = -1;
-  if (!selectedId.isEmpty())
-  {
-    index = d->referenceVolumeSelector->findData(selectedId);
-  }
-  if (index < 0)
-  {
-    index = d->referenceVolumeSelector->findText(selectedName);
-  }
-  d->referenceVolumeSelector->setCurrentIndex(index);
-}
-
-//-----------------------------------------------------------------------------
 bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
 {
   Q_D(qSlicerFreeSurferImporterModuleWidget);
@@ -243,14 +194,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   QString directory = d->pathLineEdit->currentPath();
   QString mriDirectory = directory + "/mri/";
 
-  QString referenceVolumeNodeID = d->referenceVolumeSelector->currentData().toString();
-  vtkMRMLVolumeNode* referenceVolumeNode = nullptr;
   vtkMRMLVolumeNode* focusVolumeNode = nullptr;
-  if (!referenceVolumeNodeID.isEmpty())
-  {
-    referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(referenceVolumeNodeID.toStdString()));
-  }
-  QString referenceVolumeNodeName = d->referenceVolumeSelector->currentText();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -261,7 +205,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     vtkMRMLVolumeNode* volumeNode = logic->LoadFreeSurferVolume((mriDirectory + volumeName).toStdString());
     if (!volumeNode)
     {
-      d->updateStatus(true, "Could not load surface " + volumeName + "!");
+      d->updateStatus(true, "Could not load volume " + volumeName);
       continue;
     }
 
@@ -271,13 +215,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     {
       focusVolumeNode = volumeNode;
     }
-
-    if (!referenceVolumeNode && referenceVolumeNodeName == volumeName)
-    {
-      referenceVolumeNode = volumeNode;
-    }
     d->volumeSelectorBox->setCheckState(selectedVolume, Qt::CheckState::Unchecked);
-
   }
 
   QModelIndexList selectedSegmentations = d->segmentationSelectorBox->checkedIndexes();
@@ -287,7 +225,7 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     vtkMRMLSegmentationNode* segmentationNode = logic->LoadFreeSurferSegmentation((mriDirectory + segmentationName).toStdString());
     if (!segmentationNode)
     {
-      d->updateStatus(true, "Could not load surface " + segmentationName + "!");
+      d->updateStatus(true, "Could not load segmentation " + segmentationName);
       continue;
     }
     d->segmentationSelectorBox->setCheckState(selectedSegmentation, Qt::CheckState::Unchecked);
@@ -301,21 +239,17 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
   {
     QString modelName = d->modelSelectorBox->itemText(selectedModel.row());
 
-    vtkMRMLModelNode* modelNode = logic->LoadFreeSurferModel((surfDirectory + modelName).toStdString());
+    qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+    qSlicerIO::IOProperties properties;
+    properties["fileName"] = surfDirectory + modelName;
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(ioManager->loadNodesAndGetFirst("FreeSurfer model", properties));
     if (!modelNode)
     {
-      d->updateStatus(true, "Could not load surface " + modelName + "!");
+      d->updateStatus(true, "Could not load surface " + modelName);
       continue;
     }
     d->modelSelectorBox->setCheckState(selectedModel, Qt::CheckState::Unchecked);
     modelNodes.push_back(modelNode);
-    if (referenceVolumeNode &&
-      (vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".pial"
-        || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".white"
-        || vtksys::SystemTools::GetFilenameLastExtension(modelName.toStdString()) == ".orig"))
-    {
-      logic->TransformFreeSurferModelToWorld(modelNode, referenceVolumeNode);
-    }
   }
 
   vtkNew<vtkCollection> modelNodeCollection;
@@ -338,11 +272,6 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     d->scalarOverlaySelectorBox->setCheckState(selectedScalarOverlay, Qt::CheckState::Unchecked);
   }
 
-  if (referenceVolumeNode)
-  {
-    // If a particular node is being used as reference for the models, then show that volume in the slice views.
-    focusVolumeNode = referenceVolumeNode;
-  }
   if (focusVolumeNode)
   {
     // Show the focused volume in the slice views
@@ -365,41 +294,4 @@ bool qSlicerFreeSurferImporterModuleWidget::loadSelectedFiles()
     applicationLogic->ResumeRender();
   }
   return true;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerFreeSurferImporterModuleWidget::updateTransformWidgets()
-{
-  Q_D(qSlicerFreeSurferImporterModuleWidget);
-  vtkMRMLModelNode* model = vtkMRMLModelNode::SafeDownCast(d->transformModelSelector->currentNode());
-  vtkMRMLVolumeNode* referenceVolume = vtkMRMLVolumeNode::SafeDownCast(d->transformReferenceSelector->currentNode());
-  if (!model || !referenceVolume)
-  {
-    d->transformButton->setEnabled(false);
-    return;
-  }
-
-  d->transformButton->setEnabled(true);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerFreeSurferImporterModuleWidget::transformSelectedModel()
-{
-  Q_D(qSlicerFreeSurferImporterModuleWidget);
-  vtkMRMLModelNode* model = vtkMRMLModelNode::SafeDownCast(d->transformModelSelector->currentNode());
-  vtkMRMLVolumeNode* referenceVolume = vtkMRMLVolumeNode::SafeDownCast(d->transformReferenceSelector->currentNode());
-  if (!model || !referenceVolume)
-  {
-    qCritical() << Q_FUNC_INFO << "Invalid model or reference volume!";
-    return;
-  }
-
-  vtkSlicerFreeSurferImporterLogic* logic = vtkSlicerFreeSurferImporterLogic::SafeDownCast(this->logic());
-  if (!logic)
-  {
-    qCritical() << Q_FUNC_INFO << "Could not get logic!";
-    return;
-  }
-
-  logic->TransformFreeSurferModelToWorld(model, referenceVolume);
 }

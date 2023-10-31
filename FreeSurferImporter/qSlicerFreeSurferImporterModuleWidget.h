@@ -47,14 +47,8 @@ public:
 public slots:
   /// Adds files to the input selector boxes for the files in the input directory
   void updateFileList();
-  /// Updates the reference volume selector for all currently loaded and to-be-loaded volumes
-  void updateReferenceVolumeSelector();
   /// Load the selected files
   bool loadSelectedFiles();
-  /// Update the state of the transform widgets
-  void updateTransformWidgets();
-  /// Transform selected model to using the selected reference volume
-  void transformSelectedModel();
 
 protected:
   QScopedPointer<qSlicerFreeSurferImporterModuleWidgetPrivate> d_ptr;

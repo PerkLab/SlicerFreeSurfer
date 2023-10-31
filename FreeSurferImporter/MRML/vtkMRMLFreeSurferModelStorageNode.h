@@ -25,39 +25,15 @@
 /// (same file format supported).
 class VTK_SLICER_FREESURFERIMPORTER_MODULE_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelStorageNode
 {
-  public:
-  static vtkMRMLFreeSurferModelStorageNode *New();
-  vtkTypeMacro(vtkMRMLFreeSurferModelStorageNode,vtkMRMLModelStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+public:
+  static vtkMRMLFreeSurferModelStorageNode* New();
+  vtkTypeMacro(vtkMRMLFreeSurferModelStorageNode, vtkMRMLModelStorageNode);
 
   vtkMRMLNode* CreateNodeInstance() override;
 
   ///
-  /// Read node attributes from XML file
-  void ReadXMLAttributes( const char** atts) override;
-
-  ///
-  /// Copy data from a  referenced node's filename to new location.
-  /// NOTE: use this instead of Write Data in the Remote IO Pipeline
-  /// until FreeSurferModel Writers are available.
-  virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
-
-  ///
-  /// Write this node's information to a MRML file in XML format.
-  void WriteXML(ostream& of, int indent) override;
-
-  ///
-  /// Copy the node's attributes to this object
-  void Copy(vtkMRMLNode *node) override;
-
-  ///
   /// Get node XML tag name (like Storage, Model)
-  const char* GetNodeTagName() override  {return "FreeSurferModelStorage";};
-
-  ///
-  /// Control use of the triangle stipper when reading the polydata
-  vtkGetMacro(UseStripper, int);
-  vtkSetMacro(UseStripper, int);
+  const char* GetNodeTagName() override { return "FreeSurferModelStorage"; };
 
   static const char* GetFreeSurferFileTypeAttributeName();
 
@@ -66,14 +42,6 @@ protected:
   ~vtkMRMLFreeSurferModelStorageNode() override;
   vtkMRMLFreeSurferModelStorageNode(const vtkMRMLFreeSurferModelStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelStorageNode&);
-
-  /// Initialize all the supported write file types
-  void InitializeSupportedReadFileTypes() override;
-
-  /// Read data and set it in the referenced node
-  int ReadDataInternal(vtkMRMLNode *refNode) override;
-
-  int UseStripper;
 };
 
 #endif

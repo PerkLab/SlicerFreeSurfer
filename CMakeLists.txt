@@ -25,6 +25,7 @@ add_subdirectory(FreeSurfer)
 # Extension modules
 add_subdirectory(FreeSurferImporter)
 add_subdirectory(FreeSurferMarkups)
+add_subdirectory(NiBabelModelIO)
 
 #-----------------------------------------------------------------------------
 include(${Slicer_EXTENSION_GENERATE_CONFIG})

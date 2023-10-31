@@ -206,39 +206,39 @@ vtkMRMLSegmentationNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferSegment
 //-----------------------------------------------------------------------------
 vtkMRMLModelNode* vtkSlicerFreeSurferImporterLogic::LoadFreeSurferModel(std::string filePath)
 {
-  std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
-  std::string extension = vtksys::SystemTools::GetFilenameExtension(filePath);
-  extension.erase(0, 1);
-  name += "_" + extension;
+  //std::string name = vtksys::SystemTools::GetFilenameWithoutExtension(filePath);
+  //std::string extension = vtksys::SystemTools::GetFilenameExtension(filePath);
+  //extension.erase(0, 1);
+  //name += "_" + extension;
 
-  vtkSmartPointer<vtkMRMLModelNode> surfNode = vtkSmartPointer<vtkMRMLModelNode>::Take(
-    vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLModelNode")));
-  if (!surfNode)
-  {
-    return nullptr;
-  }
-  surfNode->SetName(name.c_str());
+  //vtkSmartPointer<vtkMRMLModelNode> surfNode = vtkSmartPointer<vtkMRMLModelNode>::Take(
+  //  vtkMRMLModelNode::SafeDownCast(this->GetMRMLScene()->CreateNodeByClass("vtkMRMLModelNode")));
+  //if (!surfNode)
+  //{
+  //  return nullptr;
+  //}
+  //surfNode->SetName(name.c_str());
 
-  vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> surfStorageNode = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::Take(vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
-    this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFreeSurferModelStorageNode")));
-  if (!surfStorageNode)
-  {
-    vtkErrorMacro("LoadFreeSurferModel: Could not add FreeSurfer storage node");
-    return nullptr;
-  }
+  //vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> surfStorageNode = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::Take(vtkMRMLFreeSurferModelStorageNode::SafeDownCast(
+  //  this->GetMRMLScene()->CreateNodeByClass("vtkMRMLFreeSurferModelStorageNode")));
+  //if (!surfStorageNode)
+  //{
+  //  vtkErrorMacro("LoadFreeSurferModel: Could not add FreeSurfer storage node");
+  //  return nullptr;
+  //}
 
-  surfStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
-  if (surfStorageNode)
-  {
-    surfNode->SetAndObserveStorageNodeID(surfStorageNode->GetID());
-    surfStorageNode->SetFileName(filePath.c_str());
-    if (surfStorageNode->ReadData(surfNode))
-    {
-      this->GetMRMLScene()->AddNode(surfStorageNode);
-      this->GetMRMLScene()->AddNode(surfNode);
-      return surfNode;
-    }
-  }
+  //surfStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
+  //if (surfStorageNode)
+  //{
+  //  surfNode->SetAndObserveStorageNodeID(surfStorageNode->GetID());
+  //  surfStorageNode->SetFileName(filePath.c_str());
+  //  if (surfStorageNode->ReadData(surfNode))
+  //  {
+  //    this->GetMRMLScene()->AddNode(surfStorageNode);
+  //    this->GetMRMLScene()->AddNode(surfNode);
+  //    return surfNode;
+  //  }
+  //}
 
   return nullptr;
 }
@@ -277,7 +277,7 @@ bool vtkSlicerFreeSurferImporterLogic::LoadFreeSurferScalarOverlay(std::string f
   int numberOfOverlayLoaded = 0;
   for (int i = 0; i < modelNodes->GetNumberOfItems(); ++i)
   {
-    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(modelNodes->GetItemAsObject(i)); 
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(modelNodes->GetItemAsObject(i));
     if (!this->LoadFreeSurferScalarOverlay(filePath, modelNode))
     {
       continue;
@@ -301,21 +301,62 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLMo
     return;
   }
 
-  int extent[6] = { 0 };
-  referenceVolumeNode->GetImageData()->GetExtent(extent);
-
-  int dimensions[3] = { 0 };
+  int dimensions[3] = { 0, 0, 0 };
   referenceVolumeNode->GetImageData()->GetDimensions(dimensions);
+  dimensions[0] = 256;
+  dimensions[1] = 256;
+  dimensions[2] = 256;
 
-  double center[4] = { 0, 0, 0, 1 };
+  double spacing[3] = { 0.0, 0.0, 0.0 };
+  referenceVolumeNode->GetSpacing(spacing);
+
+  double origin[3] = { 0.0, 0.0, 0.0 };
+  referenceVolumeNode->GetOrigin(origin);
+
+  vtkNew<vtkMatrix4x4> ijkToRASDirections;
+  referenceVolumeNode->GetIJKToRASDirectionMatrix(ijkToRASDirections);
+
+  vtkNew<vtkMatrix4x4> scannerAffine;
+  referenceVolumeNode->GetIJKToRASMatrix(scannerAffine);
+
+  vtkNew<vtkMatrix4x4> strangeTransform;
+  strangeTransform->SetElement(0, 0, -1.0);
+  strangeTransform->SetElement(1, 1, 0.0);
+  strangeTransform->SetElement(2, 2, 0.0);
+  strangeTransform->SetElement(1, 2, 1.0);
+  strangeTransform->SetElement(2, 1, -1.0);
+
+  scannerAffine->Multiply4x4(scannerAffine, strangeTransform, scannerAffine);
+
+  
   for (int i = 0; i < 3; ++i)
   {
-    center[i] = extent[2 * i] + std::ceil((dimensions[i] / 2.0));
+    scannerAffine->SetElement(i, 3, 0.0);
+  }
+  double scannerAffineOrigin[4] = { dimensions[0], dimensions[1], dimensions[2], 1.0 };
+  vtkMath::MultiplyScalar(scannerAffineOrigin, 0.5);
+  scannerAffine->MultiplyPoint(scannerAffineOrigin, scannerAffineOrigin);
+  vtkMath::MultiplyScalar(origin, 0.5);
+  strangeTransform->MultiplyPoint(origin, origin);
+  for (int i = 0; i < 3; ++i)
+  {
+    scannerAffine->SetElement(i, 3, origin[i] - scannerAffineOrigin[i]);
   }
 
-  vtkNew<vtkMatrix4x4> ijkToRAS;
-  referenceVolumeNode->GetIJKToRASMatrix(ijkToRAS);
-  ijkToRAS->MultiplyPoint(center, center);
+  vtkNew<vtkMatrix4x4> tkregAffine;
+  tkregAffine->SetElement(1, 1, 0.0);
+  tkregAffine->SetElement(2, 2, 0.0);
+  tkregAffine->SetElement(0, 0, -spacing[0]);
+  tkregAffine->SetElement(1, 2, spacing[1]);
+  tkregAffine->SetElement(2, 1, -spacing[2]);
+  double tkregAffineOrigin[4] = { dimensions[0], dimensions[1], dimensions[2], 1.0 };
+  vtkMath::MultiplyScalar(tkregAffineOrigin, 0.5);
+  tkregAffine->MultiplyPoint(tkregAffineOrigin, tkregAffineOrigin);
+  for (int i = 0; i < 3; ++i)
+  {
+    tkregAffine->SetElement(i, 3, -tkregAffineOrigin[i]);
+  }
+
 
   std::string transformName = "FSModel_";
   if (referenceVolumeNode->GetName())
@@ -325,7 +366,9 @@ void vtkSlicerFreeSurferImporterLogic::TransformFreeSurferModelToWorld(vtkMRMLMo
   transformName += "ToWorld";
 
   vtkNew<vtkTransform> modelToWorldTransform;
-  modelToWorldTransform->Translate(center);
+  modelToWorldTransform->Concatenate(scannerAffine);
+  tkregAffine->Invert();
+  modelToWorldTransform->Concatenate(tkregAffine);
 
   vtkMRMLLinearTransformNode* modelToWorldNode = vtkMRMLLinearTransformNode::SafeDownCast(
     this->GetMRMLScene()->GetFirstNodeByName(transformName.c_str()));
