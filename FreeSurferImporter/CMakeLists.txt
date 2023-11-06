@@ -26,8 +26,6 @@ set(MODULE_SRCS
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.cxx
   qSlicer${MODULE_NAME}ModuleWidget.h
-  qSlicer${MODULE_NAME}ModelOptionsWidget.cxx
-  qSlicer${MODULE_NAME}ModelOptionsWidget.h
   qSlicer${MODULE_NAME}PlaneReader.cxx
   qSlicer${MODULE_NAME}PlaneReader.h
   qSlicer${MODULE_NAME}ScalarOverlayReader.cxx
@@ -44,7 +42,6 @@ set(MODULE_MOC_SRCS
   qSlicer${MODULE_NAME}CurveReader.h
   qSlicer${MODULE_NAME}Module.h
   qSlicer${MODULE_NAME}ModuleWidget.h
-  qSlicer${MODULE_NAME}ModelOptionsWidget.h
   qSlicer${MODULE_NAME}ScalarOverlayReader.h
   qSlicer${MODULE_NAME}ScalarOverlayOptionsWidget.h
   qSlicer${MODULE_NAME}PlaneReader.h
