@@ -60,13 +60,11 @@ public:
 
   vtkMRMLVolumeNode* LoadFreeSurferVolume(std::string filePath);
   vtkMRMLSegmentationNode* LoadFreeSurferSegmentation(std::string filePath);
-  vtkMRMLModelNode* LoadFreeSurferModel(std::string filePath);
   bool LoadFreeSurferScalarOverlay(std::string filePath, vtkCollection* modelNodes);
   bool LoadFreeSurferScalarOverlay(std::string filePath, vtkMRMLModelNode* modelNode);
   vtkMRMLMarkupsCurveNode* LoadFreeSurferCurve(std::string fileName);
   vtkMRMLMarkupsPlaneNode* LoadFreeSurferPlane(std::string fileName);
 
-  void TransformFreeSurferModelToWorld(vtkMRMLModelNode* surf, vtkMRMLVolumeNode* orig);
   void ApplyFreeSurferSegmentationLUT(vtkMRMLSegmentationNode* segmentation);
 
   /// Return the default freesurfer color node id for a given type
