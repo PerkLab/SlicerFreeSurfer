@@ -6,7 +6,7 @@ project(SlicerFreeSurfer)
 # Extension meta-information
 set(EXTENSION_HOMEPAGE "https://github.com/PerkLab/SlicerFreeSurfer")
 set(EXTENSION_CATEGORY "Neuroimaging")
-set(EXTENSION_CONTRIBUTORS "Kyle Sunderland (Perk Lab (Queen's University)), Andras Lasso (Perk Lab (Queen's University))")
+set(EXTENSION_CONTRIBUTORS "Kyle Sunderland (PerkLab, Queen's University), Andras Lasso (PerkLab, Queen's University)")
 set(EXTENSION_DESCRIPTION "Extension for handling FreeSurfer files in Slicer. Features importer for models, scalar overlay, and segmentations. Handles transformation of models to from FreeSurfer to Slicer coordinate system.")
 set(EXTENSION_ICONURL "https://github.com/PerkLab/SlicerFreeSurfer/raw/master/SlicerFreeSurfer.png")
 set(EXTENSION_SCREENSHOTURLS "https://github.com/PerkLab/SlicerFreeSurfer/raw/master/Screenshots/FreeSurferImporterInterface.png")
