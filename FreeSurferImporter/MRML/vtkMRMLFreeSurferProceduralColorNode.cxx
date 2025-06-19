@@ -73,7 +73,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
 
   const char* attName;
   const char* attValue;
-  int numColors;
+  int numColors{ 0 };
   while (*atts != nullptr)
     {
     attName = *(atts++);
@@ -85,8 +85,6 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
       ss >> numColors;
       vtkDebugMacro("Setting the look up table size to " << numColors << "\n");
       this->LookupTable->SetNumberOfColors(numColors);
-      this->Names.clear();
-      this->Names.resize(numColors);
       }
     else if (!strcmp(attName, "colors"))
       {
@@ -115,10 +113,6 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
           break;
           }
         }
-      if (!errorCondition)
-        {
-        this->NamesInitialisedOn();
-        }
       }
     }
   vtkDebugMacro("Finished reading in xml attributes, list id = " << this->GetID() << " and name = " << this->GetName() << endl);
@@ -137,7 +131,6 @@ void vtkMRMLFreeSurferProceduralColorNode::Copy(vtkMRMLNode *anode)
     this->SetName(node->Name);
     this->SetLookupTable(node->LookupTable);
     this->SetType(node->Type);
-    this->SetFileName(node->FileName);
     }
   else
     {

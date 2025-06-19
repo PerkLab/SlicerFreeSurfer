@@ -420,7 +420,7 @@ vtkMRMLColorTableNode* vtkSlicerFreeSurferImporterLogic::CreateFileNode(const ch
 
   if (ctNode->GetStorageNode()->ReadData(ctNode) == 0)
   {
-    vtkErrorMacro("Unable to read file as color table " << (ctNode->GetFileName() ? ctNode->GetFileName() : ""));
+    vtkErrorMacro("Unable to read file as color table " << (ctNode->GetStorageNode()->GetFileName() ? ctNode->GetStorageNode()->GetFileName() : ""));
 
     if (this->GetMRMLScene())
     {
