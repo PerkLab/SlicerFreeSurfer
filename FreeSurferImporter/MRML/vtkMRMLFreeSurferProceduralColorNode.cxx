@@ -17,7 +17,6 @@ Version:   $Revision: 1.0 $
 #include "vtkObjectFactory.h"
 
 #include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkMRMLLogic.h"
 
 #include "vtkFSLookupTable.h"
 

@@ -66,10 +66,10 @@ public:
   const char* GetMarkupType() override { return "FreeSurferCurve"; };
 
   // Get markup type GUI display name
-  const char* GetTypeDisplayName() override { return "FreeSurfer Curve"; };
+  std::string GetTypeDisplayName() override { return "FreeSurfer Curve"; };
 
   /// Get markup short name
-  const char* GetDefaultNodeNamePrefix() override { return "FSC"; };
+  std::string GetDefaultNodeNamePrefix() override { return "FSC"; };
 
   /// Read node attributes from XML file
   void ReadXMLAttributes( const char** atts) override;
