@@ -71,6 +71,7 @@
 
 // STD includes
 #include <cassert>
+#include <iostream>
 #include <regex>
 
 //----------------------------------------------------------------------------

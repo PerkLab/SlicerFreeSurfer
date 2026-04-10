@@ -21,6 +21,9 @@
 #include <vtkFloatArray.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //-------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceScalarReader);
 
@@ -61,7 +64,7 @@ int vtkFSSurfaceScalarReader::ReadFSScalars()
 
   if (output == nullptr)
   {
-      cerr << "ERROR vtkFSSurfaceScalarReader ReadFSScalars() : output is null" << endl;
+      std::cerr <<"ERROR vtkFSSurfaceScalarReader ReadFSScalars() : output is null" << std::endl;
       return 0;
   }
   vtkDebugMacro( << "vtkFSSurfaceScalarReader Execute() " << endl);

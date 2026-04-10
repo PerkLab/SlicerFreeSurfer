@@ -15,6 +15,9 @@
 // FreeSurfer includes
 #include "vtkFSLookupTable.h"
 
+// STD includes
+#include <iostream>
+
 // VTK includes
 #include <vtkObjectFactory.h>
 
@@ -47,15 +50,15 @@ void vtkFSLookupTable::PrintSelf(ostream& os, vtkIndent indent)
 {
     Superclass::PrintSelf(os, indent);
 
-    os << indent << "LowThres: " << this->LowThresh << endl;
-    os << indent << "HiThresh: " << this->HiThresh << endl;
-    os << indent << "Look up table type: " << this->GetLutTypeString() << endl;
-    os << indent << "Reverse: " << this->Reverse << endl;
-    os << indent << "Truncate: " << this->Truncate << endl;
-    os << indent << "Offset: " << this->Offset << endl;
-    os << indent << "Slope: " << this->Slope << endl;
-    os << indent << "Blufact: " << this->Blufact << endl;
-    os << indent << "Slope mid point FMid: " << this->FMid << endl;
+    os << indent << "LowThres: " << this->LowThresh << std::endl;
+    os << indent << "HiThresh: " << this->HiThresh << std::endl;
+    os << indent << "Look up table type: " << this->GetLutTypeString() << std::endl;
+    os << indent << "Reverse: " << this->Reverse << std::endl;
+    os << indent << "Truncate: " << this->Truncate << std::endl;
+    os << indent << "Offset: " << this->Offset << std::endl;
+    os << indent << "Slope: " << this->Slope << std::endl;
+    os << indent << "Blufact: " << this->Blufact << std::endl;
+    os << indent << "Slope mid point FMid: " << this->FMid << std::endl;
 }
 
 //------------------------------------------------------------------------------

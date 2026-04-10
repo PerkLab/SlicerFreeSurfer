@@ -25,6 +25,9 @@
 
 #include <vtkMRMLNode.h>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFreeSurferCurveGenerator);
 

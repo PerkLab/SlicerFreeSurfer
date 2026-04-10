@@ -43,6 +43,7 @@ Version:   $Revision: 1.2 $
 // ITKSys includes
 
 // STD includes
+#include <iostream>
 
 // Initialize static member that controls resampling --
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer
@@ -271,7 +272,7 @@ bool vtkMRMLFreeSurferModelOverlayStorageNode::ReadScalarOverlayAnnot(const std:
       numNames++;
       std::string colorName = colorString.substr(startBracketIndex+1, endBracketIndex - startBracketIndex - 1);
       vtkDebugMacro("Adding color name = " << colorName.c_str() << " at index \""
-        << colorIndexString.c_str() << "\"" << ", as int: " << atoi(colorIndexString.c_str()) <<  endl);
+        << colorIndexString.c_str() << "\"" << ", as int: " << atoi(colorIndexString.c_str()) << endl);
       if (lutNode->SetColorName(atoi(colorIndexString.c_str()), colorName.c_str()) == 0)
         {
         vtkErrorMacro("ReadData: error setting annotation color name " << colorName.c_str()
