@@ -20,6 +20,9 @@
 #include <vtkFloatArray.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //-------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceWFileReader);
 
@@ -61,7 +64,7 @@ int vtkFSSurfaceWFileReader::ReadWFile()
   // Do some basic sanity checks.
   if (output == nullptr)
     {
-    cerr << "ERROR vtkFSSurfaceWFileReader ReadWFile() : output is null" << endl;
+    std::cerr <<"ERROR vtkFSSurfaceWFileReader ReadWFile() : output is null" << std::endl;
     return this->FS_ERROR_W_OUTPUT_NULL;
     }
   vtkDebugMacro( << "vtkFSSurfaceWFileReader Execute() " << endl);

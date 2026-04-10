@@ -19,6 +19,9 @@
 #include <vtkFloatArray.h>
 #include <vtkObjectFactory.h>
 
+// STD includes
+#include <iostream>
+
 //-------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceLabelReader);
 
@@ -57,7 +60,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   // Do some basic sanity checks.
   if (output == nullptr)
     {
-    cerr << "ERROR vtkFSSurfaceLabelReader ReadLabel() : output is null" << endl;
+    std::cerr <<"ERROR vtkFSSurfaceLabelReader ReadLabel() : output is null" << std::endl;
     return this->FS_ERROR_W_OUTPUT_NULL;
     }
   vtkDebugMacro( << "vtkFSSurfaceLabelReader Execute() " << endl);
@@ -215,18 +218,18 @@ int vtkFSSurfaceLabelReader::ReadLabel()
 void vtkFSSurfaceLabelReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   vtkDataReader::PrintSelf(os,indent);
-  os << indent << "Number of vertices: " << this->NumberOfVertices << endl;
-  os << indent << "Number of values in file: " << this->NumberOfValues << endl;
+  os << indent << "Number of vertices: " << this->NumberOfVertices << std::endl;
+  os << indent << "Number of values in file: " << this->NumberOfValues << std::endl;
 
-  os << indent << "Scalar array: " << endl;
+  os << indent << "Scalar array: " << std::endl;
   if (this->Scalars == nullptr)
     {
-    os << indent.GetNextIndent() << "null" << endl;
+    os << indent.GetNextIndent() << "null" << std::endl;
     }
   else
     {
-    os << indent.GetNextIndent() << "Size = " << this->Scalars->GetNumberOfTuples() << endl;
+    os << indent.GetNextIndent() << "Size = " << this->Scalars->GetNumberOfTuples() << std::endl;
     }
-  os << indent << "LabelOff: " << this->LabelOff << endl;
-  os << indent << "LabelOn: " << this->LabelOn << endl;
+  os << indent << "LabelOff: " << this->LabelOff << std::endl;
+  os << indent << "LabelOn: " << this->LabelOn << std::endl;
 }

@@ -25,6 +25,9 @@
 #include <vtkPolyData.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
+// STD includes
+#include <iostream>
+
 //-------------------------------------------------------------------------
 vtkStandardNewMacro(vtkFSSurfaceReader);
 
@@ -110,13 +113,13 @@ int vtkFSSurfaceReader::RequestData(
 #if FS_DEBUG
   switch (magicNumber) {
   case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
-    cerr << "Reading old quad file" << endl;
+    std::cerr <<"Reading old quad file" << std::endl;
     break;
   case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER:
-    cerr << "Reading new quad file" << endl;
+    std::cerr <<"Reading new quad file" << std::endl;
     break;
   case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER:
-    cerr << "Reading triangle file" << endl;
+    std::cerr <<"Reading triangle file" << std::endl;
     break;
   }
 #endif
@@ -184,7 +187,7 @@ int vtkFSSurfaceReader::RequestData(
   }
 
 #if FS_DEBUG
-  cerr << numVertices << " vertices, " << numFaces * faceMultiplier << " faces" << endl;
+  std::cerr <<numVertices << " vertices, " << numFaces * faceMultiplier << " faces" << std::endl;
 #endif
 
   // If quad files, there are four vertices per face, in tri files,
@@ -345,7 +348,7 @@ int vtkFSSurfaceReader::RequestData(
   fclose (surfaceFile);
 
 #if FS_DEBUG
-  cerr << "Done reading surface." << endl;
+  std::cerr <<"Done reading surface." << std::endl;
 #endif
 
 #if FS_CALC_NORMALS

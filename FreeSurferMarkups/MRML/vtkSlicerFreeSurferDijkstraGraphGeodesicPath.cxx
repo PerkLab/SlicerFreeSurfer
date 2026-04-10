@@ -28,6 +28,9 @@
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 
+// STD includes
+#include <iostream>
+
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerFreeSurferDijkstraGraphGeodesicPath);
 
