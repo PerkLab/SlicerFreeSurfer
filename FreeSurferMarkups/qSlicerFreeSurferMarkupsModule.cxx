@@ -30,6 +30,8 @@
 #include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
 
 // MRML includes
+#include <vtkMRMLAbstractLogic.h>
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLMarkupsFreeSurferCurveNode.h>
 
 // Logic includes
@@ -117,7 +119,15 @@ void qSlicerFreeSurferMarkupsModule::setup()
 {
   this->Superclass::setup();
 
-  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(this->logic()->GetMRMLApplicationLogic()->GetModuleLogic("Markups"));
+  vtkMRMLAbstractLogic* moduleLogic = this->logic();
+  vtkMRMLApplicationLogic* appLogic = moduleLogic ? moduleLogic->GetMRMLApplicationLogic() : nullptr;
+  if (!appLogic)
+  {
+    qCritical("Could not find application logic");
+    return;
+  }
+
+  vtkSlicerMarkupsLogic* markupsLogic = vtkSlicerMarkupsLogic::SafeDownCast(appLogic->GetModuleLogic("Markups"));
   if (!markupsLogic)
   {
     qCritical("Could not find Markups logic");
